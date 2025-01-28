@@ -1,0 +1,492 @@
+body{
+	background: lightgrey;
+}
+.container{
+	position: relative;
+	width: 1120px;
+	max-width: 150%;
+	height: 95vh;
+	/*background:  lightgrey;*/
+	/*padding-bottom: 100px;*/
+	margin-left: 50px;
+	box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.06),0,2px, 5px 0 rgba(0, 0, 0, 0.06);
+	display: flex;
+}
+
+.container .leftside{
+	position: relative;
+	flex: 25%;
+	border-right: 1px solid grey;
+	border-left: 1px solid grey;
+	border-bottom: 1px solid grey;
+	background-color: white;
+}
+
+.container .rightside{
+	position: relative;
+	flex: 70%;
+	max-height: 100%;
+	background-color: whitesmoke;
+	border-right:  1px solid rgba(0, 0, 0, 0.2);
+		border-bottom: 1px solid grey;
+
+}
+
+.container .leftright{
+	position: relative;
+	flex: 21%;
+	border-right:  1px solid grey;
+	background-color: white;
+		border-left: 1px solid grey;
+
+		border-bottom: 1px solid grey;
+
+} 
+
+.container .rightside::before{
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: url(../images/pattern1.jpg);
+	opacity: 0.90;
+}
+.leftright .header{
+	width: 100%;
+	height: 60px;
+	position: relative;
+	background: orange;
+	align-items: center;
+	justify-content: space-between;
+	border-left: 1px solid red;
+}
+
+.container .leftright::before{
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: white;
+	opacity: 0.90;
+}
+
+.leftside .header{
+	position:  relative;
+	width: 100%;
+	height: 59px;
+	background: orange;
+	align-items: center;
+	justify-content: space-between;
+	
+}
+/*.cover{
+	position: relative;
+	width: 40px;
+	height: 40px;
+	overflow: hidden;
+	border-radius: 50%;
+	object-fit: cover;
+}*/
+.loger_name{
+	color: white;
+	text-shadow: 2px 0.5px black;
+	font-size: 0.9em;
+}
+.search-chat{
+	margin-top: 15px;
+	position: relative;
+}
+::-webkit-scrollbar{
+	width: 5px;
+}
+::-webkit-scrollbar-track{
+	  box-shadow: inset 0 0 13px rgba(0, 0, 0, 0.3);
+
+}
+::-webkit-scrollbar-thumb{
+	background: lightgrey;
+	outline: 1px solid slategrey;
+
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+.leftside .chatlist{
+	position: relative;
+	overflow-y: auto;
+	height: 70vh;
+	background: ghostwhite;
+}
+.chatlist .block{
+	position: relative;
+	width: 100%;
+	height: 8vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding: -10px;
+	padding-top: 18px;
+	border-bottom:  1px solid black;
+	cursor: pointer;
+}
+
+.chatlist .block.active{
+	color: #ebebeb;
+}
+
+.chatlist .block:hover{
+	background: #f5f5f5;
+}
+
+.chatlist .block .details{
+	position: relative;
+	width: 100%;
+}
+
+.chatlist .block .details .listHead{
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 15px;
+}
+
+.chatlist .block .details .listHead .username{
+	border: none;
+	background: none;
+	outline: none;
+	text-transform: capitalize;
+}
+
+.chatlist .block .details .listHead h5{
+	font-size: 0.9em;
+	font-weight: 600;
+	color: #111;
+}
+
+.chatlist .block .details .listHead .time{
+	font-size: 0.6em;
+	
+	position: relative;
+	font-weight: bold;
+	color: darkgrey;	
+}
+
+.message_p{
+	display: flex;
+	margin: 0;
+	margin-top: -30px;
+	border: none;
+}
+
+.message_p p{
+	display: -webkit-box;
+	-webkit-line-clamp: 1;
+	color: seagreen;
+	font-size: 0.4em;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/*.message_p b{
+	font-size: 0.6em;
+	margin-left: 35px;
+	margin-bottom: 25px;
+	background: orange;
+	color: white;
+	display: flex;
+	height: 20px;
+	width: 20px;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+}*/
+
+.listmembers{
+	display: inline-block;
+	position: relative;
+	cursor: pointer;
+	width: 28vh;
+	padding-left: 10px;
+	font-size: 0.8em;
+	height: 60vh;
+	border-left: 1px solid black;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+	box-shadow: 0px 0px 0px 3px grey;
+	overflow-y: auto;
+	background: white;
+	opacity: 1.5;	
+}
+
+.usercheckbox{
+	
+	border-bottom: 1px solid grey;
+	
+}
+.listcheck{
+	float: right;
+	margin-top: 15px;
+	margin-right: 20px;
+}
+.listname{
+	color: black;
+	font-size: 0.9em;
+}
+
+
+
+/*Right Side CSS*/
+
+.rightside .header{
+	position:  relative;
+	width: 100%;
+	height: 60px;
+	background: orange;
+
+	align-items: center;
+	justify-content: space-between;
+	border-left: 1px solid white;
+}
+
+.imgText{
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.imgText h4{
+	font-weight: 400;
+	line-height: 1.5em;
+	margin-left: 15px;
+	color: white;
+	text-shadow: 2px 0.5px black;
+}
+
+.chatBox{
+	position: relative;
+	overflow-y: auto;
+	width: 100%;
+	height: calc(100% - 120px);
+}
+
+.message{
+	position: relative;
+	display: flex;
+	width: 100%;
+	margin: 5px 0;
+}
+
+.message p{
+	position: relative;
+	text-align: right;
+
+	right: 5px;
+	max-width: 65%;
+	padding: 10px;
+	background: #dcf8c6;
+	border-radius: 10px;
+	font-size: 0.9em;
+}
+
+
+
+.message p span{
+	display: block;
+	margin-top: 5px;
+	font-size: 0.85em;
+	opacity: 0.5;
+	word-spacing: 15px;
+}
+
+.my_message{
+	justify-content: flex-end;
+}
+
+.frnd_message{
+	justify-content: flex-start;
+}
+
+.frnd_message p{
+	text-align: left;
+	right: -20px;
+	background: white;
+}
+
+.chatbox_input{
+	position: relative;
+	width: 100%;
+	height: 60px;
+	background: orange;
+	padding: 15px;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.chatbox_input ion-icon{
+	cursor: pointer;
+	font-size: 1.4em;
+	color: #51585c;
+}
+
+.chatbox_input ion-icon:nth-child(1){
+	margin-right: 15px;
+}
+
+.chatbox_input input{
+	position: relative;
+	width: 90%;
+	margin: 0 20px;
+	padding: 10px 20px;
+	border: none;
+	outline: none;
+	border-radius: 30px;
+	font-size: 1em;
+}
+.button{
+	border: none;
+	/*margin-left: 67%;*/
+	margin-top: 12px;
+	float: right;
+	padding: 0px 6px 0px 2px; 
+	/*font-weight: bold;
+	font-size: 0.9em;*/
+	/*box-shadow: 1px 2px 1px 2px black;*/
+	/*border-radius: 2px 15px;*/
+	background: white;
+	color: orange;
+}
+.button_content{
+	font-size: 0.8em;
+	border: none;
+	
+	color: grey;
+	background: white;
+}
+.button:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  
+}
+.btnlist{
+	border: none;
+	padding: 5px 0px;
+	text-align: center;
+	text-decoration: none;
+	word-wrap: 3px;
+	word-spacing: 0.5;
+	font-size: 0.7em;
+	border-bottom: 1px solid black;
+	border-width: 0.07em;
+	width: 160px;
+	text-decoration: none;
+
+}
+
+.text{
+	color: grey !important;
+	text-decoration: none !important;
+}
+.text:hover{
+	color: orange !important;
+}
+
+
+
+.nav_icons{
+	float: right;
+	margin-top: -48px;
+}
+.dropdown{
+	margin-top: -8px;
+	background: none;
+}
+
+.dropdown .upper{
+	background:none;
+	border: none;
+	outline: none;
+	font-size: 0.9em;
+}
+.upper:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  background: none !important;
+}
+
+/*For expand arrow*/
+.axpand{
+	font-size: 0.6em;
+	border: none;
+	width: 10px;
+	background: none;
+}
+.axpand:hover{
+	color: none;
+	border: none;
+	background: none;
+}
+.axpand:focus{
+	outline: none !important;
+  box-shadow: none !important;
+  background: none !important;
+}
+.expand{
+	font-size: 1.8em;
+	color:  black;
+}
+.content{
+	font-size: 3em;
+	background: white;
+	box-shadow: 1px 4px 11px 3px black;
+	border: none;
+	width: 50px;
+	margin-right: 40px;
+	border-radius: 2px 2px 2px 2px;
+	/*padding-left: 40px;*/
+}
+.list{
+	font-weight: bold;
+	color: black;
+	border: 1px solid white;
+	font-size: 0.6em;
+	background: transparent;
+	letter-spacing: 3px;
+	align-items: center;
+	width: 160px;
+	border-bottom: 1px solid grey;
+	margin-right: 60px;
+	text-transform: capitalize;
+}
+
+.token_name{
+	padding-left: 35px;
+}
+.my_message .chatAction{
+	background: none !important;
+	color: orangered;
+	outline: none !important;
+	box-shadow: none !important;
+	border: none !important;
+}
+
+.frnd_message .chatAction{
+	background: none !important;
+	color: red;
+	outline: none !important;
+	box-shadow: none !important;
+	border: none !important;
+}
+
+.notice_label{
+	/*border: 1px solid black;*/
+	text-align: center;
+	
+	/*background: orange;*/
+	/*box-shadow: 0px 0px 0px 3px grey;*/
+}

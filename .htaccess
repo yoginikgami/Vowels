@@ -1,0 +1,486 @@
+php_value max_input_vars 1000000
+php_value suhosin.get.max_vars 1000000
+php_value suhosin.post.max_vars 1000000
+php_value suhosin.request.max_vars 1000000
+
+php_value session.gc_maxlifetime 43200
+
+# ErrorDocument 404 https://clienserv.com/vowel/404
+RewriteEngine On
+RewriteCond %{REQUEST_NAME} !-f
+RewriteRule ^([^\.]+)$ $1.php [NC,L]
+RewriteRule ^MySite/ MySite/index.html
+RewriteRule ^mani_salary/home mani_salary/home.php
+RewriteRule ^mani_salary/master mani_salary/master.php
+RewriteRule ^mani_salary/attendance mani_salary/attendance.php
+RewriteRule ^mani_salary/salary mani_salary/salary.php
+RewriteRule ^mani_salary/exit mani_salary/exit.php
+RewriteRule ^mani_salary/Process_salary mani_salary/Process_salary.php
+RewriteRule ^mani_salary/ReportSalary mani_salary/Salary_createPDFDOM.php
+
+RewriteRule ^jan21/job_creation html/job_creation.php
+RewriteRule ^jan21/2 html/logout.php
+RewriteRule ^jan21/status html/status.php
+RewriteRule ^jan21/report html/report.php
+RewriteRule ^jan21/job_master html/job_master.php
+
+RewriteRule ^on html/on.php
+RewriteRule ^Download_Sales html/Download_Sales.php
+RewriteRule ^View_Sales html/View_Sales.php
+RewriteRule ^off html/off.php
+RewriteRule ^sampleDateTime html/sampleDateTime.php
+RewriteRule ^valid_id html/valid_id.txt
+RewriteRule ^test html/test.php
+RewriteRule ^login html/ltr/authentication-login.php
+RewriteRule ^register html/ltr/authentication-register.php
+RewriteRule ^we_register html/register_company.php
+RewriteRule ^forgotform html/forgotform.php
+RewriteRule ^changePassword html/ltr/changePassword.php
+# RewriteRule ^Logo assets/images/sthana-logo-2.png
+RewriteRule ^Logo html/images/logo.png
+RewriteRule ^Verify html/verifyUser.php
+RewriteRule ^Dashboard html/dashboard.php
+RewriteRule ^outstanding html/outstanding.php
+RewriteRule ^manage_dashboard html/manage_dashboard_panel.php
+RewriteRule ^2 html/logout.php
+RewriteRule ^advance html/advance.php
+RewriteRule ^service_income html/service_income.php
+RewriteRule ^service_expense html/service_expense.php
+RewriteRule ^service_contra html/service_contra.php
+RewriteRule ^finance_report html/finance_report.php
+RewriteRule ^client_master html/client_master.php
+RewriteRule ^vendor_master html/vendor_master.php
+RewriteRule ^contact_client html/contact_client.php
+RewriteRule ^dsc_subscriber html/dsc_subscriber.php
+RewriteRule ^dsc_reseller html/dsc_reseller.php
+RewriteRule ^dsc_token html/dsc_token.php
+RewriteRule ^exchange html/exchange.php
+RewriteRule ^token_stock html/token_stock.php
+RewriteRule ^dsc_stock html/dsc_stock.php
+RewriteRule ^pan html/pan.php
+RewriteRule ^add_pan_data html/add_pan_data.php
+
+
+RewriteRule ^tan html/tan.php
+RewriteRule ^it_returns html/it_returns.php
+RewriteRule ^e_tds html/e_tds.php
+RewriteRule ^twenty4g html/24g.php
+RewriteRule ^old_gst html/old_gst.php
+RewriteRule ^gst_fees html/gst_fees.php
+RewriteRule ^View_AdvanceDetails html/View_AdvanceDetails.php
+RewriteRule ^View_GstFees html/View_GstFees.php
+RewriteRule ^View_GstReturns html/View_GstReturns.php
+RewriteRule ^View_ItReturns html/View_ItReturns.php
+RewriteRule ^View_Pan html/View_Pan.php
+RewriteRule ^View_Tan html/View_Tan.php
+RewriteRule ^View_ETds html/View_ETds.php
+RewriteRule ^View_24G html/View_24G.php
+RewriteRule ^View_PspDistribution html/View_PspDistribution.php
+RewriteRule ^View_DscApplicant html/View_DscApplicant.php
+RewriteRule ^View_DscPartner html/View_DscPartner.php
+RewriteRule ^View_TokenUsage html/View_TokenUsage.php
+RewriteRule ^View_OtherService html/View_OtherService.php
+RewriteRule ^View_ServiceIncome html/View_ServiceIncome.php
+RewriteRule ^View_ClientMaster html/View_ClientMaster.php
+RewriteRule ^View_ServiceReceived html/View_ServiceReceived.php
+RewriteRule ^sendMailPanel html/sendMailPanel.php
+RewriteRule ^gst_returns html/gst_returns.php
+RewriteRule ^other_services html/other_services.php
+RewriteRule ^client_message html/client_message.php
+RewriteRule ^client_replied_message html/client_replied_message.php
+RewriteRule ^department html/department.php
+RewriteRule ^designation html/designation.php
+RewriteRule ^tax_invoice html/tax_invoice.php
+RewriteRule ^retail_invoice html/retail_invoice.php
+RewriteRule ^credit_note html/credit_note.php
+RewriteRule ^debit_note html/debit_note.php
+RewriteRule ^purchase_note html/purchase_note.php
+RewriteRule ^quotation_note html/quotation_note.php
+RewriteRule ^services_received html/services_received.php
+RewriteRule ^other_transaction html/other_transaction.php
+RewriteRule ^psp html/psp.php
+RewriteRule ^coupon_consumption html/coupon_consumption.php
+RewriteRule ^payment html/payment.php
+RewriteRule ^bank_transaction html/bank_transaction.php
+RewriteRule ^invoice_receipt html/invoice_receipt.php
+RewriteRule ^invoice_payment html/invoice_payment.php
+RewriteRule ^tender html/tender.php
+RewriteRule ^drawee html/drawee.php
+RewriteRule ^audit html/audit.php
+RewriteRule ^add_users html/add_users.php
+# RewriteRule ^EditUser html/EditUser.php
+RewriteRule ^company_profile html/company_profile.php
+RewriteRule ^controller_operator html/controller_operator.php
+RewriteRule ^report html/report.php
+RewriteRule ^Vowel-Report html/createPDFDOM.php
+RewriteRule ^Export_client_master html/Export_client_master.php
+RewriteRule ^Export_Goods_records html/Export_Goods_records.php
+RewriteRule ^Export_vendor_master html/Export_vendor_master.php
+RewriteRule ^Export_contact_client html/Export_contact_client.php
+RewriteRule ^Download_outstanding_data html/Download_outstanding_data.php
+RewriteRule ^Download_ClientOutstanding_data html/Download_ClientOutstanding_data.php
+RewriteRule ^Download_ClientSettled_data html/Download_ClientSettled_data.php
+RewriteRule ^Download_Deleted_E_tender html/Download_Deleted_E_tender.php
+#RewriteRule ^Export_gst html/Export_gst.php
+RewriteRule ^Export_gst_fees html/Export_gst_fees.php
+RewriteRule ^Export_gst_returns html/Export_gst_returns.php
+RewriteRule ^Export_Tax_Invoice html/Export_Tax_Invoice.php
+RewriteRule ^Export_Retail_Invoice html/Export_Retail_Invoice.php
+RewriteRule ^Export_Credit_Note html/Export_Credit_Note.php
+RewriteRule ^Export_Debit_Note html/Export_Debit_Note.php
+RewriteRule ^Export_Purchase_Note html/Export_Purchase_Note.php
+RewriteRule ^Export_Quotation_Note html/Export_Quotation_Note.php
+RewriteRule ^Export_it_returns html/Export_it_returns.php
+RewriteRule ^Export_audit html/Export_audit.php
+RewriteRule ^Export_pan html/Export_pan.php
+RewriteRule ^Export_sales html/Export_sales.php
+RewriteRule ^activeInactiveExport html/activeInactiveExport.php
+RewriteRule ^Export_service_income html/Export_service_income.php
+RewriteRule ^Export_service_expense html/Export_service_expense.php
+RewriteRule ^Export_service_contra html/Export_service_contra.php
+RewriteRule ^Export_tan html/Export_tan.php
+RewriteRule ^View_Etender html/View_Etender.php
+RewriteRule ^Export_other_transaction html/Export_other_transaction.php
+RewriteRule ^Export_e_tds html/Export_e_tds.php
+RewriteRule ^Export_dsc_subscriber html/Export_dsc_subscriber.php
+RewriteRule ^Export_dsc_reseller html/Export_dsc_reseller.php
+RewriteRule ^e_tender html/e_tender.php
+RewriteRule ^Export_other_services html/Export_other_services.php
+RewriteRule ^Export_services_received html/Export_services_received.php
+RewriteRule ^Export_psp_distribution html/Export_psp_distribution.php
+RewriteRule ^Export_psp_consumption html/Export_psp_consumption.php
+RewriteRule ^Export_Client html/Export_Client.php
+RewriteRule ^Export_Token_Stock html/Export_token_stock.php
+RewriteRule ^Export_Dsc_Stock html/Export_dsc_stock.php
+
+RewriteRule ^Export_Dsc_Product html/Export_dsc_product.php
+RewriteRule ^Export_Exchange html/Export_exchange.php
+RewriteRule ^Export_Dsc_Token html/Export_dsc_token.php
+RewriteRule ^Export_24G html/Export_twenty4g.php
+RewriteRule ^Export_Advance html/Export_advance.php
+
+RewriteRule ^main_website html/main_website.php
+RewriteRule ^Download_salary html/Download_salary.php
+RewriteRule ^Download_duplicate_Client html/Download_duplicate_Client.php
+RewriteRule ^Download_duplicate_Vendor html/Download_duplicate_Vendor.php
+RewriteRule ^Download_erroneous_Client html/Download_erroneous_Client.php
+RewriteRule ^Download_erroneous_Vendor html/Download_erroneous_Vendor.php
+RewriteRule ^Download_erroneous_Settings html/Download_erroneous_Settings.php
+RewriteRule ^Download_erroneous_Pan html/Download_erroneous_Pan.php
+RewriteRule ^Download_erroneous_Tan html/Download_erroneous_Tan.php
+RewriteRule ^Download_erroneous_E-Tds html/Download_erroneous_E-Tds.php
+RewriteRule ^Download_erroneous_dsc_subscriber html/Download_erroneous_dsc_subscriber.php
+RewriteRule ^Download_erroneous_dsc_reseller html/Download_erroneous_dsc_reseller.php
+RewriteRule ^Download_erroneous_service_income html/Download_erroneous_service_income.php
+RewriteRule ^Download_erroneous_service_expense html/Download_erroneous_service_expense.php
+RewriteRule ^Download_erroneous_psp_distribution html/Download_erroneous_psp_distribution.php
+RewriteRule ^Download_erroneous_psp_consumption html/Download_erroneous_psp_consumption.php
+RewriteRule ^Download_erroneous_BankTransaction html/Download_erroneous_BankTransaction.php
+RewriteRule ^Download_BankTransaction html/Download_BankTransaction.php
+RewriteRule ^Download_Settings html/Download_Settings.php
+RewriteRule ^Download_Pan html/Download_Pan.php
+RewriteRule ^Download_Tan html/Download_Tan.php
+RewriteRule ^Download_E-Tds html/Download_E-Tds.php
+RewriteRule ^Download_24g html/Download_24g.php
+RewriteRule ^Download_gst_fees html/Download_gst_fees.php
+RewriteRule ^Download_ItReturns html/Download_ItReturns.php
+RewriteRule ^Download_dsc_token html/Download_dsc_token.php
+RewriteRule ^Download_OtherServices html/Download_OtherServices.php
+RewriteRule ^Download_dsc_Subscriber html/Download_dsc_Subscriber.php
+RewriteRule ^Download_dsc_reseller html/Download_dsc_reseller.php
+RewriteRule ^Download_Service_income html/Download_Service_income.php
+RewriteRule ^Download_Service_expense html/Download_Service_expense.php
+RewriteRule ^Download_psp_Distribution html/Download_psp_Distribution.php
+RewriteRule ^Download_psp_Consumption html/Download_psp_Consumption.php
+RewriteRule ^Download_report html/Download_report.php
+RewriteRule ^Download_serviceIncome_client_transactions html/Download_serviceIncome_client_transactions.php
+RewriteRule ^Download_serviceExpense_client_transactions html/Download_serviceExpense_client_transactions.php
+
+RewriteRule ^Download_DeletedRecords html/Download_DeletedRecords.php
+
+RewriteRule ^Download_Deleted_GstFees html/Download_Deleted_GstFees.php
+RewriteRule ^Download_Deleted_ITReturns html/Download_Deleted_ITReturns.php
+RewriteRule ^Download_Deleted_Pan html/Download_Deleted_Pan.php
+RewriteRule ^Download_Deleted_Tan html/Download_Deleted_Tan.php
+RewriteRule ^Download_Deleted_E_Tds html/Download_Deleted_E_Tds.php
+RewriteRule ^Download_Deleted_24G html/Download_Deleted_24G.php
+RewriteRule ^Download_Deleted_Coupon_Distribution html/Download_Deleted_Coupon_Distribution.php
+RewriteRule ^Download_Deleted_DSC_Applicant html/Download_Deleted_DSC_Applicant.php
+RewriteRule ^Download_Deleted_DSC_Partner html/Download_Deleted_DSC_Partner.php
+RewriteRule ^Download_Deleted_Dsc_Token html/Download_Deleted_Dsc_Token.php
+RewriteRule ^Download_Deleted_Other_Services html/Download_Deleted_Other_Services.php
+RewriteRule ^Download_Deleted_ServiceReceived html/Download_Deleted_ServiceReceived.php
+
+RewriteRule ^Download_FinanceReport html/Download_FinanceReport.php
+RewriteRule ^DownloadReport_BankTransaction html/DownloadReport_BankTransaction.php
+RewriteRule ^Download_DSCApplicant_Status_Report html/Download_DSCApplicant_Status_Report.php
+RewriteRule ^Download_panStatus_Report html/Download-panStatus-Report.php
+RewriteRule ^Download_tanStatus_Report html/Download-tanStatus-Report.php
+RewriteRule ^Download_eTdsStatus_Report html/Download-eTdsStatus-Report.php
+RewriteRule ^Download_DSCPartner_Status_Report html/Download_DSCPartner_Status_Report.php
+RewriteRule ^Download_GSTClientBased_Status_Report html/Download_GSTClientBased_Status_Report.php
+RewriteRule ^Download_GSTPeriodBased_Status_Report html/Download_GSTPeriodBased_Status_Report.php
+RewriteRule ^Download_DSCToken_Status_Report html/Download_DSCToken_Status_Report.php
+RewriteRule ^Download_ServiceReport html/Download_ServiceReport.php
+RewriteRule ^Download_Receipt_History html/Download_Receipt_History.php
+RewriteRule ^Download_Payment_History html/Download_Payment_History.php
+RewriteRule ^Download_RecordCSV html/Download_RecordCSV.php
+RewriteRule ^Download_RecordPDF html/Download_RecordPDF.php
+RewriteRule ^FinanceReportPDF html/Download_FinanceReportPDF.php
+RewriteRule ^Download_TaxInvoice html/Download_TaxInvoice.php
+RewriteRule ^Download_RetailInvoice html/Download_RetailInvoice.php
+RewriteRule ^Download_CreditNote html/Download_CreditNote.php
+RewriteRule ^Download_DebitNote html/Download_DebitNote.php
+RewriteRule ^Download_PurchaseNote html/Download_PurchaseNote.php
+RewriteRule ^Download_QuotationNote html/Download_QuotationNote.php
+RewriteRule ^testPDF html/testPDF.php
+RewriteRule ^advance_balance html/advance_balance.php
+RewriteRule ^tempTrial html/tempTrial.php
+RewriteRule ^sales html/sales.php
+RewriteRule ^inventory html/inventory.php
+RewriteRule ^procure html/procure.php
+RewriteRule ^productList html/productList.php
+
+
+RewriteRule ^master html/master.php
+RewriteRule ^attendance html/attendance.php
+RewriteRule ^exit html/exit.php
+RewriteRule ^salary html/salary.php
+RewriteRule ^Process_salary html/Process_salary.php
+RewriteRule ^Salary_createPDFDOM html/Salary_createPDFDOM.php
+
+RewriteRule ^income html/incomes.php
+RewriteRule ^expense html/expenses.php
+RewriteRule ^payable html/payables.php
+RewriteRule ^receivable html/receivables.php
+RewriteRule ^account_report html/account_reports.php
+RewriteRule ^Vowel-Account_Report html/Account_createPDFDOM.php
+RewriteRule ^setting html/settings.php
+RewriteRule ^reminder html/reminders.php
+RewriteRule ^note html/notes.php
+RewriteRule ^Export_income html/Export_income.php
+RewriteRule ^Export_expense html/Export_expense.php
+RewriteRule ^Export_payable html/Export_payable.php
+RewriteRule ^Export_receivable html/Export_receivable.php
+RewriteRule ^Export_reminder html/Export_reminder.php
+
+RewriteRule ^password_manager html/password_manager.php
+
+RewriteRule ^csv_client_master.csv html/csv_client_master.csv
+RewriteRule ^csv_e_tds.csv html/csv_e_tds.csv
+RewriteRule ^csv_psp_cunsumption.csv html/csv_psp_cunsumption.csv
+RewriteRule ^csv_psp_distribution.csv html/csv_psp_distribution.csv
+RewriteRule ^csv_dsc_reseller.csv html/csv_dsc_reseller.csv
+
+
+RewriteRule ^psd psd/psdindex.html
+RewriteRule ^imgpsd Images_psd/psdImg.jpg
+
+RewriteRule ^tmHome html/tmHome.php
+RewriteRule ^tmNotice_board html/tmNotice_board.php
+RewriteRule ^tmMember html/tmMember.php
+RewriteRule ^edit_member html/edit_member.php
+RewriteRule ^edit_noticeboard html/edit_noticeboard.php
+RewriteRule ^tmAllocated_to_others html/tmAllocated_to_others.php
+RewriteRule ^tmNew_task html/tmNew_task.php
+RewriteRule ^tmView_ato html/tmView_ato.php
+RewriteRule ^tmEdit_ato html/tmEdit_ato.php
+RewriteRule ^tmEmployee_task html/tmEmployee_task.php
+RewriteRule ^tmView_emptask html/tmView_emptask.php
+RewriteRule ^tmReports html/tmReports.php
+RewriteRule ^tmFilter_PrjRec html/tmFilter_PrjRec.php
+RewriteRule ^tmAdd_new_project1 html/tmAdd_new_project1.php
+RewriteRule ^tmProject_list html/tmProject_list.php
+RewriteRule ^tmView_project html/tmView_project.php
+RewriteRule ^tmEdit_project html/tmEdit_project.php
+RewriteRule ^tmManage_task html/tmManage_task.php
+RewriteRule ^tmEditProject_Task html/tmEditProject_Task.php
+RewriteRule ^tmView_task html/tmView_task.php
+RewriteRule ^tmNew_project html/tmNew_project.php
+RewriteRule ^tmAllocated_to_me html/tmAllocated_to_me.php
+RewriteRule ^tmView_atm html/tmView_atm.php
+RewriteRule ^tmEdit_atm html/tmEdit_atm.php
+# RewriteRule ^tmUser_list html/tmUser_list.php
+# RewriteRule ^tmView_user html/tmView_user.php
+# RewriteRule ^tmNew_user html/tmNew_user.php
+
+# RewriteRule ^prEmployeeAttendance html/prEmployeeAttendance.php
+# RewriteRule ^prUpdateEmployeeAttendance html/prUpdateEmployeeAttendance.php
+# RewriteRule ^prViewEmployeeAttendance html/prViewEmployeeAttendance.php
+
+RewriteRule ^prWeekoff_filter html/prWeekoff_filter.php
+RewriteRule ^prEmployeeAttendance html/prEmployeeAttendance.php
+RewriteRule ^prDashboard html/prDashboard.php
+RewriteRule ^showsalarypage html/showsalarypage.php
+RewriteRule ^Download_Salaryslip html/Download_Salaryslip.php
+RewriteRule ^Export_salary html/Export_salary.php
+RewriteRule ^filter_salary html/filter_salary.php
+RewriteRule ^prdelete_document html/prdelete_document.php
+RewriteRule ^prdownload html/prdownload.php
+RewriteRule ^prUpdate_Employee_Attendance html/prUpdateEmployeeAttendance.php
+RewriteRule ^prView_attendance html/prViewEmployeeAttendance.php
+RewriteRule ^prEmployeeMaster html/prEmployeeMaster.php
+RewriteRule ^prEmployeeSalary html/prEmployeeSalary.php
+RewriteRule ^prEmployeeUpdate html/prEmployeeUpdate.php
+RewriteRule ^prEmployeeView html/prEmployeeView.php
+RewriteRule ^prfetchEmployeeName html/prfetchEmployeeName.php
+RewriteRule ^prfetchEmployeeattendance html/prfetchEmployeeattendance.php
+RewriteRule ^prSetting html/prSetting.php
+RewriteRule ^prUpdate_Weekoff html/prUpdate_Weekoff.php
+RewriteRule ^prView_weekoff html/prView_weekoff.php
+RewriteRule ^prBulkAttendance html/prBulkAttendance.php
+RewriteRule ^prEmployeeAdd html/prEmployeeAdd.php
+RewriteRule ^prWeekoff_add html/prWeekoff_add.php
+RewriteRule ^prEmployee_Attendance_add html/prEmployee_Attendance_add.php
+RewriteRule ^prAttendance_Fittering html/prAttendance_Fittering.php
+RewriteRule ^prSalary_Fittering html/prSalary_Fittering.php
+RewriteRule ^Client_query html/Client_query.php
+RewriteRule ^resolved_chat html/resolved_chat.php
+RewriteRule ^ticket_notification html/ticket_notification.php
+
+# Task Manager
+RewriteRule ^main_content html/main_content.php
+RewriteRule ^do_task html/do_task.php
+RewriteRule ^give_task html/give_task.php
+RewriteRule ^state html/state.php
+RewriteRule ^see_task html/see_task.php
+RewriteRule ^give_update html/give_update.php
+RewriteRule ^group html/group.php
+RewriteRule ^fetch_chat_ms html/fetch_chat_ms.php
+RewriteRule ^fetch_chat_data_msg html/fetch_chat_data_msg.php
+RewriteRule ^GroupForm html/GroupForm.php
+RewriteRule ^state1 html/state1.php
+RewriteRule ^see_groupData html/see_groupData.php
+RewriteRule ^GroupDataUpdate html/GroupDataUpdate.php
+RewriteRule ^verifyProcess html/verifyProcess.php
+RewriteRule ^chat_process html/chat_process.php
+RewriteRule ^mailHistory_export html/mailHistory_export.php
+
+RewriteRule ^export_allData html/export_allData.php
+
+#user access
+RewriteRule ^user_access html/user_access.php
+RewriteRule ^access_record html/access_record.php
+
+# Supplier recevied
+RewriteRule ^view_supplier_received html/view_supplier_received.php
+RewriteRule ^supplier_received html/supplier_received.php
+RewriteRule ^servise_received html/servise_received.php
+RewriteRule ^goods_received html/goods_received.php
+
+#WhatsApp
+RewriteRule ^broadcast_Camp html/broadcast_Camp.php
+RewriteRule ^create_broadcast_group html/create_broadcast_group.php
+RewriteRule ^create_campaign html/create_campaign.php
+RewriteRule ^whatsapi_setup html/whatsapi_setup.php
+
+# CRM Software
+RewriteRule ^calling_data html/calling_data.php
+RewriteRule ^CallTitle_DataList html/CallTitle_DataList.php
+RewriteRule ^ac_Change html/ac_Change.php
+RewriteRule ^showTitle_ChangeData html/showTitle_ChangeData.php
+RewriteRule ^call_Filter html/call_Filter.php
+RewriteRule ^Export_FilterData html/Export_FilterData.php
+RewriteRule ^showServiceList_dataList html/showServiceList_dataList.php
+RewriteRule ^client_status html/client_status.php
+RewriteRule ^view_client_details html/view_client_details.php
+RewriteRule ^client_service html/client_service.php
+RewriteRule ^showClientStatus_Datalist html/showClientStatus_Datalist.php
+RewriteRule ^job_progress html/job_progress.php
+RewriteRule ^showClientjob_progress html/showClientjob_progress.php
+RewriteRule ^allCallData_Export html/allCallData_Export.php
+RewriteRule ^ExportreportJob_progress html/ExportreportJob_progress.php
+RewriteRule ^mom_filter html/mom_filter.php
+RewriteRule ^exportKeyword_data html/exportKeyword_data.php
+RewriteRule ^client_filter html/client_filter.php
+RewriteRule ^enquiry html/enquiry.php
+RewriteRule ^fetch_enquiryAjax html/fetch_enquiryAjax.php
+RewriteRule ^fix_meeting html/fix_meeting.php
+RewriteRule ^schedule_meeting_ajax html/schedule_meeting_ajax.php
+RewriteRule ^filter_partner html/filter_partner.php
+RewriteRule ^Partner_dashboard html/Partner_dashboard.php
+RewriteRule ^partner html/partner.php
+RewriteRule ^call_verification html/call_verification.php
+RewriteRule ^client_partner html/client_partner.php
+RewriteRule ^dashboard_bid html/dashboard_bid.php
+RewriteRule ^bidding_ajax html/bidding_ajax.php
+RewriteRule ^bidding html/bidding.php
+RewriteRule ^filter_bid html/filter_bid.php
+RewriteRule ^Export_StatusU_bid html/Export_StatusU_bid.php
+RewriteRule ^Status_partner html/Status_partner.php
+RewriteRule ^view_partner_client_details html/view_partner_client_details.php
+RewriteRule ^service_Partner html/service_Partner.php
+RewriteRule ^part_progress html/part_progress.php
+RewriteRule ^crm_dashboard html/crm_dashboard.php
+RewriteRule ^Export_report html/Export_report.php
+RewriteRule ^creategroup html/creategroup.php
+RewriteRule ^user_dashboard html/user_dashboard.php
+RewriteRule ^addRecord html/addRecord.php
+
+# Payroll
+
+RewriteRule ^emp_loans html/emp_loans.php
+RewriteRule ^set_recovery html/set_recovery.php
+RewriteRule ^view_emp_recovery html/view_emp_recovery.php
+RewriteRule ^staff_pay_addition html/staff_pay_addition.php
+RewriteRule ^emp_salary_settelment html/emp_salary_settelment.php
+RewriteRule ^utility html/utility.php
+RewriteRule ^Export_Title_Data html/Export_Title_Data.php
+RewriteRule ^export_duplicate_data html/export_duplicate_data.php
+RewriteRule ^whatsTemplate html/whatsTemplate.php
+
+# USER REPORT
+RewriteRule ^user_report html/user_report.php
+RewriteRule ^user_reportAjax html/user_reportAjax.php
+
+
+# Recipient Station Client Addition Intellectual Property
+RewriteRule ^intell_patent html/intell_patent.php
+RewriteRule ^intell_copyright html/intell_copyright.php
+RewriteRule ^intell_trademark html/intell_trademark.php
+RewriteRule ^intell_tradesecret html/intell_tradesecret.php
+RewriteRule ^industrial_design html/industrial_design.php
+RewriteRule ^legal_notice html/legal_notice.php
+RewriteRule ^ip_dashboard html/ip_dashboard.php
+
+RewriteRule ^View_Trade_mark html/View_Trade_mark.php
+RewriteRule ^View_patent html/View_patent.php
+RewriteRule ^View_copy_right html/View_copy_right.php
+RewriteRule ^View_tradesecret html/View_tradesecret.php
+RewriteRule ^View_industrial_design html/View_industrial_design.php
+RewriteRule ^ip_utility html/ip_utility.php
+
+RewriteRule ^esp_dashboard html/esp_dashboard.php
+RewriteRule ^supplier_outstanding html/supplier_outstanding.php
+
+RewriteRule ^sales_graph html/sales_graph.php
+RewriteRule ^team_leader_dashboard html/team_leader_dashboard.php
+
+RewriteRule ^loan html/loan.php
+RewriteRule ^insurance html/insurance.php
+RewriteRule ^finance html/finance.php
+
+# Two step verification 
+RewriteRule ^receive_mac html/receive_mac.php
+RewriteRule ^user_login html/ltr/users-login.php
+RewriteRule ^user_log_data html/user_log_data.php
+RewriteRule ^data_user_log_down html/data_user_log_down.php
+RewriteRule ^email_log_data html/email_log_data.php
+RewriteRule ^recipient_report html/recipient_report.php
+RewriteRule ^supplier_report html/supplier_report.php
+
+# Advocade
+RewriteRule ^advocate_case html/advocate_case.php
+RewriteRule ^advocate_setup html/advocate_setup.php
+RewriteRule ^View_Advocate html/View_Advocate.php
+RewriteRule ^documents_setup html/documents_setup.php
+
+# Callaric Report
+RewriteRule ^callaric html/callaric_dashboard.php
+RewriteRule ^call_report html/callaric_call_report.php
+RewriteRule ^log_report html/callaric_log_report.php
+RewriteRule ^aric_analytics html/aric_analytics.php
+RewriteRule ^staff_dashboard html/callaric_staff_dashboard.php
+
+
+RewriteRule ^check_in html/check_in.php
