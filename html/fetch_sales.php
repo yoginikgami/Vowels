@@ -8,7 +8,6 @@ $tables = $request['tables'] ?? [];
 
 // Validate input
 $response = [];
-$totalSales = 0;
 
 // Determine the date condition based on the filter
 switch ($filter) {
@@ -67,7 +66,6 @@ try {
         } else {
             $query = "SELECT SUM($column) AS totalFees FROM $table WHERE STR_TO_DATE($dateColumn, '%Y-%b-%d') >= $dateCondition";
         }
-        // echo $query;
 
         // Prepare and execute the query
         $stmt = $con->prepare($query);
@@ -78,12 +76,10 @@ try {
 
         // Format sales data
         $response[$table] = number_format($tableSales, 2); // Individual table sales
-        $totalSales += $tableSales; // Add to total sales
         $stmt->close();
     }
 
-    // Return the total sales as well
-    $response['total_sales'] = $totalSales;
+    // Return the sales data without the total_sales
     header('Content-Type: application/json');
     echo json_encode($response);
 } catch (Exception $e) {

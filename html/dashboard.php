@@ -39,44 +39,44 @@ $con->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interactive Dashboard</title>
 
-<!-- Bootstrap CSS -->
-<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
 
-<!-- Custom File Input CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.css" rel="stylesheet">
+    <!-- Custom File Input CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.css" rel="stylesheet">
 
-<!-- Chosen CSS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css" />
+    <!-- Chosen CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.4.2/chosen.min.css" />
 
-<!-- Select2 CSS -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet">
 
-<!-- Font Awesome Icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-<!-- DataTables CSS
-<link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.min.css"> -->
+    <!-- DataTables CSS
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.min.css"> -->
 
-<!-- Bootstrap JS Bundle -->
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<!-- bsCustomFileInput JS -->
-<script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+    <!-- bsCustomFileInput JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
 
-<!-- Chosen JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+    <!-- Chosen JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
 
-<!-- Select2 JS -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- DataTables JS
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> -->
+    <!-- DataTables JS
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> -->
 
     <style>
         .page-wrapper>.container-fluid {
@@ -143,7 +143,6 @@ $con->close();
             flex: 1;
             padding: 15px;
         }
-
         .card {
             height: 100%; 
             display: flex;
@@ -152,8 +151,7 @@ $con->close();
             border-radius: 8px; 
             background-color: #fff;
             margin-bottom: 0px; 
-        } 
-       
+        }
         .card-body {
             -ms-flex: 1 1 auto;
             flex: 1 1 auto;
@@ -164,7 +162,6 @@ $con->close();
             padding-top: 0.5rem; /* Adjust top padding */
             padding-bottom: 0.5rem; /* Adjust bottom padding */
         }
-
         .container-fluid.custom-gap .card {
             margin-bottom: 0.5rem; /* Adjust gap between cards */
         }
@@ -185,8 +182,49 @@ $con->close();
             padding-bottom: 0.01rem !important;
             padding-top: 0.01rem !important;
         }
+        /* Container for the toggle */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        /* Hide the default checkbox */
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        /* The track */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            background-color: #ccc;
+            border-radius: 12px; /* Rounded corners for the track */
+            width: 100%;
+            height: 100%;
+            transition: background-color 0.3s;
+        }
+        /* The circular slider */
+        .slider::before {
+            content: "";
+            position: absolute;
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        /* Toggled state (when the checkbox is checked) */
+        .toggle-switch input:checked + .slider {
+            background-color: #4caf50; /* Green when toggled */
+        }
+        .toggle-switch input:checked + .slider::before {
+            transform: translateX(26px); /* Move slider to the right */
+        }
     </style>
-
 </head>
 <body>
     <div class="container-fluid">
@@ -194,7 +232,6 @@ $con->close();
     
             <?php
                 require 'connection.php';
-
                 // Query to sum 'fees' from each table
                 $panQuery = "SELECT SUM(fees) AS totalFees FROM pan";
                 $tanQuery = "SELECT SUM(fees) AS totalFees FROM tan";
@@ -257,250 +294,207 @@ $con->close();
                 // Close the database connection
                 $con->close();
             ?>
-
             <!-- Main Content -->
             <div class="container-fluid py-4">
             <div class="row g-3">
                 <!-- Row 1 -->
-                
-                <div class="col-md-6" >
-                    <div class="card p-3" >
-                    <div class="d-flex align-items-center justify-content-between mb-3">
-                        <h5>Sales Report</h5>
-                        <!-- Buttons to filter data -->
-                        
-                        <div class="button-group">
-                            <button class="btn btn-primary " data-sales="today_sale">Today</button>
-                            <button class="btn btn-secondary " data-sales="week_sale">Week</button>
-                            <button class="btn btn-success " data-sales="month_sale">Month</button>
-                            <button class="btn btn-warning " data-sales="year_sale" >Year</button>
+                <div class="col-md-6">
+                    <div class="card p-3">
+                        <!-- Toggle Switch -->
+                        <label class="toggle-switch square">
+                            <input type="checkbox" id="chartToggle" class="chart-toggle">
+                            <span class="slider"></span>
+                        </label>
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h5>Sales Report</h5>
+                            <!-- Buttons to filter data -->
+                            <div class="button-group">
+                                <button class="btn btn-primary" data-sales="today_sale">Today</button>
+                                <button class="btn btn-secondary" data-sales="week_sale">Week</button>
+                                <button class="btn btn-success" data-sales="month_sale">Month</button>
+                                <button class="btn btn-warning" data-sales="year_sale">Year</button>
+                            </div>
                         </div>
-                    </div>
                         <div class="container">
-                        <select id="portfolio" multiple  style= "width: 70%;">
-                            <option value="pan">Pan</option>
-                            <option value="tan">Tan</option>
-                            <option value="e_tds">E_TDS</option>
-                            <option value="it_returns">IT Returns</option>
-                            <option value="e_tender">E Tender</option>
-                            <option value="gst_fees">GST Fees</option>
-                            <option value="dsc_subscriber">Dsc Subscriber</option>
-                            <option value="dsc_token">Dsc Token</option>
-                            <option value="dsc_reseller">Dsc Reseller</option>
-                            <option value="other_services">Other Services</option>
-                            <option value="psp">PSP Coupon Distribution</option>
-                            <option value="sales">Sales</option>
-                            <option value="trade_mark">Trand Mark</option>
-                            <option value="patent">Patent</option>
-                            <option value="copy_right">Copy Right</option>
-                            <option value="industrial_design">Industrial Design</option>
-                            <option value="trade_secret">Trade Secret </option>
-                            <option value="advocade_case">Advocade Case</option>
-                        </select>
-                        <button id="btnSearch" style="margin-top: 10px;">Search</button>
-                        <!-- <div id="selectedValues"></div> -->
-                        <div id="salesResults"></div> 
+                            <select id="portfolio" multiple style="width: 70%;">
+                                <option value="pan">Pan</option>
+                                <option value="tan">Tan</option>
+                                <option value="e_tds">E_TDS</option>
+                                <option value="it_returns">IT Returns</option>
+                                <option value="e_tender">E Tender</option>
+                                <option value="gst_fees">GST Fees</option>
+                                <option value="dsc_subscriber">Dsc Subscriber</option>
+                                <option value="dsc_token">Dsc Token</option>
+                                <option value="dsc_reseller">Dsc Reseller</option>
+                                <option value="other_services">Other Services</option>
+                                <option value="psp">PSP Coupon Distribution</option>
+                                <option value="sales">Sales</option>
+                                <option value="trade_mark">Trand Mark</option>
+                                <option value="patent">Patent</option>
+                                <option value="copy_right">Copy Right</option>
+                                <option value="industrial_design">Industrial Design</option>
+                                <option value="trade_secret">Trade Secret</option>
+                                <option value="advocade_case">Advocade Case</option>
+                            </select>
+                            <div id="salesResults"></div> 
                         </div>
-                        <script>
-                            // Handle button click
-                            document.getElementById('btnSearch').addEventListener('click', function () {
-                                // Get selected options
-                                const portfolio = document.getElementById('portfolio');
-                                const selectedOptions = Array.from(portfolio.selectedOptions).map(option => option.text);
-
-                                // Display selected values
-                                const selectedValuesDiv = document.getElementById('selectedValues');
-                                if (selectedOptions.length > 0) {
-                                    selectedValuesDiv.textContent = `Selected Values: ${selectedOptions.join(', ')}`;
-                                } else {
-                                    selectedValuesDiv.textContent = 'No values selected.';
-                                }
-                            });
-                        </script>
                         <canvas id="salesChart1" style="width: 100%; height: 400px;"></canvas>
                         <canvas id="salesChart" style="width: 100%; height: 200px; display: none;"></canvas>
 
-
                         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                        <script>
+                            let selectedFilter = 'year_sale'; // Default filter is year_sale
+                            let salesChart = null; // Declare chart globally
+                            let chartType = 'line'; // Default chart type is line
 
-                    <script>
-
-                        let selectedFilter = 'year_sale';  // Default filter is year_sale
-                        let salesChart = null;  // Declare chart globally
-
-                        // Event listener for the filter buttons
-                        document.querySelectorAll('.button-group button').forEach(button => {
-                            button.addEventListener('click', function () {
-                                selectedFilter = this.getAttribute('data-sales');
+                            // Event listener for the filter buttons
+                            document.querySelectorAll('.button-group button').forEach(button => {
+                                button.addEventListener('click', function () {
+                                    selectedFilter = this.getAttribute('data-sales');
+                                    fetchSalesData();
+                                });
+                            });
+                            document.addEventListener('DOMContentLoaded', () => {
+                                // Automatically select the 'Year' filter button
+                                document.querySelector('[data-sales="year_sale"]').click();
+                                
+                                // Select all options in the portfolio dropdown
+                                const portfolio = document.getElementById('portfolio');
+                                for (let i = 0; i < portfolio.options.length; i++) {
+                                    portfolio.options[i].selected = true;
+                                }
+                                // Fetch data on page load with default settings
                                 fetchSalesData();
                             });
-                        });
+                            // Event listener for the toggle chart type button
+                            document.getElementById('chartToggle').addEventListener('change', function () {
+                                // Toggle the chart type between 'line' and 'bar'
+                                chartType = this.checked ? 'bar' : 'line';
 
-                        // Event listener for the search button
-                        document.getElementById('btnSearch').addEventListener('click', fetchSalesData);
+                                // Re-fetch the sales data and update the chart
+                                fetchSalesData();
+                            });
+                            function fetchSalesData() {
+                                const selectedTables = Array.from(document.getElementById('portfolio').selectedOptions).map(option => option.value);
 
-                        function fetchSalesData() {
-                            const selectedTables = Array.from(document.getElementById('portfolio').selectedOptions).map(option => option.value);
-
-                            if (selectedTables.length === 0) {
-                                const options = portfolio.options;
-                                for (let i = 0; i < options.length; i++) {
-                                    options[i].selected = true;  // Select all options
+                                if (selectedTables.length === 0) {
+                                    const options = portfolio.options;
+                                    for (let i = 0; i < options.length; i++) {
+                                        options[i].selected = true; // Select all options
+                                    }
                                 }
-
-                                // Refresh the selected tables array after selecting all options
-                                selectedTables.push(...Array.from(portfolio.selectedOptions).map(option => option.value));
+                                const requestData = {
+                                    filter: selectedFilter,
+                                    tables: selectedTables
+                                };
+                                fetch('html/fetch_sales.php', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify(requestData),
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    updateChart(data);
+                                })
+                                .catch(error => {
+                                    console.error('Error:', error);
+                                });
                             }
+                            function updateChart(data) {
+                                const labels = Object.keys(data).filter(key => key !== 'total_sales');
+                                const salesData = labels.map(label => parseFloat(data[label].replace(/[^0-9.-]+/g, "")) || 0);
 
-                            const requestData = {
-                                filter: selectedFilter,
-                                tables: selectedTables
-                            };
-
-                            fetch('html/fetch_sales.php', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify(requestData),
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log(data);
-                                displaySalesData(data);
-                                updateChart(data);
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                            })
-                        }
-
-                        function displaySalesData(data) {
-                            const resultsDiv = document.getElementById('salesResults');
-                            resultsDiv.innerHTML = ''; // Clear previous results
-
-                            if (data.error) {
-                                resultsDiv.innerHTML = `<p>${data.error}</p>`;
-                                return;
-                            }
-                        }
-
-                        function updateChart(data) {
-                        // Extract labels (sales categories) and corresponding sales data values
-                        const labels = Object.keys(data).filter(key => key !== 'total_sales');
-                        const salesData = labels.map(label => {
-                            // Ensure all sales data are treated as numbers (parse strings to float)
-                            const value = parseFloat(data[label].replace(/[^0-9.-]+/g, "")) || 0;
-                            return value;
-                        });
-
-                        // Check if the salesChart exists and destroy it before creating a new one
-                        if (salesChart) {
-                            salesChart.destroy();
-                        }
-
-                        // Prepare chart data
-                        const chartData = {
-                            labels: labels,
-                            datasets: [{
-                                label: 'Sales Fees',
-                                data: salesData,
-                                backgroundColor: [
-                                    '#FF6384', '#36A2EB', '#FFCE56', '#38a832', '#ff1a1a', '#88cc00', 
-                                    '#4d79ff', '#bf8040', '#ff4d94', '#FF6384', '#36A2EB', '#FFCE56',
-                                    '#38a832', '#ff1a1a', '#88cc00', '#4d79ff', '#bf8040', '#ff4d94'
-                                ],
-                                borderColor: '#36A2EB',
-                                fill: false,  
-                                tension: 0.1
-                            }]
-                        };
-
-                        // Chart configuration
-                        const config = {
-                            type: 'line',  // You can change this to 'line' if you want a line chart
-                            data: chartData,
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,  // Start Y-axis from 0
-                                        ticks: {
-                                            callback: function(value) {
-                                                return value.toLocaleString(); // Format numbers with commas
+                                if (salesChart) {
+                                    salesChart.destroy(); // Destroy the previous chart
+                                }
+                                const chartData = {
+                                    labels: labels,
+                                    datasets: [{
+                                        label: 'Sales Fees',
+                                        data: salesData,
+                                        backgroundColor: [
+                                            '#FF6384', '#36A2EB', '#FFCE56', '#38a832', '#ff1a1a', '#88cc00',
+                                            '#4d79ff', '#bf8040', '#ff4d94', '#FF6384', '#36A2EB', '#FFCE56'
+                                        ],
+                                        borderColor: '#36A2EB',
+                                        tension: 0.1
+                                    }]
+                                };
+                                const config = {
+                                    type: chartType, // Dynamic chart type (line or bar)
+                                    data: chartData,
+                                    options: {
+                                        responsive: true,
+                                        scales: {
+                                            y: {
+                                                beginAtZero: true,
+                                                ticks: {
+                                                    callback: function (value) {
+                                                        return value.toLocaleString();
+                                                    }
+                                                }
+                                            },
+                                        },
+                                        plugins: {
+                                            legend: {
+                                                position: 'top',
+                                            },
+                                            title: {
+                                                display: true,
+                                                text: 'Sales Report'
                                             }
                                         }
                                     }
-                                },
-                                plugins: {
-                                    legend: {
-                                        position: 'top',
-                                    },
-                                    title: {
-                                        display: true,
-                                        text: 'Sales Report'
+                                };
+                                salesChart = new Chart(document.getElementById('salesChart'), config);
+                                // Toggle visibility between different charts
+                                document.getElementById('salesChart1').style.display = 'none';
+                                document.getElementById('salesChart').style.display = 'block';
+                            }
+                        </script> 
+                        <script>
+                            // Fetch data from PHP variables
+                            const data = {
+                                labels: ['PAN', 'TAN', 'E-TDS', 'IT Returns', 'E Tender', 'GST Fees', 'DSC Subscriber', 'DSC Token', 'DSC Reseller', 'Other Services', 'PSP','Sales','Trand Mark', 'Patent', 'Copy Right', 'Indenstrial Design', 'Trade Secred','Advocade Case'],
+                                datasets: [{
+                                    label: 'Fees',
+                                    data: [<?= $panFees ?>, <?= $tanFees ?>, <?= $etdsFees ?>, <?= $it_returns ?>, <?= $e_tender ?>, <?= $gst_fees ?>, <?= $dsc_subscriber ?>, <?= $dsc_token ?>, <?= $dsc_reseller ?>,<?= $other_service ?>,<?= $psp ?>,<?= $sales ?>,<?= $trade_mark?>,<?=$patent ?>,<?= $copy_right?>,<?= $industrial_design?>,<?= $trade_secret?>,<?= $advocade_case?>],
+                                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#38a832', '#ff1a1a', '#88cc00', '#4d79ff', '#bf8040', '#ff4d94','#FF6384', '#36A2EB', '#FFCE56', '#38a832', '#ff1a1a', '#88cc00', '#4d79ff', '#bf8040', '#ff4d94'],
+                                    borderColor: '#36A2EB',
+                                    fill: false, // Prevent area under the line from being filled
+                                    tension: 0.1 // Smoothness of the line
+                                }]
+                            };
+
+                            // Chart configuration
+                            const config = {
+                                type: 'line', // Change 'bar' to 'line'
+                                data: data,
+                                options: {
+                                    responsive: true,
+                                    plugins: {
+                                        legend: {
+                                            position: 'top',
+                                        },
+                                        title: {
+                                            display: true,
+                                            text: 'Sales Report'
+                                        }
                                     }
-                                }
-                            }
-                        };
-
-                        // Render the new chart
-                        salesChart = new Chart(
-                            document.getElementById('salesChart'),
-                            config
-                        );
-
-                        // Toggle visibility between different charts
-                        document.getElementById('salesChart1').style.display = 'none';
-                        document.getElementById('salesChart').style.display = 'block';
-                        document.getElementById('btnSearch').style.display = 'none';
-                    }
-                    </script> 
-                    </div>
-                </div>
-                
-                
-                
-                 <script>
-                    // Fetch data from PHP variables
-                    const data = {
-                        labels: ['PAN', 'TAN', 'E-TDS', 'IT Returns', 'E Tender', 'GST Fees', 'DSC Subscriber', 'DSC Token', 'DSC Reseller', 'Other Services', 'PSP','Sales','Trand Mark', 'Patent', 'Copy Right', 'Indenstrial Design', 'Trade Secred','Advocade Case'],
-                        datasets: [{
-                            label: 'Fees',
-                            data: [<?= $panFees ?>, <?= $tanFees ?>, <?= $etdsFees ?>, <?= $it_returns ?>, <?= $e_tender ?>, <?= $gst_fees ?>, <?= $dsc_subscriber ?>, <?= $dsc_token ?>, <?= $dsc_reseller ?>,<?= $other_service ?>,<?= $psp ?>,<?= $sales ?>,<?= $trade_mark?>,<?=$patent ?>,<?= $copy_right?>,<?= $industrial_design?>,<?= $trade_secret?>,<?= $advocade_case?>],
-                            backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#38a832', '#ff1a1a', '#88cc00', '#4d79ff', '#bf8040', '#ff4d94','#FF6384', '#36A2EB', '#FFCE56', '#38a832', '#ff1a1a', '#88cc00', '#4d79ff', '#bf8040', '#ff4d94'],
-                            borderColor: '#36A2EB',
-                            fill: false, // Prevent area under the line from being filled
-                            tension: 0.1 // Smoothness of the line
-                        }]
-                    };
-
-                    // Chart configuration
-                    const config = {
-                        type: 'line', // Change 'bar' to 'line'
-                        data: data,
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    position: 'top',
                                 },
-                                title: {
-                                    display: true,
-                                    text: 'Sales Report'
-                                }
-                            }
-                        },
-                    };
+                            };
 
-                    // Render the chart
-                    const salesChart1 = new Chart(
-                        document.getElementById('salesChart1'),
-                        config
-                    );
-                </script> 
+                            // Render the chart
+                            const salesChart1 = new Chart(
+                                document.getElementById('salesChart1'),
+                                config
+                            );
+                        </script>
+                    </div>
+                </div>     
                 <!-- Row 2 -->
-                
                 <div class="col-md-6">
                     <div class="card p-3">
                     <div class="d-flex align-items-center justify-content-between mb-3">
@@ -512,7 +506,6 @@ $con->close();
                         <button class="btn btn-warning filter-button" data-time="Year">Year</button>
                         </div>
                     </div>
-                        
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <div class="card text-center p-3 bg-light-green shadow-sm">
@@ -555,7 +548,6 @@ $con->close();
                             }
                         ]
                     };
-
                     // Chart configuration
                     const incomeExpenseConfig = {
                         type: 'bar', // Bar chart type
@@ -581,7 +573,6 @@ $con->close();
                             }
                         }
                     };
-
                     // Render the chart
                     const incomeExpenseChart = new Chart(
                         document.getElementById('incomeExpenseChart'), // Canvas element ID
@@ -655,7 +646,6 @@ $con->close();
                 <div class="col-md-6">
                         <div class="card p-3">
                             <h5>Search Client</h5>
-                            
                             <!-- <div class="container">
                             <div class="card shadow-sm w-100" style="max-width: 800px; max-height: 400px;">
                                 <div class="card-body"> -->
@@ -736,7 +726,6 @@ $con->close();
                         // Fetch client details when an option is selected
                         $('#client').on('change', function () {
                             const clientId = $(this).val();
-
                             if (clientId) {
                                 $.ajax({
                                     url: 'html/fetch_dash.php', // Server-side script for fetching details
@@ -761,9 +750,7 @@ $con->close();
                                 $('#clientForm').find('input').val('');
                             }
                         });
-
                     </script>
-                
                     <div class="col-md-6">
                         <div class="card p-3">
                         <div class="d-flex align-items-center justify-content-between mb-3">
@@ -805,16 +792,13 @@ $con->close();
                         </div>
                         </div>
                     </div>
-
                     <script>
                         // Set the default date to today
                         const dateInput = document.getElementById('date');
                         dateInput.valueAsDate = new Date();
-
                         // Fetch data on date change
                         dateInput.addEventListener('change', function () {
                             const date = dateInput.value;
-
                             // Send the AJAX request
                             fetch('html/fetch_attendance.php', {
                                 method: 'POST',
@@ -844,14 +828,11 @@ $con->close();
                                     console.error('Fetch error:', error);
                                 });
                         });
-
                         // Trigger the data fetch on page load for the default date
                         dateInput.dispatchEvent(new Event('change'));
                     </script>
                 </div>
                 </div>
-
-                    
                 <div class="container-fluid py-4">
                 <div class="row g-3">
                     <!--  Last - 5 Payment Recieved -->
@@ -939,16 +920,11 @@ $con->close();
                         </div>
                 </div>
                 </div>
-                
                 <!-- Row 3-->
-                <!-- Sales data display -->
                 <div class="container-fluid py-4">
-                <!-- <div class="container" style="width : 100%"> -->
                     <div class="card shadow-sm w-100" style="max-width: 100%;">
                         <div class="card-body">
                             <h5>Sales Data</h5>
-                            
-                            
                             <!-- <div id="result">Result will be displayed here.</div> -->
                             <div style="display: flex; align-items: center; justify-content: flex-start; margin-top: 20px">
                                 <select id="salesPeriod" style="width: 150px;">
@@ -1161,14 +1137,22 @@ $con->close();
                                 });
                                 
                                 $(document).ready(function() {
-                                   
-                                    $('#salesPeriod').change(function() {
-                                        var selectedPeriod = $(this).val();
+                                    $('#salesPeriod').val('lastday');
+                                    $('.multiselect-dropdown-list input[type="checkbox"]').prop('checked', true);
+                                    updateData();
+                                    // Function to update selected portfolios and period
+                                    function updateData() {
+                                        var selectedPeriod = $('#salesPeriod').val();
                                         var selectedPortfolios = [];
+                                        
+                                        // Get selected portfolios
                                         $('.multiselect-dropdown-list input:checked').each(function() {
                                             selectedPortfolios.push($(this).attr('id'));
                                         });
 
+                                        console.log('Selected Period:', selectedPeriod);
+                                        console.log('Selected Portfolios:', selectedPortfolios);
+                                        // Send AJAX request
                                         $.ajax({
                                             url: 'html/fetch_dash.php',
                                             method: 'POST',
@@ -1177,7 +1161,10 @@ $con->close();
                                                 selectedPortfolios: selectedPortfolios
                                             },
                                             success: function(response) {
+                                                // Clear the table body
                                                 $('#dataforsale tbody').empty();
+                                                
+                                                // Append the new data
                                                 $.each(response, function(index, row) {
                                                     $('#dataforsale tbody').append(
                                                         `<tr>
@@ -1191,7 +1178,8 @@ $con->close();
                                                     );
                                                 });
 
-                                                // Initialize DataTable after populating the table
+                                                // Reinitialize the DataTable
+                                                $('#dataforsale').DataTable().clear().destroy();
                                                 $('#dataforsale').DataTable();
                                             },
                                             error: function(xhr, status, error) {
@@ -1199,10 +1187,21 @@ $con->close();
                                                 $('#result').html('<div style="color: red;">An error occurred while processing your request.</div>');
                                             }
                                         });
+                                    }
+
+                                    // Trigger data update on 'salesPeriod' change
+                                    $('#salesPeriod').change(function() {
+                                        updateData();  // Call the updateData function to refresh the data
                                     });
 
-                                    // Initialize DataTable on page load if needed
+                                    // Trigger data update on portfolio checkbox change
+                                    $('.multiselect-dropdown-list input[type="checkbox"]').change(function() {
+                                        updateData();  // Call the updateData function to refresh the data
+                                    });
+
+                                    // Initialize DataTable
                                     $('#dataforsale').DataTable();
+                                    updateData();
                                 });
 
                             	window.addEventListener('load', () => {
@@ -1218,228 +1217,11 @@ $con->close();
                             </script>
                         </div>
                     </div>
-                    <!-- </div> -->
-                </div>  
-                
-
-                <div class="container-fluid py-4">
-    <div class="row g-3">
-        <!-- Row 1 -->
-        <div class="col-md-6">
-            <div class="card p-3">
-                <h5>Sales Report</h5>
-                <!-- Buttons to filter data -->
-                <div class="button-group d-flex justify-content-end mb-3">
-                    <button class="btn btn-primary" id="btnToday" data-sales="today_sale">Today</button>
-                    <button class="btn btn-secondary" id="btnWeek" data-sales="week_sale">Week</button>
-                    <button class="btn btn-success" id="btnMonth" data-sales="month_sale">Month</button>
-                    <button class="btn btn-warning" id="btnYear" data-sales="year_sale">Year</button>
-                </div>
-                <div class="container">
-                    <select id="portfolioDropdown" multiple style="width: 70%;">
-                        <option value="pan">Pan</option>
-                        <option value="tan">Tan</option>
-                        <option value="e_tds">E_TDS</option>
-                        <option value="it_returns">IT Returns</option>
-                        <option value="e_tender">E Tender</option>
-                        <option value="gst_fees">GST Fees</option>
-                        <option value="dsc_subscriber">Dsc Subscriber</option>
-                        <option value="dsc_token">Dsc Token</option>
-                        <option value="dsc_reseller">Dsc Reseller</option>
-                        <option value="other_services">Other Services</option>
-                        <option value="psp">PSP Coupon Distribution</option>
-                        <option value="sales">Sales</option>
-                        <option value="trade_mark">Trade Mark</option>
-                        <option value="patent">Patent</option>
-                        <option value="copy_right">Copy Right</option>
-                        <option value="industrial_design">Industrial Design</option>
-                        <option value="trade_secret">Trade Secret</option>
-                        <option value="advocate_case">Advocate Case</option>
-                    </select>
-                    <button id="btnSearchChart" style="margin-top: 10px;">Search</button>
-                    <div id="salesResults"></div>
-                </div>
-                <!-- Chart Area -->
-                <canvas id="salesChart2"></canvas>
-                <canvas id="salesChart22" style="display:none;"></canvas>
-                
-                <!-- Include Chart.js -->
-                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-                <!-- <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        let selectedFilter1 = 'year_sale'; // Default filter is year_sale
-                        let salesChart2 = null; // Declare chart globally
-
-                        // Event listener for the filter buttons
-                        document.querySelectorAll('.button-group button').forEach(button => {
-                            button.addEventListener('click', function () {
-                                selectedFilter1 = this.getAttribute('data-sales');
-                                fetchSalesData();
-                            });
-                        });
-
-                        // Event listener for the search button
-                        document.getElementById('btnSearchChart').addEventListener('click', fetchSalesData);
-
-                        function fetchSalesData() {
-                            const selectedTables = Array.from(document.getElementById('portfolioDropdown').selectedOptions).map(option => option.value);
-
-                            if (selectedTables.length === 0) {
-                                const options = document.getElementById('portfolioDropdown').options;
-                                for (let i = 0; i < options.length; i++) {
-                                    options[i].selected = true; // Select all options
-                                }
-
-                                // Refresh the selected tables array after selecting all options
-                                selectedTables.push(...Array.from(document.getElementById('portfolioDropdown').selectedOptions).map(option => option.value));
-                            }
-
-                            const requestData = {
-                                filter: selectedFilter1,
-                                tables: selectedTables,
-                            };
-
-                            fetch('html/fetch_sales.php', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify(requestData),
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                console.log(data); // Debugging data
-                                displaySalesData(data);
-                                updateChart(data);
-                            })
-                            .catch(error => {
-                                console.error('Error:', error);
-                            });
-                        }
-
-                        function displaySalesData(data) {
-                            const resultsDiv = document.getElementById('salesResults');
-                            resultsDiv.innerHTML = ''; // Clear previous results
-
-                            if (data.error) {
-                                resultsDiv.innerHTML = `<p>${data.error}</p>`;
-                                return;
-                            }
-                        }
-
-                        function updateChart(data) {
-                            const labels = Object.keys(data).filter(key => key !== 'total_sales');
-                            const salesData = labels.map(label => (data[label]) || 0);
-
-                            console.log('Labels:', labels); // Check the labels
-                            console.log('Sales Data:', salesData); // Check the sales data
-
-                            // If the chart exists, destroy it first
-                            if (salesChart2) {
-                                salesChart2.destroy();
-                            }
-
-                            // Ensure the canvas exists before creating the chart
-                            const canvasElement = document.getElementById('salesChart2');
-                            if (!canvasElement) {
-                                console.error('Canvas element not found!');
-                                return;
-                            }
-
-                            // Prepare chart data
-                            const chartData = {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Fees',
-                                    data: salesData,
-                                    backgroundColor: [
-                                        '#FF6384',
-                                        '#36A2EB',
-                                        '#FFCE56',
-                                        '#38a832',
-                                        '#ff1a1a',
-                                        '#88cc00',
-                                        '#4d79ff',
-                                        '#bf8040',
-                                        '#ff4d94',
-                                    ],
-                                    borderColor: '#36A2EB',
-                                    fill: false, // Prevent area under the line from being filled
-                                    tension: 0.1, // Smoothness of the line
-                                }],
-                            };
-
-                            const config = {
-                                type: 'line', // Change 'bar' to 'line'
-                                data: chartData,
-                                options: {
-                                    responsive: true,
-                                    plugins: {
-                                        legend: {
-                                            position: 'top',
-                                        },
-                                        title: {
-                                            display: true,
-                                            text: 'Sales Report',
-                                        },
-                                    },
-                                },
-                            };
-
-                            // Create or update the chart
-                            salesChart2 = new Chart(canvasElement, config);
-
-                            // Toggle visibility of the canvas
-                            const salesChart2Element = document.getElementById('salesChart2');
-                            const salesChart22Element = document.getElementById('salesChart22');
-                            const btnSearchElement = document.getElementById('btnSearchChart');
-
-                            if (salesChart2Element) {
-                                salesChart2Element.style.display = 'block';
-                            }
-
-                            if (salesChart22Element) {
-                                salesChart22Element.style.display = 'none';
-                            }
-
-                            if (btnSearchElement) {
-                                btnSearchElement.style.display = 'none';
-                            }
-                        }
-                    });
-                </script> -->
-            </div>
-        </div>
-    </div>
-</div>
-
-
-            
+                </div> 
         </div>
     </div>
 </body>
 </html>
-
-<!-- <script>
-
-    // Initialize Select2 for the portfolio dropdown
-    $(".portfolio").select2();
-
-    // Event listener for the Search button
-    $('#btnSearch').on('click', function() {
-        const selectedValues = $(".portfolio").val(); // Get the selected values
-
-        if (selectedValues && selectedValues.length > 0) {
-            // Display the selected values in the display area
-            $('#selectedValueDisplay').text('Selected: ' + selectedValues.join(', '));
-        } else {
-            // If no value is selected, display a message
-            $('#selectedValueDisplay').text('Please select at least one option.');
-        }
-    });
-</script> -->
-
 </html>
 <?php
 include_once 'ltr/header-footer.php';

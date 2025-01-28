@@ -6,16 +6,16 @@ if(isset($_POST['time'])){
     // Determine the date range based on the `time` parameter
     switch ($timeData) {
         case 'Today':
-            $dateCondition = "modify_date = CURDATE()";
+            $dateCondition = "STR_TO_DATE(date, '%Y-%b-%d') = CURDATE()";
             break;
         case 'Week':
-            $dateCondition = "modify_date >= CURDATE() - INTERVAL 7 DAY";
+            $dateCondition = "STR_TO_DATE(date, '%Y-%b-%d') >= CURDATE() - INTERVAL 7 DAY";
             break;
         case 'Month':
-            $dateCondition = "modify_date >= CURDATE() - INTERVAL 30 DAY";
+            $dateCondition = "STR_TO_DATE(date, '%Y-%b-%d') >= CURDATE() - INTERVAL 30 DAY";
             break;
         case 'Year':
-            $dateCondition = "modify_date >= CURDATE() - INTERVAL 365 DAY";
+            $dateCondition = "STR_TO_DATE(date, '%Y-%b-%d') >= CURDATE() - INTERVAL 365 DAY";
             break;
         default:
             $dateCondition = "1"; // Fetch all data
@@ -77,10 +77,10 @@ if(isset($_POST['salesPeriod']) && isset($_POST['selectedPortfolios']))
         'gst_fees' => ['dates' => 'date', 'fees' => 'consulting_fees', 'fees_received' => 'fees_received'],
         'sales' => ['dates' => 'date', 'fees' => 'billing_amount', 'fees_received' => 'fees_received'],
         'trade_mark' => ['dates' => 'date_application', 'fees' => 'bill_amt', 'fees_received' => 'fees_received'],
-        'patent' => ['dates' => 'filling_date', 'fees' => 'billing_amount', 'fees_received' => 'fees_received'],
-        'copy_right' => ['dates' => 'filling_date', 'fees' => 'billing_amount', 'fees_received' => 'fees_received'],
-        'industrial_design' => ['dates' => 'filling_date', 'fees' => 'billing_amount', 'fees_received' => 'fees_received'],
-        'trade_secret' => ['dates' => 'date_of_filling', 'fees' => 'billing_amount', 'fees_received' => 'fees_received'],
+        'patent' => ['dates' => 'filling_date', 'fees' => 'billing_amount', 'fees_received' => 'fees_recived'],
+        'copy_right' => ['dates' => 'filling_date', 'fees' => 'billing_amount', 'fees_received' => 'fees_recived'],
+        'industrial_design' => ['dates' => 'filling_date', 'fees' => 'billing_amount', 'fees_received' => 'fees_recived'],
+        'trade_secret' => ['dates' => 'date_of_filling', 'fees' => 'billing_amount', 'fees_received' => 'fees_recived'],
         'advocade_case' => ['dates' => 'file_date', 'fees' => 'fees', 'fees_received' => 'fees_received'],
     ];
     
