@@ -154,4 +154,56 @@ if(isset($_POST['salesPeriod']) && isset($_POST['selectedPortfolios']))
 }
 
 
+if (isset($_GET['product_name'])) {
+    $productName = $_GET['product_name'];
+
+    // Debugging: Log received product name
+    error_log("Received Product Name: " . $productName);
+
+    // Use DISTINCT to remove duplicates
+    $brandQuery = "SELECT DISTINCT brand_name FROM product_list WHERE product_name = ?";
+    $stmt = $con->prepare($brandQuery);
+
+    if ($stmt) {
+        $stmt->bind_param('s', $productName);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        // Check if brands are available
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo '<option value="' . htmlspecialchars($row['brand_name']) . '">' . htmlspecialchars($row['brand_name']) . '</option>';
+            }
+        } else {
+            echo '<option value="">No Brands Available</option>';
+        }
+
+        $stmt->close();
+    } else {
+        echo '<option value="">Query Error</option>';
+    }
+}
+
+if (isset($_GET['brand_name'])) {
+    $brandName = $_GET['brand_name']; 
+
+    // Debugging: Check received brand name
+    error_log("Received Brand Name: " . $brandName);
+
+    $quantityQuery = "SELECT SUM(unit_value) AS total_quantity FROM product_list WHERE brand_name = ?";
+    $stmt = $con->prepare($quantityQuery);
+
+    if ($stmt) {
+        $stmt->bind_param('s', $brandName);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $data = $result->fetch_assoc();
+
+        echo ($data['total_quantity']) ? $data['total_quantity'] : '0'; // Output total quantity
+
+        $stmt->close();
+    } else {
+        echo 'Query Error';
+    }
+}
 ?>

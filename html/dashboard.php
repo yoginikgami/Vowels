@@ -29,7 +29,31 @@ if ($incomeResult && $expenseResult) {
     // Log error if query fails
     error_log("Database query failed: " . $con->error);
 }
+
+$productQuery = "SELECT company_id, product_name FROM product_list GROUP BY product_name";
+$productResult = $con->query($productQuery);
+$products = [];
+while ($row = $productResult->fetch_assoc()) {
+    $products[] = $row;
+}
+
+// if (isset($_GET['product'])) {
+//     $productName = $_GET['product'];
+
+//     // Query to fetch brands related to the selected product
+//     $query = "SELECT DISTINCT brand_name AS name FROM product_list WHERE product_name = '$productName'";
+//     $result = $con->query($query);
+
+//     $brands = [];
+//     while ($row = $result->fetch_assoc()) {
+//         $brands[] = $row;
+//     }
+
+//     // Return the brands as a JSON response
+//     echo json_encode($brands);
+// }
 $con->close();
+
 ?>
 
 <!DOCTYPE html>
@@ -116,7 +140,7 @@ $con->close();
         }
 
         thead {
-            background-color:rgb(54, 183, 71);
+            background-color:#3796fd;
             text-align: left;
             color : white;
         }
@@ -920,6 +944,111 @@ $con->close();
                         </div>
                 </div>
                 </div>
+
+                <div class="container-fluid py-4">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card p-4 shadow-sm rounded">
+                            <h5 class="mb-4">Trading Inventory</h5>
+
+                            <!-- Product Name Dropdown -->
+                            <div class="row mb-3 align-items-center">
+                                <label for="productName" class="col-sm-4 col-form-label fw-bold">Product Name:</label>
+                                <div class="col-sm-8">
+                                    <select id="productName" class="form-select" name="product">
+                                        <option value="">Select Product</option>
+                                        <?php foreach ($products as $product): ?>
+                                            <option value="<?= $product['product_name'] ?>"><?= $product['product_name'] ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Brand Name Dropdown -->
+                            <div class="row mb-3 align-items-center">
+                                <label for="brandName" class="col-sm-4 col-form-label fw-bold">Brand Name:</label>
+                                <div class="col-sm-8">
+                                    <select id="brandName" class="form-select" name="brand">
+                                        <option value="">Select Brand</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Total Quantity Input -->
+                            <div class="row mb-3 align-items-center">
+                                <label for="totalQuantity" class="col-sm-4 col-form-label fw-bold">Total Quantity:</label>
+                                <div class="col-sm-4">
+                                    <input type="text" id="totalQuantity" class="form-control" readonly>
+                                </div>
+                            </div>
+                        </div>
+  
+                            <script>
+                              
+                              $(document).ready(function () {
+                                    // Fetch brands when product is selected
+                                    $('#productName').on('change', function () {
+                                        let productName = $(this).val(); // Get selected product name
+
+                                        console.log("Selected Product Name:", productName); // Debugging log
+
+                                        if (productName) {
+                                            $.ajax({
+                                                url: 'html/fetch_dash.php',
+                                                type: 'GET',
+                                                data: { product_name: productName },
+                                                dataType: 'html', // Ensure response is treated as HTML
+                                                success: function (response) {
+                                                    console.log("Brand AJAX Response:", response); // Debugging log
+                                                    $('#brandName').html(response); // Update brand dropdown
+
+                                                    // Automatically trigger change event to select first available brand
+                                                    $('#brandName').trigger('change');
+                                                },
+                                                error: function () {
+                                                    alert("Error fetching brands.");
+                                                }
+                                            });
+                                        } else {
+                                            $('#brandName').html('<option value="">Select Brand</option>');
+                                            $('#totalQuantity').val('');
+                                        }
+                                    });
+
+                                    // Fetch total quantity when a brand is selected
+                                    $('#brandName').on('change', function () {
+                                        let brandName = $(this).val();
+
+                                        console.log("Selected Brand Name:", brandName);
+
+                                        if (brandName) {
+                                            $.ajax({
+                                                url: 'html/fetch_dash.php',
+                                                type: 'GET',
+                                                data: { brand_name: brandName },
+                                                dataType: 'text', // Ensure response is treated as text
+                                                success: function (response) {
+                                                    console.log("Quantity AJAX Response:", response);
+                                                    $('#totalQuantity').val(response);
+                                                },
+                                                error: function () {
+                                                    alert("Error fetching quantity.");
+                                                }
+                                            });
+                                        } else {
+                                            $('#totalQuantity').val('');
+                                        }
+                                    });
+                                });
+                            </script>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card p-3">
+                                <h5>Trading Inventory</h5>
+                            </div>
+                        </div>
+                </div>
+                </div>
                 <!-- Row 3-->
                 <div class="container-fluid py-4">
                     <div class="card shadow-sm w-100" style="max-width: 100%;">
@@ -938,7 +1067,7 @@ $con->close();
                                 <option value="allrecord">All Records</option>
                             </select>
                                 <!-- Button for Dropdown -->
-                                <button class="dropdown-btn" style="margin-right: 10px;margin-left: 100px; height: 35px; width: 170px; background-color:#20962f; color: white;  border: none; border-radius: 5px">Select Portfolio</button>
+                                <button class="dropdown-btn" style="margin-right: 10px;margin-left: 100px; font-family: Arial, sans-serif; height: 35px; width: 170px; background-color:#3796fd; color: white; border-radius: 5px">Select Portfolio</button>
                                 
                                 <!-- Selected Portfolio List -->
                                 <div id="selectedPortfolio" class="form-control" style="flex-grow: 2; text-align: left;">
