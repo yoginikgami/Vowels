@@ -37,21 +37,6 @@ while ($row = $productResult->fetch_assoc()) {
     $products[] = $row;
 }
 
-// if (isset($_GET['product'])) {
-//     $productName = $_GET['product'];
-
-//     // Query to fetch brands related to the selected product
-//     $query = "SELECT DISTINCT brand_name AS name FROM product_list WHERE product_name = '$productName'";
-//     $result = $con->query($query);
-
-//     $brands = [];
-//     while ($row = $result->fetch_assoc()) {
-//         $brands[] = $row;
-//     }
-
-//     // Return the brands as a JSON response
-//     echo json_encode($brands);
-// }
 $con->close();
 
 ?>
@@ -103,6 +88,16 @@ $con->close();
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> -->
 
     <style>
+        .form-control:disabled, .form-control[readonly] {
+            height: 35px;
+        }
+        label {
+            margin-bottom: 0;  /* Removes extra space below label */
+        }
+
+        input, select {
+            height: 36px; /* Adjust input height for consistency */
+        }
         .page-wrapper>.container-fluid {
             padding: 5px;
             min-height: calc(100vh - 180px);
@@ -140,7 +135,7 @@ $con->close();
         }
 
         thead {
-            background-color:#3796fd;
+            background-color:#218125;
             text-align: left;
             color : white;
         }
@@ -167,6 +162,7 @@ $con->close();
             flex: 1;
             padding: 15px;
         }
+        
         .card {
             height: 100%; 
             display: flex;
@@ -193,7 +189,7 @@ $con->close();
             margin-bottom: 0.1rem; /* Reduced gap between rows */
         }
 
-        .col-sm-3 {
+        .col-sm-3,.col-sm-4 {
             font-weight: bold;
         }
         .mb-3, .my-3 {
@@ -201,6 +197,9 @@ $con->close();
         }
         .form-control {
             border-radius: 0.25rem;
+        }
+        .sm-4{
+            padding-right: 0.01rem !important;
         }
         .pb-4, .py-4 {
             padding-bottom: 0.01rem !important;
@@ -530,6 +529,7 @@ $con->close();
                         <button class="btn btn-warning filter-button" data-time="Year">Year</button>
                         </div>
                     </div>
+                    <br>
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <div class="card text-center p-3 bg-light-green shadow-sm">
@@ -550,6 +550,7 @@ $con->close();
                                 </div>
                             </div>
                         </div>
+                        <br>
                         <div class="chart-container" style="position: relative;">
                             <canvas id="incomeExpenseChart"></canvas>
                         </div>
@@ -666,60 +667,64 @@ $con->close();
                 </script>
                     <!-- Attendance Report -->
                 <div class="container-fluid py-4">
-                <div class="row g-3">
-                <div class="col-md-6">
-                        <div class="card p-3">
-                            <h5>Search Client</h5>
-                            <!-- <div class="container">
-                            <div class="card shadow-sm w-100" style="max-width: 800px; max-height: 400px;">
-                                <div class="card-body"> -->
-                                    <form>
-                                        <div class="row mb-3">
-                                            <label for="client" class="col-sm-3 col-form-label fw-bold">Client Name:</label>
-                                            <div class="col-sm-9">
-                                                <select id="client" name="client" class="clientname">
-                                                    <option value="">Choose...</option>
-                                                </select>
-                                            </div>
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <div class="card p-4 shadow-sm rounded">
+                                <h5 class="mb-3">Search Client</h5>
+
+                                <form>
+                                    <!-- Client Name Dropdown -->
+                                    <div class="row g-2 align-items-center mb-2">
+                                        <label for="client" class="col-sm-4 ">Client Name:</label>
+                                        <div class="col-sm-8">
+                                            <select id="client" name="client" class="form-select">
+                                                <option value="">Choose...</option>
+                                            </select>
                                         </div>
-                                        <div class="row mb-3">
-                                            <label for="company" class="col-sm-3 col-form-label fw-bold">Company Name:</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" id="company" class="form-control" disabled>
-                                            </div>
+                                    </div>
+
+                                    <!-- Company Name -->
+                                    <div class="row g-2 align-items-center mb-2">
+                                        <label for="company" class="col-sm-4 ">Company Name:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="company" class="form-control" class="col-sm-8" disabled>
                                         </div>
-                                        <div class="row mb-3">
-                                            <label for="contact" class="col-sm-3 col-form-label fw-bold">Contact Person:</label>
-                                            <div class="col-sm-9">
-                                                <input type="text" id="contact" class="form-control" disabled>
-                                            </div>
+                                    </div>
+
+                                    <!-- Contact Person -->
+                                    <div class="row g-2 align-items-center mb-2">
+                                        <label for="contact" class="col-sm-4 col-form-label fw-bold">Contact Person:</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" id="contact" class="form-control" disabled>
                                         </div>
-                                        <div class="row mb-3">
-                                            <label for="mobile" class="col-sm-3 col-form-label fw-bold">Mobile No:</label>
-                                            <div class="col-sm-3">
-                                                <input type="text" id="mobile" class="form-control" disabled>
-                                            </div>
-                                            <label for="email" class="col-sm-3 col-form-label fw-bold">Email ID:</label>
-                                            <div class="col-sm-3">
-                                                <input type="text" id="email" class="form-control" disabled>
-                                            </div>
+                                    </div>
+
+                                    <!-- Mobile No & Email -->
+                                    <div class="row g-2 align-items-center mb-2">
+                                        <label for="mobile" class="col-sm-3 col-form-label fw-bold">Mobile No:</label>
+                                        <div class="col-sm-3">
+                                            <input type="text" id="mobile" class="form-control" disabled>
                                         </div>
-                                        <div class="row mb-3">
-                                            <label for="state" class="col-sm-3 col-form-label fw-bold">State:</label>
-                                            <div class="col-sm-3">
-                                                <input type="text" id="state" class="form-control" disabled>
-                                            </div>
-                                            <label for="city" class="col-sm-3 col-form-label fw-bold">City:</label>
-                                            <div class="col-sm-3">
-                                                <input type="text" id="city" class="form-control" disabled>
-                                            </div>
+                                        <label for="email" class="col-sm-3 col-form-label fw-bold">Email ID:</label>
+                                        <div class="col-sm-3">
+                                            <input type="text" id="email" class="form-control" disabled>
                                         </div>
-                                    </form>
-                                <!-- </div>
+                                    </div>
+
+                                    <!-- State & City -->
+                                    <div class="row g-2 align-items-center">
+                                        <label for="state" class="col-sm-2 col-form-label fw-bold">State:</label>
+                                        <div class="col-sm-4">
+                                            <input type="text" id="state" class="form-control" disabled>
+                                        </div>
+                                        <label for="city" class="col-sm-3 col-form-label fw-bold">City:</label>
+                                        <div class="col-sm-3">
+                                            <input type="text" id="city" class="form-control" disabled>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                            </div> -->
                         </div>
-                    </div>
                     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                     <script>
                         $(document).ready(function () {
@@ -950,7 +955,6 @@ $con->close();
                     <div class="col-md-6">
                         <div class="card p-4 shadow-sm rounded">
                             <h5 class="mb-4">Trading Inventory</h5>
-
                             <!-- Product Name Dropdown -->
                             <div class="row mb-3 align-items-center">
                                 <label for="productName" class="col-sm-4 col-form-label fw-bold">Product Name:</label>
@@ -963,7 +967,6 @@ $con->close();
                                     </select>
                                 </div>
                             </div>
-
                             <!-- Brand Name Dropdown -->
                             <div class="row mb-3 align-items-center">
                                 <label for="brandName" class="col-sm-4 col-form-label fw-bold">Brand Name:</label>
@@ -973,7 +976,6 @@ $con->close();
                                     </select>
                                 </div>
                             </div>
-
                             <!-- Total Quantity Input -->
                             <div class="row mb-3 align-items-center">
                                 <label for="totalQuantity" class="col-sm-4 col-form-label fw-bold">Total Quantity:</label>
@@ -984,13 +986,12 @@ $con->close();
                         </div>
   
                             <script>
-                              
                               $(document).ready(function () {
                                     // Fetch brands when product is selected
                                     $('#productName').on('change', function () {
                                         let productName = $(this).val(); // Get selected product name
 
-                                        console.log("Selected Product Name:", productName); // Debugging log
+                                        //console.log("Selected Product Name:", productName); // Debugging log
 
                                         if (productName) {
                                             $.ajax({
@@ -999,9 +1000,8 @@ $con->close();
                                                 data: { product_name: productName },
                                                 dataType: 'html', // Ensure response is treated as HTML
                                                 success: function (response) {
-                                                    console.log("Brand AJAX Response:", response); // Debugging log
+                                                    //console.log("Brand AJAX Response:", response); // Debugging log
                                                     $('#brandName').html(response); // Update brand dropdown
-
                                                     // Automatically trigger change event to select first available brand
                                                     $('#brandName').trigger('change');
                                                 },
@@ -1019,7 +1019,7 @@ $con->close();
                                     $('#brandName').on('change', function () {
                                         let brandName = $(this).val();
 
-                                        console.log("Selected Brand Name:", brandName);
+                                        //console.log("Selected Brand Name:", brandName);
 
                                         if (brandName) {
                                             $.ajax({
@@ -1028,7 +1028,7 @@ $con->close();
                                                 data: { brand_name: brandName },
                                                 dataType: 'text', // Ensure response is treated as text
                                                 success: function (response) {
-                                                    console.log("Quantity AJAX Response:", response);
+                                                    //console.log("Quantity AJAX Response:", response);
                                                     $('#totalQuantity').val(response);
                                                 },
                                                 error: function () {
@@ -1067,8 +1067,7 @@ $con->close();
                                 <option value="allrecord">All Records</option>
                             </select>
                                 <!-- Button for Dropdown -->
-                                <button class="dropdown-btn" style="margin-right: 10px;margin-left: 100px; font-family: Arial, sans-serif; height: 35px; width: 170px; background-color:#3796fd; color: white; border-radius: 5px">Select Portfolio</button>
-                                
+                                <button class="dropdown-btn" style="margin-right: 10px;margin-left: 100px; font-family: Arial, sans-serif; height: 35px; width: 170px; background-color:#218125; color: white; border-radius: 5px">Select Portfolio</button>
                                 <!-- Selected Portfolio List -->
                                 <div id="selectedPortfolio" class="form-control" style="flex-grow: 2; text-align: left;">
                                     Selected Portfolio: None
@@ -1076,7 +1075,6 @@ $con->close();
                             </div>
                              <!-- <div id="result" style="margin-top: 20px; font-size: 18px; color: green;"></div>  -->
                                 <div class="multiselect-dropdown hide" style="margin-left: 150px;">
-                                    
                                     <ul class="multiselect-dropdown-list" style=" center; justify-content: flex-start; ">
                                     <input class="multiselect-dropdown-search" type="text" placeholder="Search...">
                                         <li class="multiselect-dropdown-all-selector">
@@ -1127,15 +1125,10 @@ $con->close();
                                 <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.2.1/js/dataTables.min.js"></script>
 
                             <script>
-                                // $(document).ready(function() {
-                                //     bsCustomFileInput.init();
-                                // });
+                                
                                 $(document).ready(function() {
                                     $('#dataforsale').DataTable();
                                 });
-
-                                // Toggle the dropdown visibility
-                               
                                 const dropdownBtn = document.querySelector('.dropdown-btn');
                                 const dropdown = document.querySelector('.multiselect-dropdown');
                                 const selectAllCheckbox = document.getElementById('selectAll');
@@ -1157,21 +1150,18 @@ $con->close();
 
                                 function updateSelectedPortfolio() {
                                     const selected = [];
-
                                     // Check the state of all checkboxes except "Select All"
                                     checkboxes.forEach(checkbox => {
                                         if (checkbox.checked && checkbox.id !== 'selectAll') {
                                             selected.push(document.querySelector(`label[for="${checkbox.id}"]`).textContent);
                                         }
                                     });
-
                                     // Special case: If "Select All" is checked, display all values
                                     if (selectAll.checked) {
                                         const allLabels = [...document.querySelectorAll('.multiselect-dropdown-list label')];
                                         const allValues = allLabels
                                             .filter(label => label.htmlFor !== 'selectAll') // Exclude "Select All" label
                                             .map(label => label.textContent);
-
                                         selectedPortfolio.textContent = `Selected Portfolio: ${allValues.join(', ')}`;
                                     } else {
                                         // Update the display for regular cases
@@ -1179,12 +1169,10 @@ $con->close();
                                             ? `Selected Portfolio: ${selected.join(', ')}`
                                             : 'Selected Portfolio: None';
                                     }
-                                    //sendSelectedPortfolio(selected);
                                 }
                                 function updateSelectedPeriod() {
                                     const selectedPeriod = salesPeriod.value; // Get selected period from the dropdown
                                     let periodText = '';
-
                                     switch (selectedPeriod) {
                                         case 'lastday':
                                             periodText = 'Last 1 Day';
@@ -1213,23 +1201,19 @@ $con->close();
                                         default:
                                             periodText = 'No Period Selected';
                                     }
-
                                     // Update the displayed selected period text
                                     selectedPortfolio.textContent = `Selected Period: ${periodText}`;
                                 }
-
                                 // Bind both functions to updates
                                 $('#salesPeriod').change(function() {
                                     updateSelectedPeriod();
                                     updateSelectedPortfolio();  // Update both the selected period and portfolio
                                 });
-
                                 checkboxes.forEach(checkbox => {
                                     checkbox.addEventListener('change', function() {
                                         updateSelectedPortfolio(); // Update portfolio whenever a checkbox is clicked
                                     });
                                 });
-
                                 // Update the selected count
                                 checkboxes.forEach(checkbox => {
                                     checkbox.addEventListener('change', () => {
@@ -1243,13 +1227,11 @@ $con->close();
                                         updateSelectedPortfolio();
                                     });
                                 });
-
                                 // Function to update the selected count
                                 function updateSelectedCount() {
                                     const selectedCount = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
                                     document.querySelector('.optext').textContent = `${selectedCount} selected`;
                                 }
-
                                 // Search functionality
                                 const searchInput = document.querySelector('.multiselect-dropdown-search');
                                 searchInput.addEventListener('input', () => {
@@ -1279,8 +1261,8 @@ $con->close();
                                             selectedPortfolios.push($(this).attr('id'));
                                         });
 
-                                        console.log('Selected Period:', selectedPeriod);
-                                        console.log('Selected Portfolios:', selectedPortfolios);
+                                        // console.log('Selected Period:', selectedPeriod);
+                                        // console.log('Selected Portfolios:', selectedPortfolios);
                                         // Send AJAX request
                                         $.ajax({
                                             url: 'html/fetch_dash.php',
