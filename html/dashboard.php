@@ -141,8 +141,8 @@ $con->close();
         }
 
         th, td {
-            padding: 10px;
-            border: 1px solid #ccc;
+            padding: 5px;
+            border: 0px solid #ccc;
         }
 
         tbody tr:nth-child(odd) {
@@ -529,7 +529,6 @@ $con->close();
                         <button class="btn btn-warning filter-button" data-time="Year">Year</button>
                         </div>
                     </div>
-                    <br>
                         <div class="row mb-3">
                             <div class="col-md-4">
                                 <div class="card text-center p-3 bg-light-green shadow-sm">
@@ -673,34 +672,70 @@ $con->close();
                                 <h5 class="mb-3">Search Client</h5>
 
                                 <form>
+                                    <table >
+                                        <tr >
+                                            <td><label for="client" >Client Name:</label></td>
+                                            <td><select id="client" name="client" class="form-select " >
+                                                <option value="">Choose...</option>
+                                            </select></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label for="company" >Company Name:</label></td>
+                                            <td><input type="text" id="company" class="form-control" class="col-sm-8" disabled></td>
+                                        </tr>
+                                        <tr>
+                                            <td><label for="contact" >Contact Person:</label></td>
+                                            <td><input type="text" id="contact" class="form-control" disabled></td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="mobile" >Mobile No:</label>
+                                                <input type="text" id="email" class="col-md-9 form-control"  disabled>
+                                            </td>
+                                            <td>
+                                                <label for="email" >Email ID:</label>
+                                                <input type="text" id="email" class="col-md-9 form-control" disabled>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <label for="state" >State:</label>
+                                                <input type="text" id="state" class="col-md-9 form-control" disabled>
+                                            </td>
+                                            <td>
+                                                <label for="city" >City:</label>
+                                                <input type="text" id="city" class="form-control" disabled>
+                                            </td>
+                                        </tr>
+                                    </table>
                                     <!-- Client Name Dropdown -->
-                                    <div class="row g-2 align-items-center mb-2">
+                                    <!-- <div class="row g-2 align-items-center mb-2">
                                         <label for="client" class="col-sm-4 ">Client Name:</label>
                                         <div class="col-sm-8">
                                             <select id="client" name="client" class="form-select">
                                                 <option value="">Choose...</option>
                                             </select>
                                         </div>
-                                    </div>
+                                    </div> -->
 
                                     <!-- Company Name -->
-                                    <div class="row g-2 align-items-center mb-2">
+                                    <!-- <div class="row g-2 align-items-center mb-2">
                                         <label for="company" class="col-sm-4 ">Company Name:</label>
                                         <div class="col-sm-8">
                                             <input type="text" id="company" class="form-control" class="col-sm-8" disabled>
                                         </div>
-                                    </div>
+                                    </div> -->
 
                                     <!-- Contact Person -->
-                                    <div class="row g-2 align-items-center mb-2">
+                                    <!-- <div class="row g-2 align-items-center mb-2">
                                         <label for="contact" class="col-sm-4 col-form-label fw-bold">Contact Person:</label>
                                         <div class="col-sm-8">
                                             <input type="text" id="contact" class="form-control" disabled>
                                         </div>
-                                    </div>
+                                    </div> -->
 
                                     <!-- Mobile No & Email -->
-                                    <div class="row g-2 align-items-center mb-2">
+                                    <!-- <div class="row g-2 align-items-center mb-2">
                                         <label for="mobile" class="col-sm-3 col-form-label fw-bold">Mobile No:</label>
                                         <div class="col-sm-3">
                                             <input type="text" id="mobile" class="form-control" disabled>
@@ -709,10 +744,10 @@ $con->close();
                                         <div class="col-sm-3">
                                             <input type="text" id="email" class="form-control" disabled>
                                         </div>
-                                    </div>
+                                    </div> -->
 
                                     <!-- State & City -->
-                                    <div class="row g-2 align-items-center">
+                                    <!-- <div class="row g-2 align-items-center">
                                         <label for="state" class="col-sm-2 col-form-label fw-bold">State:</label>
                                         <div class="col-sm-4">
                                             <input type="text" id="state" class="form-control" disabled>
@@ -721,7 +756,7 @@ $con->close();
                                         <div class="col-sm-3">
                                             <input type="text" id="city" class="form-control" disabled>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </form>
                             </div>
                         </div>
@@ -959,7 +994,7 @@ $con->close();
                             <div class="row mb-3 align-items-center">
                                 <label for="productName" class="col-sm-4 col-form-label fw-bold">Product Name:</label>
                                 <div class="col-sm-8">
-                                    <select id="productName" class="form-select" name="product">
+                                    <select id="productName" class="col-sm-10 form-select" name="product">
                                         <option value="">Select Product</option>
                                         <?php foreach ($products as $product): ?>
                                             <option value="<?= $product['product_name'] ?>"><?= $product['product_name'] ?></option>
@@ -971,7 +1006,7 @@ $con->close();
                             <div class="row mb-3 align-items-center">
                                 <label for="brandName" class="col-sm-4 col-form-label fw-bold">Brand Name:</label>
                                 <div class="col-sm-8">
-                                    <select id="brandName" class="form-select" name="brand">
+                                    <select id="brandName" class="col-sm-10 form-select" name="brand">
                                         <option value="">Select Brand</option>
                                     </select>
                                 </div>
@@ -979,7 +1014,7 @@ $con->close();
                             <!-- Total Quantity Input -->
                             <div class="row mb-3 align-items-center">
                                 <label for="totalQuantity" class="col-sm-4 col-form-label fw-bold">Total Quantity:</label>
-                                <div class="col-sm-4">
+                                <div class="col-sm-7">
                                     <input type="text" id="totalQuantity" class="form-control" readonly>
                                 </div>
                             </div>
