@@ -86,6 +86,5 @@ try {
     error_log("Error: " . $e->getMessage());
     echo json_encode(['error' => 'Database query failed']);
 }
-
 $con->close();
 ?>

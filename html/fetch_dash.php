@@ -141,8 +141,8 @@ if(isset($_POST['salesPeriod']) && isset($_POST['selectedPortfolios']))
             $result = $con->query($query);
             // Fetch data and append it to the response array
             if ($result && $result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    $response[] = $row;
+                while ($salesData = $result->fetch_assoc()) {
+                    $response[] = $salesData;
                 }
             }
         }
