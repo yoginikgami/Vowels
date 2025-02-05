@@ -227,7 +227,7 @@ if (!empty($row['display_order'])) {
         }
 
         .multiselect-dropdown-list {
-            max-height: 125px;
+            max-height: 200px;
             /* Set the maximum height for the dropdown */
             max-width: 25%;
             position: absolute;
@@ -236,6 +236,7 @@ if (!empty($row['display_order'])) {
             overflow-x: hidden;
             /* Disable horizontal scrolling */
             border: 1px solid #ccc;
+            z-index: 1050;
             /* Optional: Add a border for better visibility */
             padding: 10px;
             /* Optional: Add some padding for better spacing */
@@ -763,56 +764,56 @@ if (!empty($row['display_order'])) {
 
                             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                             <script>
-                                let clientList = <?php echo $responseData; ?>; // The response from PHP
-                                let clientDropdown = document.getElementById('client');
-                                clientDropdown.innerHTML = '<option value="">Choose...</option>'; // Clear previous options
+    // Step 1: Populate the client dropdown
+    let clientList = <?php echo $responseData; ?>; // PHP to JavaScript data transfer
+    let clientDropdown = document.getElementById('client');
+    clientDropdown.innerHTML = '<option value="">Choose...</option>'; // Clear previous options
 
-                                clientList.forEach(client => {
-                                    let option = document.createElement('option');
-                                    option.value = client.id; // Use client ID as the value
-                                    option.textContent = client.client_name; // Display client name as text
-                                    clientDropdown.appendChild(option);
-                                });
+    // Create options dynamically based on clientList
+    clientList.forEach(client => {
+        let option = document.createElement('option');
+        option.value = client.id; // Use client ID as the value
+        option.textContent = client.client_name; // Display client name as text
+        clientDropdown.appendChild(option);
+    });
 
-                                // Event listener for client selection
-                                clientDropdown.addEventListener('change', function() {
-                                    let clientId = this.value; // Get selected client ID
-                                    if (clientId) {
-                                        fetchClientDetails(clientId); // Fetch client details by ID
-                                    }
-                                });
-                            </script>
-                            <script>
-                                // Fetch client details when an option is selected
-                                $('#client').on('change', function() {
-                                    const clientId = $(this).val();
-                                    if (clientId) {
-                                        $.ajax({
-                                            url: 'html/fetch_dash.php', // Server-side script for fetching details
-                                            type: 'POST',
-                                            data: {
-                                                id: clientId
-                                            },
-                                            dataType: 'json',
-                                            success: function(data) {
-                                                // Populate form fields with fetched data
-                                                $('#company').val(data.company_name);
-                                                $('#contact').val(data.contact_person);
-                                                $('#mobile').val(data.mobile_no);
-                                                $('#email').val(data.email_1);
-                                                $('#state').val(data.state);
-                                                $('#city').val(data.city);
-                                            },
-                                            error: function(xhr, status, error) {
-                                                console.error('Error fetching client details:', error);
-                                            },
-                                        });
-                                    } else {
-                                        // Clear form fields if no client is selected
-                                        $('#clientForm').find('input').val('');
-                                    }
-                                });
-                            </script>
+    // Step 2: Fetch client details when the dropdown selection changes
+    clientDropdown.addEventListener('change', function() {
+        let clientId = this.value; // Get selected client ID
+        if (clientId) {
+            fetchClientDetails(clientId); // Fetch client details by ID
+        } else {
+            // Clear form if no client is selected
+            $('#clientForm').find('input').val('');
+        }
+    });
+
+    // Function to fetch client details using AJAX
+    function fetchClientDetails(clientId) {
+        $.ajax({
+            url: 'html/fetch_dash.php', // Server-side script for fetching details
+            type: 'POST',
+            data: {
+                id: clientId // Send the selected client ID
+            },
+            dataType: 'json',
+            success: function(data) {
+                // Step 3: Populate form fields with fetched client details
+                if (data) {
+                    $('#company').val(data.company_name);
+                    $('#contact').val(data.contact_person);
+                    $('#mobile').val(data.mobile_no);
+                    $('#email').val(data.email_1);
+                    $('#state').val(data.state);
+                    $('#city').val(data.city);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching client details:', error);
+            }
+        });
+    }
+</script>
                         <?php } elseif ($section == 'attendance_report') { ?>
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <h5>Attendance Report</h5>

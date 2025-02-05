@@ -115,38 +115,52 @@ if(isset($_POST['salesPeriod']) && isset($_POST['selectedPortfolios']))
                 $dateCondition = ''; // No filtering for all records
                 break;
         }
-    
+
         // Loop through selected portfolios and execute query for each
+        $response = []; // Initialize the response array
         foreach ($selectedPortfolios as $table) {
             // Use column mappings for the selected table
             $columns = $columnMappings[$table] ?? ['dates' => 'date', 'fees' => 'fees', 'fees_received' => 'fees_received'];
-    
+
             // Replace placeholder in the date condition
             $currentDateCondition = str_replace('{dates}', $columns['dates'], $dateCondition);
-    
-            // Construct the query
-            $query = "
-                SELECT 
-                    '{$table}' AS table_name,
-                    transaction_id,
-                    client_name,
-                    {$columns['dates']} AS date,
-                    {$columns['fees']} AS fees,
-                    {$columns['fees_received']} AS fees_received
-                FROM `{$table}` 
-                {$currentDateCondition}";
+
+            // Specific tables requiring a specific date format
+            $specificDateTables = ['copy_right', 'patent', 'trade_mark', 'trade_secret'];
             
+            // Construct the query
+            if (in_array($table, $specificDateTables)) {
+                $query = "
+                    SELECT 
+                        '{$table}' AS table_name,
+                        transaction_id,
+                        client_name,
+                        {$columns['dates']} AS date,
+                        {$columns['fees']} AS fees,
+                        {$columns['fees_received']} AS fees_received
+                    FROM `{$table}`
+                    WHERE STR_TO_DATE({$columns['dates']}, '%Y-%m-%d') >= CURDATE() - INTERVAL 1 DAY";  // This is for the specific date tables
+            } else {
+                $query = "
+                    SELECT 
+                        '{$table}' AS table_name,
+                        transaction_id,
+                        client_name,
+                        {$columns['dates']} AS date,
+                        {$columns['fees']} AS fees,
+                        {$columns['fees_received']} AS fees_received
+                    FROM `{$table}`
+                    {$currentDateCondition}";
+            }
+
             // Execute the query
-            //echo $query;
             $result = $con->query($query);
-            // Fetch data and append it to the response array
             if ($result && $result->num_rows > 0) {
                 while ($salesData = $result->fetch_assoc()) {
                     $response[] = $salesData;
                 }
             }
         }
-    
     header('Content-Type: application/json');
     // Return the response as JSON
     echo json_encode($response);
