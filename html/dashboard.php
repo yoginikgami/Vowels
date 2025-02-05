@@ -197,7 +197,7 @@ if (!empty($row['display_order'])) {
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Include DataTable CSS -->
+        <!-- Include DataTable CSS -->
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.min.css">
 
     <!-- Include DataTable JS -->
