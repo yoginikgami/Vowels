@@ -1,7 +1,6 @@
 <?php
 // Include the header and database connection
 include_once 'ltr/header.php';
-
 include 'connection.php';
 
 // Check if session variables are set
@@ -37,21 +36,14 @@ $products = [];
 while ($row = $productResult->fetch_assoc()) {
     $products[] = $row;
 }
-if (isset($_SESSION['company_id'])) {
-    $fetch_user_data = "SELECT * FROM `users` WHERE `company_id` = '" . $_SESSION['company_id'] . "' AND `id` = '" . $_SESSION['user_id'] . "'";
-    $run_fetch_user_data = mysqli_query($con, $fetch_user_data);
-    $row = mysqli_fetch_array($run_fetch_user_data);
-}
-// $con->close();
+
 if (isset($_SESSION['company_id'])) {
     $company_id = $_SESSION['company_id'];
-
     // Fetch user data for the given company ID and user ID
     $fetch_user_data = "SELECT * FROM `users` WHERE `company_id` = '$company_id' AND `id` = '" . $_SESSION['user_id'] . "'";
     $run_fetch_user_data = mysqli_query($con, $fetch_user_data);
     $row = mysqli_fetch_array($run_fetch_user_data);
 }
-
 // Default card order if user has no custom order
 $default_order = [
     'sales_report_graph',
@@ -78,7 +70,6 @@ if (($row['type'] == 1) || ($row['esp_attendence_graph'] == 1)) {
 if (($row['type'] == 1) || ($row['esp_search_client'] == 1)) {
     $sections[] = 'search_client';
 }
-
 if (($row['type'] == 1) || ($row['esp_payment_received'] == 1)) {
     $sections[] = 'payment_received';
 }
@@ -96,6 +87,60 @@ if ($row['payment'] == 1 || $row['settlement'] == 1 || $row['expense'] == 1 || $
 if($row['payroll'] == 1){
     $sections[] = 'attendance_report';   
 }
+
+// List of dropdown menu items to check
+$columns = [
+    "pan" => "pan",
+    "tan" => "tan",
+    "e_tds" => "e_tds",
+    "it_returns" => "it_returns",
+    "e_tender" => "e_tender",
+    "gst" => "gst_fees",
+    "dsc_subscriber" => "dsc_subscriber",
+    "dsc_reseller" => "dsc_reseller",
+    "other_services" => "other_services",
+    "psp" => "psp",
+    "trade_mark" => "trade_mark",
+    "patent" => "patent",
+    "copy_right" => "copy_right",
+    "industrial_design" => "industrial_design",
+    "trade_secret" => "trade_secret",
+    "legal_notice" => "advocade_case"
+];
+
+$dropdown_options = [];
+foreach ($columns as $col) {
+    if (isset($row[$col]) && $row[$col] == 1) {
+        $dropdown_options[$col] = $col;
+    }
+}
+$multiple_dropdown = $dropdown_options;
+$clientmaster = $dropdown_options;
+if (isset($row['gst']) && $row['gst'] == 1) {
+    
+    $dropdown_options['gst_fees'] = 'gst_fees'; 
+    $multiple_dropdown['gst_fees'] = 'gst_fees';
+    $clientmaster['gst_fees'] = 'gst_fees'; 
+}
+if (isset($row['legal_notice']) && $row['legal_notice'] == 1) {
+    $dropdown_options['advocate_case'] = 'advocate_case'; 
+    $multiple_dropdown['advocate_case'] = 'advocate_case';
+    $clientmaster['advocate_case'] = 'advocate_case'; 
+}
+
+// Convert to JSON and send via POST request to featch_clients.php
+$clientmaster_json = json_encode($clientmaster);
+
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL, 'http://localhost/Vowel/html/fetch_clients.php');
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $clientmaster_json);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+
+$responseData = curl_exec($ch);
+curl_close($ch);
+
 $sections = array_unique($sections);
 
 // Fetch user-defined order if available
@@ -108,14 +153,12 @@ if (!empty($row['display_order'])) {
     // Append any missing sections that were not in user preference
     $sections = array_merge($ordered_sections, array_diff($sections, $custom_order));
 } else {
-    // Use default order
     $sections = array_merge(array_intersect($default_order, $sections), array_diff($sections, $default_order));
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -136,9 +179,6 @@ if (!empty($row['display_order'])) {
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
-    <!-- DataTables CSS
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.min.css"> -->
-
     <!-- Bootstrap JS Bundle -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
 
@@ -157,8 +197,12 @@ if (!empty($row['display_order'])) {
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- DataTables JS
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script> -->
+    <!-- Include DataTable CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.min.css">
+
+    <!-- Include DataTable JS -->
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.2.1/js/dataTables.min.js"></script>
+
 
     <style>
         .form-control:disabled,
@@ -368,16 +412,12 @@ if (!empty($row['display_order'])) {
         }
     </style>
 </head>
-
 <body>
     <div class="container-fluid py-4">
         <div class="row g-3">
             <?php foreach ($sections as $index => $section) { ?>
                 <div class="col-md-6">
                     <div class="card p-3">
-                        <!-- <h5>
-                            <?php echo ucwords(str_replace('_', ' ', $section)); ?>
-                        </h5> -->
                         <?php if ($section == 'sales_report_graph') { ?>
                             <!-- Toggle Switch -->
                             <label class="toggle-switch square">
@@ -396,24 +436,9 @@ if (!empty($row['display_order'])) {
                             </div>
                             <div class="container">
                                 <select id="portfolio" multiple style="width: 70%;">
-                                    <option value="pan">Pan</option>
-                                    <option value="tan">Tan</option>
-                                    <option value="e_tds">E_TDS</option>
-                                    <option value="it_returns">IT Returns</option>
-                                    <option value="e_tender">E Tender</option>
-                                    <option value="gst_fees">GST Fees</option>
-                                    <option value="dsc_subscriber">Dsc Subscriber</option>
-                                    <option value="dsc_token">Dsc Token</option>
-                                    <option value="dsc_reseller">Dsc Reseller</option>
-                                    <option value="other_services">Other Services</option>
-                                    <option value="psp">PSP Coupon Distribution</option>
-                                    <option value="sales">Sales</option>
-                                    <option value="trade_mark">Trand Mark</option>
-                                    <option value="patent">Patent</option>
-                                    <option value="copy_right">Copy Right</option>
-                                    <option value="industrial_design">Industrial Design</option>
-                                    <option value="trade_secret">Trade Secret</option>
-                                    <option value="advocade_case">Advocade Case</option>
+                                    <?php foreach ($dropdown_options as $value => $label): ?>
+                                        <option value="<?= htmlspecialchars($value); ?>"><?= htmlspecialchars($label); ?></option>
+                                    <?php endforeach; ?>
                                 </select>
                                 <div id="salesResults"></div>
                             </div>
@@ -534,44 +559,6 @@ if (!empty($row['display_order'])) {
                                     document.getElementById('salesChart1').style.display = 'none';
                                     document.getElementById('salesChart').style.display = 'block';
                                 }
-                            </script>
-                            <script>
-                                // Fetch data from PHP variables
-                                const data = {
-                                    labels: ['PAN', 'TAN', 'E-TDS', 'IT Returns', 'E Tender', 'GST Fees', 'DSC Subscriber', 'DSC Token', 'DSC Reseller', 'Other Services', 'PSP', 'Sales', 'Trand Mark', 'Patent', 'Copy Right', 'Indenstrial Design', 'Trade Secred', 'Advocade Case'],
-                                    datasets: [{
-                                        label: 'Fees',
-                                        data: [<?= $panFees ?>, <?= $tanFees ?>, <?= $etdsFees ?>, <?= $it_returns ?>, <?= $e_tender ?>, <?= $gst_fees ?>, <?= $dsc_subscriber ?>, <?= $dsc_token ?>, <?= $dsc_reseller ?>, <?= $other_service ?>, <?= $psp ?>, <?= $sales ?>, <?= $trade_mark ?>, <?= $patent ?>, <?= $copy_right ?>, <?= $industrial_design ?>, <?= $trade_secret ?>, <?= $advocade_case ?>],
-                                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#38a832', '#ff1a1a', '#88cc00', '#4d79ff', '#bf8040', '#ff4d94', '#FF6384', '#36A2EB', '#FFCE56', '#38a832', '#ff1a1a', '#88cc00', '#4d79ff', '#bf8040', '#ff4d94'],
-                                        borderColor: '#36A2EB',
-                                        fill: false, // Prevent area under the line from being filled
-                                        tension: 0.1 // Smoothness of the line
-                                    }]
-                                };
-
-                                // Chart configuration
-                                const config = {
-                                    type: 'line', // Change 'bar' to 'line'
-                                    data: data,
-                                    options: {
-                                        responsive: true,
-                                        plugins: {
-                                            legend: {
-                                                position: 'top',
-                                            },
-                                            title: {
-                                                display: true,
-                                                text: 'Sales Report'
-                                            }
-                                        }
-                                    },
-                                };
-
-                                // Render the chart
-                                const salesChart1 = new Chart(
-                                    document.getElementById('salesChart1'),
-                                    config
-                                );
                             </script>
                         <?php } elseif ($section == 'income_expense') { ?>
                             <div class="d-flex align-items-center justify-content-between mb-3">
@@ -721,7 +708,7 @@ if (!empty($row['display_order'])) {
                         <?php } elseif ($section == 'search_client') { ?>
 
                             <h5 class="mb-3">Search Client</h5>
-
+                            <br>
                             <form>
                                 <!-- Client Name Dropdown -->
                                 <div class="row g-2 align-items-center mb-2">
@@ -763,8 +750,8 @@ if (!empty($row['display_order'])) {
 
                                 <!-- State & City -->
                                 <div class="row g-2 align-items-center">
-                                    <label for="state" class="col-sm-2 col-form-label fw-bold">State:</label>
-                                    <div class="col-sm-4">
+                                    <label for="state" class="col-sm-3 col-form-label fw-bold">State:</label>
+                                    <div class="col-sm-3">
                                         <input type="text" id="state" class="form-control" disabled>
                                     </div>
                                     <label for="city" class="col-sm-3 col-form-label fw-bold">City:</label>
@@ -776,31 +763,26 @@ if (!empty($row['display_order'])) {
 
                             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                             <script>
-                                $(document).ready(function() {
-                                    // Fetch client data
-                                    $.ajax({
-                                        url: 'html/fetch_clients.php', // Server-side script URL
-                                        type: 'GET', // HTTP method
-                                        dataType: 'json', // Expected response format
-                                        success: function(response) {
-                                            // Clear existing options except the placeholder
-                                            $('#client').find('option:not(:first)').remove();
+                                let clientList = <?php echo $responseData; ?>; // The response from PHP
+                                let clientDropdown = document.getElementById('client');
+                                clientDropdown.innerHTML = '<option value="">Choose...</option>'; // Clear previous options
 
-                                            // Loop through the response and append options
-                                            response.forEach(function(client) {
-                                                $('#client').append(
-                                                    $('<option>', {
-                                                        value: client.id, // Use client ID as value
-                                                        text: client.client_name, // Display client name
-                                                    })
-                                                );
-                                            });
-                                        },
-                                        error: function(xhr, status, error) {
-                                            console.error('Error fetching client data:', error);
-                                        }
-                                    });
+                                clientList.forEach(client => {
+                                    let option = document.createElement('option');
+                                    option.value = client.id; // Use client ID as the value
+                                    option.textContent = client.client_name; // Display client name as text
+                                    clientDropdown.appendChild(option);
                                 });
+
+                                // Event listener for client selection
+                                clientDropdown.addEventListener('change', function() {
+                                    let clientId = this.value; // Get selected client ID
+                                    if (clientId) {
+                                        fetchClientDetails(clientId); // Fetch client details by ID
+                                    }
+                                });
+                            </script>
+                            <script>
                                 // Fetch client details when an option is selected
                                 $('#client').on('change', function() {
                                     const clientId = $(this).val();
@@ -1099,31 +1081,22 @@ if (!empty($row['display_order'])) {
                             </div>
                              <!-- <div id="result" style="margin-top: 20px; font-size: 18px; color: green;"></div>  -->
                                 <div class="multiselect-dropdown hide" style="margin-left: 150px;">
-                                    <ul class="multiselect-dropdown-list" style=" center; justify-content: flex-start; ">
+                                    
+                                <ul class="multiselect-dropdown-list" style="center; justify-content: flex-start;">
                                     <input class="multiselect-dropdown-search" type="text" placeholder="Search...">
-                                        <li class="multiselect-dropdown-all-selector">
-                                        
-                                            <input type="checkbox" id="selectAll"> <label for="selectAll">Select All</label>
+                                    
+                                    <li class="multiselect-dropdown-all-selector">
+                                        <input type="checkbox" id="selectAll"> <label for="selectAll">Select All</label>
+                                    </li>
+
+                                    <?php foreach ($multiple_dropdown as $value => $label): ?>
+                                        <li>
+                                            <input type="checkbox" id="<?= htmlspecialchars($value); ?>" 
+                                                <?php if (isset($row[$value]) && $row[$value] == 1): ?>checked<?php endif; ?> >
+                                            <label for="<?= htmlspecialchars($value); ?>"><?= htmlspecialchars($label); ?></label>
                                         </li>
-                                        <li><input type="checkbox" id="dsc_subscriber"> <label for="dsc_subscriber">dsc_subscriber</label></li>
-                                        <li><input type="checkbox" id="dsc_reseller"> <label for="dsc_reseller">dsc_reseller</label></li>
-                                        <li><input type="checkbox" id="pan"> <label for="pan">pan</label></li>
-                                        <li><input type="checkbox" id="it_returns"> <label for="it_returns">it_returns</label></li>
-                                        <li><input type="checkbox" id="tan"> <label for="tan">tan</label></li>
-                                        <li><input type="checkbox" id="e_tds"> <label for="e_tds">e_tds</label></li>
-                                        <li><input type="checkbox" id="gst_fees"> <label for="gst_fees">gst_fees</label></li>
-                                        <li><input type="checkbox" id="other_services"> <label for="other_services">other_services</label></li>
-                                        <li><input type="checkbox" id="psp"> <label for="psp">psp</label></li>
-                                        <li><input type="checkbox" id="dsc_token"> <label for="dsc_token">dsc_token</label></li>
-                                        <li><input type="checkbox" id="e_tender"> <label for="e_tender">e_tender</label></li>
-                                        <li><input type="checkbox" id="sales"> <label for="sales">sales</label></li>
-                                        <li><input type="checkbox" id="trade_mark"> <label for="trade_mark">trade_mark</label></li>
-                                        <li><input type="checkbox" id="patent"> <label for="patent">patent</label></li>
-                                        <li><input type="checkbox" id="copy_right"> <label for="copy_right">copy_right</label></li>
-                                        <li><input type="checkbox" id="industrial_design"> <label for="industrial_design">industrial_design</label></li>
-                                        <li><input type="checkbox" id="trade_secret"> <label for="trade_secret">trade_secret</label></li>
-                                        <li><input type="checkbox" id=" advocade_case"> <label for=" advocade_case">advocade_case</label></li>
-                                    </ul>
+                                    <?php endforeach; ?>
+                                </ul>
                                     <span class="optext maxselected">0 selected</span>
                                 </div>  
                                 <br>
@@ -1142,17 +1115,8 @@ if (!empty($row['display_order'])) {
                                         <!-- Data will be appended here -->
                                     </tbody>
                                 </table>
-                                <!-- Include DataTable CSS -->
-                                <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.2.1/css/dataTables.dataTables.min.css">
-
-                                <!-- Include DataTable JS -->
-                                <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/2.2.1/js/dataTables.min.js"></script>
-
-                            <script>
                                 
-                                $(document).ready(function() {
-                                    $('#dataforsale').DataTable();
-                                });
+                            <script>
                                 const dropdownBtn = document.querySelector('.dropdown-btn');
                                 const dropdown = document.querySelector('.multiselect-dropdown');
                                 const selectAllCheckbox = document.getElementById('selectAll');
@@ -1272,6 +1236,7 @@ if (!empty($row['display_order'])) {
                                 });
                                 
                                 $(document).ready(function() {
+                                    let table = new DataTable('#dataforsale');
                                     $('#salesPeriod').val('lastday');
                                     $('.multiselect-dropdown-list input[type="checkbox"]').prop('checked', true);
                                     updateData();
@@ -1285,8 +1250,6 @@ if (!empty($row['display_order'])) {
                                             selectedPortfolios.push($(this).attr('id'));
                                         });
 
-                                        // console.log('Selected Period:', selectedPeriod);
-                                        // console.log('Selected Portfolios:', selectedPortfolios);
                                         // Send AJAX request
                                         $.ajax({
                                             url: 'html/fetch_dash.php',
@@ -1313,9 +1276,6 @@ if (!empty($row['display_order'])) {
                                                     );
                                                 });
 
-                                                // Reinitialize the DataTable
-                                                $('#dataforsale').DataTable().clear().destroy();
-                                                $('#dataforsale').DataTable();
                                             },
                                             error: function(xhr, status, error) {
                                                 console.error('Request failed: ' + error);
@@ -1335,7 +1295,6 @@ if (!empty($row['display_order'])) {
                                     });
 
                                     // Initialize DataTable
-                                    $('#dataforsale').DataTable();
                                     updateData();
                                 });
 
