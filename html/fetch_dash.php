@@ -61,14 +61,15 @@ if(isset($_POST['id']))
     $con->close();
 }
 
+
 if(isset($_POST['salesPeriod']) && isset($_POST['selectedPortfolios']))
 {
+    $salesPeriod = $_POST['salesPeriod'];  // Selected sales period
+    $selectedPortfolios = $_POST['selectedPortfolios'];  // Array of selected portfolios
     
-        $salesPeriod = $_POST['salesPeriod'];  // Selected sales period
-        $selectedPortfolios = $_POST['selectedPortfolios'];  // Array of selected portfolios
     // Initialize an empty response array
     $response = [];
-    
+
     // Define column mappings for each portfolio
     $columnMappings = [
         'e_tds' => ['dates' => 'receipt_date', 'fees' => 'fees', 'fees_received' => 'fees_received'],
@@ -83,64 +84,79 @@ if(isset($_POST['salesPeriod']) && isset($_POST['selectedPortfolios']))
         'trade_secret' => ['dates' => 'date_of_filling', 'fees' => 'billing_amount', 'fees_received' => 'fees_recived'],
         'advocade_case' => ['dates' => 'file_date', 'fees' => 'fees', 'fees_received' => 'fees_received'],
     ];
-    
+
     // Check if portfolios are selected
     if (!empty($selectedPortfolios)) {
         // Define the date condition based on the selected period
         $dateCondition = '';
         switch ($salesPeriod) {
             case 'lastday':
-                $dateCondition = "WHERE STR_TO_DATE({dates}, '%Y-%b-%d') >= CURDATE() - INTERVAL 1 DAY";
+                $dateCondition = "CURDATE() - INTERVAL 1 DAY";
                 break;
             case 'lasttwoday':
-                $dateCondition = "WHERE STR_TO_DATE({dates}, '%Y-%b-%d') >= CURDATE() - INTERVAL 2 DAY";
+                $dateCondition = "CURDATE() - INTERVAL 2 DAY";
                 break;
             case 'lastthreeday':
-                $dateCondition = "WHERE STR_TO_DATE({dates}, '%Y-%b-%d') >= CURDATE() - INTERVAL 3 DAY";
+                $dateCondition = "CURDATE() - INTERVAL 3 DAY";
                 break;
             case 'lastfourday':
-                $dateCondition = "WHERE STR_TO_DATE({dates}, '%Y-%b-%d') >= CURDATE() - INTERVAL 4 DAY";
+                $dateCondition = "CURDATE() - INTERVAL 4 DAY";
                 break;
             case 'lastfiveday':
-                $dateCondition = "WHERE STR_TO_DATE({dates}, '%Y-%b-%d') >= CURDATE() - INTERVAL 5 DAY";
+                $dateCondition = "CURDATE() - INTERVAL 5 DAY";
                 break;
             case 'lastMonth':
-                $dateCondition = "WHERE STR_TO_DATE({dates}, '%Y-%b-%d') >= CURDATE() - INTERVAL 1 MONTH";
+                $dateCondition = "CURDATE() - INTERVAL 1 MONTH";
                 break;
             case 'lastYear':
-                $dateCondition = "WHERE STR_TO_DATE({dates}, '%Y-%b-%d') >= CURDATE() - INTERVAL 1 YEAR";
+                $dateCondition = "CURDATE() - INTERVAL 1 YEAR";
                 break;
             case 'allrecord':
             default:
-                $dateCondition = ''; // No filtering for all records
+                // No date condition for 'allrecord'
+                $dateCondition = ''; // This will fetch all records
                 break;
         }
 
         // Loop through selected portfolios and execute query for each
-        $response = []; // Initialize the response array
         foreach ($selectedPortfolios as $table) {
             // Use column mappings for the selected table
             $columns = $columnMappings[$table] ?? ['dates' => 'date', 'fees' => 'fees', 'fees_received' => 'fees_received'];
 
-            // Replace placeholder in the date condition
-            $currentDateCondition = str_replace('{dates}', $columns['dates'], $dateCondition);
+            // If the period is 'allrecord', no specific date condition is applied
+            if ($dateCondition) {
+                // Replace placeholder in the date condition
+                $currentDateCondition = str_replace('{dates}', $columns['dates'], $dateCondition);
 
-            // Specific tables requiring a specific date format
-            $specificDateTables = ['copy_right', 'patent', 'trade_mark', 'trade_secret'];
-            
-            // Construct the query
-            if (in_array($table, $specificDateTables)) {
-                $query = "
-                    SELECT 
-                        '{$table}' AS table_name,
-                        transaction_id,
-                        client_name,
-                        {$columns['dates']} AS date,
-                        {$columns['fees']} AS fees,
-                        {$columns['fees_received']} AS fees_received
-                    FROM `{$table}`
-                    WHERE STR_TO_DATE({$columns['dates']}, '%Y-%m-%d') >= CURDATE() - INTERVAL 1 DAY";  // This is for the specific date tables
+                // Specific tables requiring a specific date format
+                $specificDateTables = ['copy_right', 'patent', 'trade_mark', 'trade_secret'];
+
+                // Construct the query
+                if (in_array($table, $specificDateTables)) {
+                    $query = "
+                        SELECT 
+                            '{$table}' AS table_name,
+                            transaction_id,
+                            client_name,
+                            {$columns['dates']} AS date,
+                            {$columns['fees']} AS fees,
+                            {$columns['fees_received']} AS fees_received
+                        FROM `{$table}`
+                        WHERE STR_TO_DATE({$columns['dates']}, '%Y-%m-%d') >= $currentDateCondition";
+                } else {
+                    $query = "
+                        SELECT 
+                            '{$table}' AS table_name,
+                            transaction_id,
+                            client_name,
+                            {$columns['dates']} AS date,
+                            {$columns['fees']} AS fees,
+                            {$columns['fees_received']} AS fees_received
+                        FROM `{$table}`
+                        WHERE STR_TO_DATE({$columns['dates']}, '%Y-%b-%d') >= $currentDateCondition";
+                }
             } else {
+                // Query without date filter for 'allrecord'
                 $query = "
                     SELECT 
                         '{$table}' AS table_name,
@@ -149,8 +165,7 @@ if(isset($_POST['salesPeriod']) && isset($_POST['selectedPortfolios']))
                         {$columns['dates']} AS date,
                         {$columns['fees']} AS fees,
                         {$columns['fees_received']} AS fees_received
-                    FROM `{$table}`
-                    {$currentDateCondition}";
+                    FROM `{$table}`";
             }
 
             // Execute the query
@@ -161,10 +176,11 @@ if(isset($_POST['salesPeriod']) && isset($_POST['selectedPortfolios']))
                 }
             }
         }
+    }
+
     header('Content-Type: application/json');
     // Return the response as JSON
     echo json_encode($response);
-    }
 }
 
 

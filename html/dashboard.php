@@ -54,7 +54,6 @@ $default_order = [
     'payment_paid',
     'trading_inventory'
 ];
-
 // Define permission-based visibility
 $sections = [];
 
@@ -128,19 +127,6 @@ if (isset($row['legal_notice']) && $row['legal_notice'] == 1) {
     $clientmaster['advocate_case'] = 'advocate_case'; 
 }
 
-// Convert to JSON and send via POST request to featch_clients.php
-$clientmaster_json = json_encode($clientmaster);
-
-$ch = curl_init();
-curl_setopt($ch, CURLOPT_URL, 'http://localhost/Vowel/html/fetch_clients.php');
-curl_setopt($ch, CURLOPT_POST, 1);
-curl_setopt($ch, CURLOPT_POSTFIELDS, $clientmaster_json);
-curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-
-$responseData = curl_exec($ch);
-curl_close($ch);
-
 $sections = array_unique($sections);
 
 // Fetch user-defined order if available
@@ -156,7 +142,6 @@ if (!empty($row['display_order'])) {
     $sections = array_merge(array_intersect($default_order, $sections), array_diff($sections, $default_order));
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -762,58 +747,72 @@ if (!empty($row['display_order'])) {
                                 </div>
                             </form>
 
-                            <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                             <script>
-    // Step 1: Populate the client dropdown
-    let clientList = <?php echo $responseData; ?>; // PHP to JavaScript data transfer
-    let clientDropdown = document.getElementById('client');
-    clientDropdown.innerHTML = '<option value="">Choose...</option>'; // Clear previous options
+                                //Pass PHP client data to JavaScript
+                                let client_array = <?php echo json_encode($clientmaster); ?>;
+                                
+                                //Fetch client data from PHP using AJAX
+                                fetch('html/fetch_clients.php', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                    },
+                                    body: JSON.stringify({ clientmaster: client_array }),
+                                })
+                                .then(response => response.json())  // Parse the response as JSON
+                                .then(data => {
+                                    console.log('Data passed:', data);  // Log the returned data for debugging
 
-    // Create options dynamically based on clientList
-    clientList.forEach(client => {
-        let option = document.createElement('option');
-        option.value = client.id; // Use client ID as the value
-        option.textContent = client.client_name; // Display client name as text
-        clientDropdown.appendChild(option);
-    });
+                                    //Populate the dropdown with client data
+                                    let clientDropdown = document.getElementById('client');  // Get the dropdown element
+                                    clientDropdown.innerHTML = '<option value="">Choose...</option>';  // Clear previous options
 
-    // Step 2: Fetch client details when the dropdown selection changes
-    clientDropdown.addEventListener('change', function() {
-        let clientId = this.value; // Get selected client ID
-        if (clientId) {
-            fetchClientDetails(clientId); // Fetch client details by ID
-        } else {
-            // Clear form if no client is selected
-            $('#clientForm').find('input').val('');
-        }
-    });
+                                    // Create options dynamically
+                                    data.forEach(client => {
+                                        let option = document.createElement('option');  // Create a new option element
+                                        option.value = client.id;  // Set client ID as the value
+                                        option.textContent = client.client_name;  // Display the client name
+                                        clientDropdown.appendChild(option);  // Append the option to the dropdown
+                                    });
 
-    // Function to fetch client details using AJAX
-    function fetchClientDetails(clientId) {
-        $.ajax({
-            url: 'html/fetch_dash.php', // Server-side script for fetching details
-            type: 'POST',
-            data: {
-                id: clientId // Send the selected client ID
-            },
-            dataType: 'json',
-            success: function(data) {
-                // Step 3: Populate form fields with fetched client details
-                if (data) {
-                    $('#company').val(data.company_name);
-                    $('#contact').val(data.contact_person);
-                    $('#mobile').val(data.mobile_no);
-                    $('#email').val(data.email_1);
-                    $('#state').val(data.state);
-                    $('#city').val(data.city);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('Error fetching client details:', error);
-            }
-        });
-    }
-</script>
+                                    //Add event listener to fetch client details when a client is selected
+                                    clientDropdown.addEventListener('change', function() {
+                                        let clientId = this.value;  // Get the selected client ID
+                                        if (clientId) {
+                                            fetchClientDetails(clientId);  // Fetch client details if a client is selected
+                                        } else {
+                                            // Clear form fields if no client is selected
+                                            $('#clientForm').find('input').val('');
+                                        }
+                                    });
+                                })
+                                .catch(error => console.error('Error:', error));  // Handle any errors
+
+                                //Function to fetch client details based on the selected client ID
+                                function fetchClientDetails(clientId) {
+                                    $.ajax({
+                                        url: 'html/fetch_dash.php',  // PHP script for fetching client details
+                                        type: 'POST',
+                                        data: { id: clientId },  // Send the selected client ID
+                                        dataType: 'json',
+                                        success: function(data) {
+                                            // Populate form fields with fetched client details
+                                            if (data) {
+                                                $('#company').val(data.company_name);
+                                                $('#contact').val(data.contact_person);
+                                                $('#mobile').val(data.mobile_no);
+                                                $('#email').val(data.email_1);
+                                                $('#state').val(data.state);
+                                                $('#city').val(data.city);
+                                            }
+                                        },
+                                        error: function(xhr, status, error) {
+                                            console.error('Error fetching client details:', error);
+                                        }
+                                    });
+                                }
+                            </script>
+
                         <?php } elseif ($section == 'attendance_report') { ?>
                             <div class="d-flex align-items-center justify-content-between mb-3">
                                 <h5>Attendance Report</h5>
@@ -1316,9 +1315,6 @@ if (!empty($row['display_order'])) {
         </div>
     </div>
 </body>
-
-</html>
-
 </html>
 <?php
 include_once 'ltr/header-footer.php';
