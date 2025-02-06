@@ -1,309 +1,204 @@
 <?php
-include_once 'ltr/header.php'; // Including header
-include_once 'connection.php';  // Database connection
 
-// Fetch client names from client_master table
-$sql = "SELECT client_name FROM client_master";
-$result = $con->query($sql);
+include_once 'ltr/header.php';
+include_once 'connection.php';
 
-// Prepare an array to store client names
-$clients = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $clients[] = $row['client_name'];
-    }
-} else {
-    $clients = [];
+if (!isset($_SESSION['company_id']) || !isset($_SESSION['user_id'])) {
+    echo "<script>alert('Unauthorized access!'); window.location.href='login.php';</script>";
+    exit();
 }
 
-$portfolio_services = ['pan', 'tan', 'e_tds', 'other_services', 'it_returned', 'e_tender', 'gst_fees', 'dsc_subscriber', 'dsc_token', 'dsc_reseller'];
+$company_id = $_SESSION['company_id'];
+$user_id = $_SESSION['user_id'];
 
+// Fetch user data for the given company ID and user ID
+$fetch_user_data = "SELECT * FROM `users` WHERE `company_id` = '$company_id' AND `id` = '$user_id'";
+$run_fetch_user_data = mysqli_query($con, $fetch_user_data);
+$row = mysqli_fetch_array($run_fetch_user_data);
+
+// Define column mappings
+$columns = [
+    "pan" => "pan",
+    "tan" => "tan",
+    "e_tds" => "e_tds",
+    "it_returns" => "it_returns",
+    "e_tender" => "e_tender",
+    "gst" => "gst_fees",
+    "dsc_subscriber" => "dsc_subscriber",
+    "dsc_reseller" => "dsc_reseller",
+    "other_services" => "other_services",
+    "psp" => "psp",
+    "trade_mark" => "trade_mark",
+    "patent" => "patent",
+    "copy_right" => "copy_right",
+    "industrial_design" => "industrial_design",
+    "trade_secret" => "trade_secret",
+    "legal_notice" => "advocade_case"
+];
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Receipt Report</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-  <style>
-    /* Global styles */
-    body {
-        display: flex;
-        margin: 0;
-        font-family: Arial, sans-serif;
-        height: 100vh;
-        overflow: hidden; /* Prevent scrolling the entire page */
-
-    }
-
-    .sidebar {
-        width: 400px;
-        background-color: #f4f4f4;
-        border-right: 1px solid #ccc;
-        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        height: 100vh; 
-    }
-
-    .sidebar-title {
-        font-size: 18px;
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
-
-    .sidebar-section h5 {
-        font-size: 16px;
-        cursor: pointer;
-        color: #333;
-        margin-bottom: 10px;
-    }
-
-    .sidebar-section h5 i {
-        margin-right: 8px;
-    }
-
-    .sidebar-content {
-        margin-bottom: 20px;
-        padding-left: 10px;
-    }
-
-    .sidebar-content .form-group {
-        margin-bottom: 15px;
-    }
-
-    .custom-btn {
-        background-color: #007bff; /* Blue color */
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-    }
-
-    .custom-btn:hover {
-        background-color: #0056b3; /* Darker blue on hover */
-        transform: scale(1.05); /* Slight zoom effect */
-    }
-
-    .main-content {
-        flex: 1;
-        padding: 20px;
-        overflow-y: auto; /* Enable scrolling for the main content */
-        height: 100vh;
-    }
-
-    .report-container {
-        background-color: #fff;
-        border: 1px solid #ddd;
-        padding: 20px;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .dropdown-container {
-        position: relative;
-        margin-bottom: 20px;
-    }
-
-    .dropdown {
-        position: absolute;
-        background-color: white;
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        width: 100%;
-        max-height: 150px;
-        overflow-y: auto;
-        z-index: 1000;
-        padding: 10px;
-    }
-
-    .dropdown label {
-        display: block;
-        margin-bottom: 5px;
-    }
-
-    .dropdown-container .form-control {
-        cursor: pointer;
-    }
-
-    /* Export Button */
-    .btn-success {
-        background-color: #28a745;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-size: 16px;
-        transition: background-color 0.3s, transform 0.2s;
-    }
-
-    .btn-success:hover {
-        background-color: #218838;
-        transform: scale(1.05);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipient Report</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            display: flex;
+            font-family: Arial, sans-serif;
+        }
+        .sidebar {
+            width: 300px;
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            height: 100vh;
+        }
+        .report-section {
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .tableScroll {
+            height: 700px;
+            overflow: auto;
+        }
+        .generate-btn {
+            background-color: green;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .generate-btn:hover {
+            background-color: darkgreen;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="container">
-    <div class="row">
-      <!-- Sidebar with Filters -->
-      <div class="col-md-3 sidebar">
-        <h4 class="sidebar-title">Filters</h4>
-        
-        <!-- Date Range Filter -->
-        <div class="sidebar-section">
-          <h5 onclick="toggleSection('dateSection')"><i class="fas fa-calendar-alt"></i> Date Range</h5>
-          <div id="dateSection" class="sidebar-content">
-            <div class="form-group">
-              <label for="fromDate">From Date:</label>
-              <input type="date" id="fromDate" class="form-control" value="2025-01-01">
+    <div class="sidebar">
+        <h4>Filters</h4>
+        <form id="userReport_form">
+            <div>
+                <label>From Date</label>
+                <input type="date" id="from_Date" name="from_Date" class="form-control" value="<?php echo date('Y-m-d', strtotime("-1 month")); ?>">
             </div>
-            <div class="form-group">
-              <label for="toDate">To Date:</label>
-              <input type="date" id="toDate" class="form-control" value="2025-12-31">
+            <div>
+                <label>To Date</label>
+                <input type="date" id="to_Date" name="to_Date" class="form-control" value="<?php echo date('Y-m-d'); ?>">
             </div>
-          </div>
-        </div>
-
-        <!-- Recipient Dropdown -->
-        <div class="dropdown-container">
-          <label for="recipientSelected">
-            <i class="fa fa-users"></i> Recipient
-          </label>
-          <input type="text" id="recipientSelected" readonly value="All" class="form-control" onclick="toggleDropdown('recipientDropdown')">
-          <div class="dropdown" id="recipientDropdown" style="display: none;">
-            <label>
-              <input type="checkbox" class="recipient-checkbox" value="All" onclick="handleCheckboxClick('recipient', this)"> All
-            </label>
-            <?php 
-            if (empty($clients)) {
-                echo "<p>No clients available</p>";
-            } else {
-                foreach ($clients as $client) {
-                    echo '<label>
-                            <input type="checkbox" class="recipient-checkbox" value="' . htmlspecialchars($client) . '" onclick="handleCheckboxClick(\'recipient\', this)"> ' . htmlspecialchars($client) . '
-                          </label>';
-                }
-            }
-            ?>
-          </div>
-        </div>
-
-        <!-- Portfolio Dropdown -->
-        <div class="dropdown-container">
-          <label for="portfolioSelected">
-            <i class="fa fa-briefcase"></i> Portfolio
-          </label>
-          <input type="text" id="portfolioSelected" readonly value="All" class="form-control" onclick="toggleDropdown('portfolioDropdown')">
-          <div class="dropdown" id="portfolioDropdown" style="display: none;">
-            <label>
-              <input type="checkbox" class="portfolio-checkbox" value="All" onclick="handleCheckboxClick('portfolio', this)"> All
-            </label>
-            <?php foreach ($portfolio_services as $service): ?>
-                <label>
-                  <input type="checkbox" class="portfolio-checkbox" value="<?php echo $service; ?>" onclick="handleCheckboxClick('portfolio', this)"> <?php echo ucfirst($service); ?>
-                </label>
-            <?php endforeach; ?>
-          </div>
-        </div>
-
-        <!-- Generate Report Button -->
-        <button type="button" class="btn custom-btn mt-3 w-100" onclick="generateReport()">Generate Report</button>
-        </div>
-
-      <!-- Main Content Area -->
-      <div class="col-md-9 main-content">
-        <div class="header">
-          <h2 class="text-center mb-4">📊 Recipient Report</h2>
-        </div>
-
-        <div class="report-container">
-          <h3 class="report-title">Generated Report</h3><br>
-          <div class="export-options">
-            <button class="btn btn-success" onclick="exportToExcel()">Export to Excel</button>
-          </div><br>
-          <div class="table-responsive">
-            <div id="reportContent" class="mt-3"></div>
-          </div>
-        </div>
-      </div>
+            <div>
+                <label>Recipients</label>
+                <select class="form-control" name="select_user[]" id="select_user" multiple>
+                    <?php
+                    $user_query = "SELECT * FROM `client_master` WHERE `company_id` = '$company_id' ORDER BY `client_name`";
+                    $user_result = mysqli_query($con, $user_query);
+                    while ($client_row = mysqli_fetch_array($user_result)) {
+                        echo '<option value="' . $client_row['transaction_id'] . '">' . $client_row['client_name'] . '</option>';
+                    }
+                    ?>
+                </select>
+            </div>
+            <div>
+                <label>Portfolio</label>
+                <select class="form-control" name="portfolio[]" id="portfolio" multiple>
+                    <?php
+                    foreach ($columns as $column => $label) {
+                        if (!empty($row[$column]) && $row[$column] == 1) {
+                            echo "<option value='$column'>$label</option>";
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
+            <button class="generate-btn" id="submitReport" type="submit">Show Report</button>
+        </form>
     </div>
-  </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-  <script>
-    // Toggle dropdown visibility
-    function toggleDropdown(dropdownId) {
-      const dropdown = document.getElementById(dropdownId);
-      dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
-    }
+    <div class="report-section">
+        <h2>📊 Recipient Report</h2>
+        <div class="tableScroll">
+            <div id="fetch_result">
+                <table class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>No</th>
+                            <th>Date</th>
+                            <th>Service ID</th>
+                            <th>Recipient Name</th>
+                            <th>Fees</th>
+                            <th>Fees Received</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="6" class="text-center">
+                                <h4>Fill Details to see Report!</h4>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-    // Handle checkbox selection and update the field
-    function handleCheckboxClick(type, checkbox) {
-      const selectedValues = getSelectedValues(type);
-      document.getElementById(type + 'Selected').value = selectedValues.join(', ') || 'All';
-      fetchReportData();
-    }
+    <script>
+        $(document).ready(function() {
+            $('#userReport_form').submit(function(e) {
+                e.preventDefault();
+                var fromDate = $('#from_Date').val();
+                var toDate = $('#to_Date').val();
+                var portfolio = $('#portfolio').val();
+                var users = $('#select_user').val();
 
-    // Get selected values from checkboxes
-    function getSelectedValues(type) {
-      const checkboxes = document.querySelectorAll(`.${type}-checkbox:checked`);
-      return Array.from(checkboxes).map(cb => cb.value);
-    }
+                if (fromDate && toDate && portfolio.length > 0 && users.length > 0) {
+                    $.ajax({
+                        url: "html/recipient_reportAjax.php",
+                        method: "POST",
+                        data: $(this).serialize(),
+                        success: function(data) {
+                            $('#fetch_result').html(data);
+                        },
+                        error: function() {
+                            alert("An error occurred. Please try again.");
+                        }
+                    });
+                } else {
+                    alert("Please fill all fields.");
+                }
+            });
 
-    // Function to fetch report data based on selected filters
-    function fetchReportData() {
-      const recipients = getSelectedValues('recipient');
-      const portfolios = getSelectedValues('portfolio');
+            $('#portfolio').on('mousedown', function(e) {
+                e.preventDefault();
+                var scrollTop = $(this).scrollTop();
+                $(this).focus();
+                $(this).scrollTop(scrollTop);
+                return false;
+            });
 
-      let reportData = `
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Client Name</th>
-              <th>Service</th>
-              <th>Fees</th>
-              <th>Fees Receipt</th>
-            </tr>
-          </thead>
-          <tbody>
-      `;
+            $('#select_user').on('mousedown', function(e) {
+                e.preventDefault();
+                var scrollTop = $(this).scrollTop();
+                $(this).focus();
+                $(this).scrollTop(scrollTop);
+                return false;
+            });
 
-      // Example data for each selected portfolio
-      portfolios.forEach(portfolio => {
-        recipients.forEach(recipient => {
-          reportData += `
-            <tr>
-              <td>${recipient}</td>
-              <td>${portfolio}</td>
-              <td>Example Fee</td>
-              <td>Example Receipt</td>
-            </tr>
-          `;
+            $('#portfolio option, #select_user option').on('mousedown', function(e) {
+                e.preventDefault();
+                $(this).prop('selected', !$(this).prop('selected'));
+                $(this).parent().change();
+                return false;
+            });
         });
-      });
+    </script>
 
-      reportData += '</tbody></table>';
-      document.getElementById('reportContent').innerHTML = reportData;
-    }
-
-    // Export data to Excel
-    function exportToExcel() {
-      const table = document.getElementById('reportContent').querySelector('table');
-      if (table) {
-        const wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
-        XLSX.writeFile(wb, "report.xlsx");
-      }
-    }
-  </script>
+    <?php include_once 'ltr/header-footer.php'; ?>
 </body>
-</html>
 
-<?php
-include_once 'ltr/header-footer.php'; // Including footer
-?>
+</html>
