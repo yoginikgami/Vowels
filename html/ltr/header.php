@@ -198,6 +198,21 @@ $result_comapny_name = strtoupper($first_character . $second_character_after_spa
 
 
 $_SESSION['company_name_for_transacrion_id'] = $result_comapny_name;
+
+
+if (isset($_SESSION['company_id'])) {
+    $company_id = $_SESSION['company_id'];
+    // Fetch user data for the given company ID and user ID
+    $fetch_user_data = "SELECT * FROM `users` WHERE `company_id` = '$company_id' AND `id` = '" . $_SESSION['user_id'] . "'";
+    $run_fetch_user_data = mysqli_query($con, $fetch_user_data);
+    $permission_row = mysqli_fetch_array($run_fetch_user_data);
+}
+$sections = [];
+if(($permission_row['type']== 1) || ($permission_row['document_records'] == 1))
+{
+    $sections = 'document_records';
+}
+
 ?>
 <!DOCTYPE html>
 <html dir="ltr" lang="en">
@@ -285,7 +300,7 @@ $_SESSION['company_name_for_transacrion_id'] = $result_comapny_name;
         }
 
         body {
-            background: #8C8C8C; //#adb5bb;
+            background: #8C8C8C; 
             color: #000;
             position: relative;
             padding-bottom: 56px;
@@ -348,7 +363,7 @@ $_SESSION['company_name_for_transacrion_id'] = $result_comapny_name;
         input[type="submit"]:disabled:hover,
         input[type="email"]:disabled:hover,
         input[type="checkbox"]:disabled:hover {
-            //background: #dddddd;
+            
             cursor: not-allowed;
         }
 
@@ -357,12 +372,12 @@ $_SESSION['company_name_for_transacrion_id'] = $result_comapny_name;
         input[type="text"]:read-only:hover,
         input[type="number"]:read-only:hover,
         input[type="email"]:read-only:hover {
-            //background: #dddddd;
+            /* //background: #dddddd; */
             cursor: not-allowed;
         }
 
         .left-menu {
-            //height: 100%;
+            /* //height: 100%; */
             min-height: 100vh;
             position: fixed;
             overflow-y: scroll;
@@ -401,23 +416,23 @@ $_SESSION['company_name_for_transacrion_id'] = $result_comapny_name;
         }
 
         .sidebar-nav ul .sidebar-item .sidebar-link.active {
-            background-color: #72C7EC; //#e36127;
+            background-color: #72C7EC;/* //#e36127;*/
             color: #FFF;
             font-weight: bold;
-            //content: "-->";
-            //font-family: Font Awesome 5 Free;
+            /* //content: "-->";
+            //font-family: Font Awesome 5 Free; */
         }
 
         .sidebar-nav ul .sidebar-item.selected>.sidebar-link {
             background: #27a9e3;
-            //background: #E36127; //a9e327
+            /* //background: #E36127; //a9e327 */
             opacity: 1;
         }
 
         .sidebar-nav ul .sidebar-item ul .sidebar-link {
             background: #FFF;
             color: #000;
-            //opacity: 1;
+            /* //opacity: 1; */
         }
 
         .sidebar-nav ul .sidebar-item ul .sidebar-link .mdi,
@@ -454,7 +469,7 @@ $_SESSION['company_name_for_transacrion_id'] = $result_comapny_name;
         .pageHeading {
             padding: 10px 16px;
             background: #FFF;
-            //color: #f1f1f1;
+            /* //color: #f1f1f1; */
             z-index: 5000;
             align-self: center;
         }
@@ -463,11 +478,11 @@ $_SESSION['company_name_for_transacrion_id'] = $result_comapny_name;
             position: fixed;
             top: 64px;
             width: 77%;
-            //max-width: 100%;
-            //color: #f1f1f1;
+            /* //max-width: 100%;
+            //color: #f1f1f1; */
             z-index: 1;
             align-self: center;
-            //border: 1px solid red;
+            /* //border: 1px solid red; */
         }
 
         .after-heading {
@@ -488,8 +503,8 @@ $_SESSION['company_name_for_transacrion_id'] = $result_comapny_name;
         top: 0px;
     }*/
         #speechinput {
-            width: 25px; // just wide enough to show mic icon
-            height: 25px; // just high enough to show mic icon
+            width: 25px; /*// just wide enough to show mic icon*/
+            height: 25px; /*// just high enough to show mic icon*/
             cursor: pointer;
             border: none;
             position: absolute;
@@ -499,10 +514,10 @@ $_SESSION['company_name_for_transacrion_id'] = $result_comapny_name;
         }
 
         .modal-header .logo {
-            //border: 1px solid red;
-            width: 160px !important; //70px
+            /*//border: 1px solid red;*/
+            width: 160px !important; /*//70px*/
             height: 80px !important;
-            //min-height: 1% !important;
+            /*//min-height: 1% !important;
         }
 
         .preloader {
@@ -1689,6 +1704,7 @@ $_SESSION['company_name_for_transacrion_id'] = $result_comapny_name;
                 <div class="row">
                     <div class="col-12 d-flex no-block align-items-center">
                         <?php
+                        
                         $filename = basename($_SERVER['PHP_SELF'], '.php');
                         //echo $filename;
 
@@ -2207,11 +2223,14 @@ $_SESSION['company_name_for_transacrion_id'] = $result_comapny_name;
                                             </form>";
                                         }
                                         if ($filename == "tax_invoice") {
-                                            echo "<button class='btn btn-primary btn-sm mr-1' id='view_Service'><i class='fa fa-plus'></i> Add (T&Cs)</button>
+                                            if($sections == 'document_records'){
+                                                echo "<button class='btn btn-primary btn-sm mr-1' id='view_Service'><i class='fa fa-plus'></i> Add (T&Cs)</button>
                                             <button class='btn btn-success btn-sm mr-1' id='add_new_TaxInvoice'><i class='fas fa-plus'></i> Add New</button>
                                             <form method='post' id='Export_TaxInvoiceForm' action='Export_Tax_Invoice'>
                                                 <button type='submit' name='Export_Tax_Invoice' class='btn btn-secondary btn-sm' id='export_gst'><i class='fas fa-file-export'></i> Export</button>
                                             </form>";
+                                            }
+                                            
                                         }
 
 
@@ -2220,11 +2239,14 @@ $_SESSION['company_name_for_transacrion_id'] = $result_comapny_name;
                                             //  echo "<form method='post' action='activeInactiveExport.php'><button class='btn btn-secondary btn-sm mr-1' id='add_new_TitleData' name='activeInactiveExport'><i class='fas fa-plus'></i> Export</button></form>&nbsp;";
                                         }
                                         if ($filename == "retail_invoice") {
-                                            echo "<button class='btn btn-primary btn-sm mr-1' id='view_Service'><i class='fa fa-plus'></i> Add (T&Cs)</button>
-                                            <button class='btn btn-success btn-sm mr-1' id='add_new_RetailInvoice'><i class='fas fa-plus'></i> Add New</button>
-                                            <form method='post' id='Export_RetailInvoiceForm' action='Export_Retail_Invoice'>
-                                                <button type='submit' name='Export_Retail_Invoice' class='btn btn-secondary btn-sm' id='export_gst'><i class='fas fa-file-export'></i> Export</button>
-                                            </form>";
+                                            if($sections == 'document_records'){
+                                                    echo "<button class='btn btn-primary btn-sm mr-1' id='view_Service'><i class='fa fa-plus'></i> Add (T&Cs)</button>
+                                                <button class='btn btn-success btn-sm mr-1' id='add_new_RetailInvoice'><i class='fas fa-plus'></i> Add New</button>
+                                                <form method='post' id='Export_RetailInvoiceForm' action='Export_Retail_Invoice'>
+                                                    <button type='submit' name='Export_Retail_Invoice' class='btn btn-secondary btn-sm' id='export_gst'><i class='fas fa-file-export'></i> Export</button>
+                                                </form>";
+                                            }
+                                            
                                         }
                                         if ($filename == "credit_note") {
                                             echo "<button class='btn btn-success btn-sm mr-1' id='add_new_CreditNote'><i class='fas fa-plus'></i> Add New</button>

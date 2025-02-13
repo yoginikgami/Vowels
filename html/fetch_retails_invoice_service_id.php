@@ -4,11 +4,12 @@ include_once 'connection.php';
 
 if (isset($_POST['empId'])) {
     $empId = mysqli_real_escape_string($con, $_POST['empId']); // Prevent SQL Injection
-    $empYear = mysqli_real_escape_string($con, $_POST['empYear']);
-    $fetch_data = "SELECT * FROM tax_invoice WHERE tax_invoice_number = '$empId' and `financial_year`='".$empYear."'";
+
+   echo $fetch_data = "SELECT * FROM retail_invoice WHERE retail_invoice_number = '$empId'";
     $run_data = mysqli_query($con, $fetch_data);
 
     // $data = array();
+    //echo $empId;
     
 while ($row = mysqli_fetch_assoc($run_data)) {
     $service_ids = explode(',', $row['service_id']);
@@ -121,6 +122,8 @@ while ($row = mysqli_fetch_assoc($run_data)) {
             // Handle the default case if needed
             break;
     }
+    
+
         // Fetch corresponding data from the appropriate table
         if (!empty($table_name)) {
             $fetchIdForServiceId = "SELECT * FROM `$table_name` WHERE `transaction_id` = '$service_id'";
@@ -140,13 +143,11 @@ while ($row = mysqli_fetch_assoc($run_data)) {
             // Output the client name in a <td> element
             echo "<td>$portfolio_name</td>";
             echo "</tr>";
+            
         }
     }
 }
-
-
-
-    // echo $data;
+// echo $data;
 } else {
     echo "empId not set";
 }

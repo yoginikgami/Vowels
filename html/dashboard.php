@@ -122,9 +122,9 @@ if (isset($row['gst']) && $row['gst'] == 1) {
     $clientmaster['gst_fees'] = 'gst_fees'; 
 }
 if (isset($row['legal_notice']) && $row['legal_notice'] == 1) {
-    $dropdown_options['advocate_case'] = 'advocate_case'; 
-    $multiple_dropdown['advocate_case'] = 'advocate_case';
-    $clientmaster['advocate_case'] = 'advocate_case'; 
+    $dropdown_options['advocade_case'] = 'advocasde_case'; 
+    $multiple_dropdown['advocade_case'] = 'advocade_case';
+    $clientmaster['advocade_case'] = 'advocade_case'; 
 }
 
 $sections = array_unique($sections);
@@ -507,8 +507,7 @@ if (!empty($row['display_order'])) {
                                             label: 'Sales Fees',
                                             data: salesData,
                                             backgroundColor: [
-                                                '#FF6384', '#36A2EB', '#FFCE56', '#38a832', '#ff1a1a', '#88cc00',
-                                                '#4d79ff', '#bf8040', '#ff4d94', '#FF6384', '#36A2EB', '#FFCE56'
+                                                '#FF6384', '#36A2EB', '#FFCE56', '#38a832', '#ff1a1a', '#88cc00','#4d79ff', '#bf8040', '#FF6384', '#36A2EB', '#FFCE56', '#38a832', '#ff1a1a', '#88cc00','#4d79ff', '#bf8040'    
                                             ],
                                             borderColor: '#36A2EB',
                                             tension: 0.1
@@ -1082,7 +1081,7 @@ if (!empty($row['display_order'])) {
                              <!-- <div id="result" style="margin-top: 20px; font-size: 18px; color: green;"></div>  -->
                                 <div class="multiselect-dropdown hide" style="margin-left: 150px;">
                                     
-                                <ul class="multiselect-dropdown-list" style="center; justify-content: flex-start;">
+                                <ul class="multiselect-dropdown-list" style=" justify-content: flex-start;">
                                     <input class="multiselect-dropdown-search" type="text" placeholder="Search...">
                                     
                                     <li class="multiselect-dropdown-all-selector">

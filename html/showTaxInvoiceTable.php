@@ -369,9 +369,9 @@ $total_pages = ceil($total_rows / $no_of_records_per_page);
         // Handle the Pay button click
         $('.viewButton').click(function() {
             var empId = $(this).data('emp-id');
-            var empYear = $(this).data('emp-year');
+             var empYear = $(this).data('emp-year');
             $('#empIdModal1').val(empId);
-            $('#empIdModal112').val(empYear);
+             $('#empIdModal112').val(empYear);
             $.ajax({
                 url: 'html/fetch_tax_invoice_service_id.php', // Replace with your PHP script path
                 type: 'POST',

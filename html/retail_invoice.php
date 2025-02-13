@@ -1,10 +1,13 @@
 <?php 
 	include_once 'ltr/header.php';
 	include_once 'connection.php';
-// 	echo $_SERVER['REMOTE_ADDR'];
 	// include_once 'bulkDeletePopup.php';
 	// include_once 'mailFunction.php';
-	$_SESSION['pageName'] = "tax_invoice";
+	$_SESSION['pageName'] = "retail_invoice";
+	?>
+	
+	<h2><span id="Service-status"></span></h2>
+	<?php
 	
 	date_default_timezone_set('Asia/Kolkata');
 	$alertMsg = "";
@@ -13,7 +16,7 @@
 		if (isset($_POST['gstEditID'])) {
 			$fetch_data = "SELECT * FROM `gst_fees` WHERE `id` = '".$_POST['gstEditID']."'";
 			$run_fetch_data = mysqli_query($con,$fetch_data);
-			$row = mysqli_fetch_array($run_fetch_datfa);
+			$row = mysqli_fetch_array($run_fetch_data);
 			$edit_client_name = $row['client_name'];
 			if ($row['date'] != '') {
 				$edit_date = date('Y-m-d',strtotime($row['date']));
@@ -34,136 +37,93 @@
 			$edit_remarks = $row['remarks'];
 		}
 	}
-	if (isset($_POST['TaxInvoice_save'])) {
-		$fetchLastTransactionId = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '".$DBName."' AND TABLE_NAME = 'tax_invoice'";
-		// echo $fetchLastTransactionId;
-		$run_fetchLastTransactionId = mysqli_query($con,$fetchLastTransactionId);
-		$TaxNumber = "1";
-		if (mysqli_num_rows($run_fetchLastTransactionId) > 0) {
-			$FetchlastTransactionID_row = mysqli_fetch_array($run_fetchLastTransactionId);
-			$TaxNumber = $FetchlastTransactionID_row['AUTO_INCREMENT'];
-		}
-		// $tax_invoice_number = date('Ymd').'-'.$TaxNumber;
-		$tax_invoice_number = $_POST['invoice_number'];
+	if (isset($_POST['RetailInvoice_save'])) {
+		$retail_invoice_number = $_POST['invoice_number'];
 		$reference_number = $_POST['reference_number'];
 		$date = date('Y-M-d',strtotime($_POST['date']));
 		$category = $_POST['category'];
-		$client_name = explode(',',$_POST['client_name']);
+// 		$client_name = $_POST['client_name'];
+        $client_name = explode(',',$_POST['client_name']);
 		$gst_no = $_POST['gst_no'];
 		$serviceIds = $_POST['serviceIds'];
-		$TotalAmount = $_POST['TotalAmount'];
-        $gst_type = $_POST['gst_type'];
-        $cgst = $_POST['cgst'];
-        $sgst = $_POST['sgst'];
-        if (isset($_POST['drawee'])) {
-            $drawee = $_POST['drawee'];
-        } else {
-            $drawee = ''; // or handle the case where 'drawee' is not set, e.g., setting a default value or triggering an error
-        }
-        $c_name=$_POST['c_name'];
-        $igst = $_POST['igst'];
-        $tax_cgst = $_POST['tax_cgst'];
-        $tax_sgst = $_POST['tax_sgst'];
-        $tax_igst = $_POST['tax_igst'];
+		$totalValue = $_POST['totalValue'];
         $totalValue = $_POST['totalValue'];
-        $drawee_gst_no_temp=$_POST['drawee_gst_no_temp'];
+        $drawee = isset($_POST['drawee']) ? $_POST['drawee'] : ''; // Default value if "drawee" is not set
+        $c_name=$_POST['c_name'];
         $client_id=$_POST['client_ID'];
-        $challan_date=$_POST['challan_date'];
-        $challan_no=$_POST['challan_no'];
-        $procure_type=$_POST['procure_type'];
-        // Check if the key "financial_year" exists in the $_POST array
-        if(isset($_POST['financial_year'])) {
-            $financial_year = $_POST['financial_year'];
-            // Now you can use $financial_year without generating a warning
-        } else {
-            // Handle the case where "financial_year" key is not present in $_POST
-            // Maybe set a default value or display an error message to the user
-        }
-       
+        $Drawee_id=$_POST['drawee_ID'];
+        
         $fech_add="select * from client_master where transaction_id='".$client_id."'";
         $run=mysqli_query($con,$fech_add);
         $addres_client_row=mysqli_fetch_array($run);
         $client_address=$addres_client_row['address'];
-        
-		if ($cgst == '') {
-			$cgst = 0;
-		}
-		if ($sgst == '') {
-			$sgst = 0;
-		}
-		if ($igst == '') {
-			$igst = 0;
-		}
 
-		$finalTax = (($cgst + $sgst) + $igst);
-		$checkExistData = "SELECT * FROM `tax_invoice` WHERE `tax_invoice_number` = '".$tax_invoice_number."' and financial_year='".$financial_year."'";
+		$checkExistData = "SELECT * FROM `retail_invoice` WHERE `retail_invoice_number` = '".$retail_invoice_number."'";
 		$run_checkExistData = mysqli_query($con,$checkExistData);
-		
 		if(mysqli_num_rows($run_checkExistData) > 0){
 			$alertMsg = "Record already exist!";
 			$alertClass = "alert alert-danger";
 		} else{
 			$MultipleServiceIds = explode(',', $_POST['serviceIds']);
 			foreach($MultipleServiceIds as $serviceId){
-				
+				// print_r($serviceId);
 				if ($serviceId != "") {
 					$firstUnderscore = explode("_", $serviceId);
 
 					if ($firstUnderscore[1] == 'CLM') {
-						$updatePortfolio = "UPDATE `client_master` SET `tax_invoice_number` = '".$tax_invoice_number."', `previous_balance` = `previous_balance` + round(( `previous_balance`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `client_master` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'GST') {
-						$updatePortfolio = "UPDATE `gst_fees` SET `tax_invoice_number` = '".$tax_invoice_number."', `consulting_fees` = `consulting_fees` + round(( `consulting_fees`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `gst_fees` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'ITR') {
-						$updatePortfolio = "UPDATE `it_returns` SET `tax_invoice_number` = '".$tax_invoice_number."', `fees` = `fees` + round(( `fees`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `it_returns` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'PAN') {
-						$updatePortfolio = "UPDATE `pan` SET `tax_invoice_number` = '".$tax_invoice_number."', `fees` = `fees` + round(( `fees`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `pan` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'TAN') {
-						$updatePortfolio = "UPDATE `tan` SET `tax_invoice_number` = '".$tax_invoice_number."', `fees` = `fees` + round(( `fees`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `tan` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'TDS') {
-						$updatePortfolio = "UPDATE `e_tds` SET `tax_invoice_number` = '".$tax_invoice_number."', `fees` = `fees` + round(( `fees`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `e_tds` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'PSP') {
-						$updatePortfolio = "UPDATE `psp` SET `tax_invoice_number` = '".$tax_invoice_number."', `fees` = `fees` + round(( `fees`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'PSP_COUPON') {
-						$updatePortfolio = "UPDATE `psp_coupon_consumption` SET `tax_invoice_number` = '".$taxs_invoice_number."', `previous_balance` = `previous_balance` + round(( `previous_balance`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'TRD') {
-    					$updatePortfolio = "UPDATE `trade_mark` SET `tax_invoice_number` = '".$tax_invoice_number."', `bill_amt` = `bill_amt` + round(( `bill_amt`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
-    				}else if ($firstUnderscore[1] == 'DA') {
-						$updatePortfolio = "UPDATE `dsc_subscriber` SET `tax_invoice_number` = '".$tax_invoice_number."', `fees` = `fees` + round(( `fees`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'DP') {
-						$updatePortfolio = "UPDATE `dsc_reseller` SET `tax_invoice_number` = '".$tax_invoice_number."', `fees` = `fees` + round(( `fees`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'DT') {
-						$updatePortfolio = "UPDATE `dsc_token` SET `tax_invoice_number` = '".$tax_invoice_number."', `fees` = `fees` + round(( `fees`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'TND') {
-						$updatePortfolio = "UPDATE `e_tender` SET `tax_invoice_number` = '".$tax_invoice_number."', `bill_amu` = `bill_amu` + round(( `bill_amu`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'TSL') { 
-						$updatePortfolio = "UPDATE `sales` SET `tax_invoice_number` = '".$tax_invoice_number."', `billing_amount` = `billing_amount` + round(( `billing_amount`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'PTN') {
-						$updatePortfolio = "UPDATE `patent` SET `tax_invoice_number` = '".$tax_invoice_number."', `billing_amount` = `billing_amount` + round(( `billing_amount`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'COP') {
-						$updatePortfolio = "UPDATE `copy_right` SET `tax_invoice_number` = '".$tax_invoice_number."', `billing_amount` = `billing_amount` + round(( `billing_amount`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'TRS') {
-						$updatePortfolio = "UPDATE `trade_secret` SET `tax_invoice_number` = '".$tax_invoice_number."', `billing_amount` = `billing_amount` + round(( `billing_amount`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'IDS') {
-						$updatePortfolio = "UPDATE `industrial_design` SET `tax_invoice_number` = '".$tax_invoice_number."', `billing_amount` = `billing_amount` + round(( `billing_amount`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `psp` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'ADV') {
-						$updatePortfolio = "UPDATE `advocade_case` SET `tax_invoice_number` = '".$tax_invoice_number."', `fees` = `fees` + round(( `fees`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
+					echo	$updatePortfolio = "UPDATE `advocade_case` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'DA') {
+						$updatePortfolio = "UPDATE `dsc_subscriber` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'DP') {
+						$updatePortfolio = "UPDATE `dsc_reseller` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'TRD') {
+    					$updatePortfolio = "UPDATE `trade_mark` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'COP') {
+    					$updatePortfolio = "UPDATE `copy_right` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'TRS') {
+    					$updatePortfolio = "UPDATE `trade_secret` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'IDS') {
+    					$updatePortfolio = "UPDATE `industrial_design` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'PTN') {
+    					$updatePortfolio = "UPDATE `patent` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'TSL') {
+						$updatePortfolio = "UPDATE `sales` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'DT') {
+						$updatePortfolio = "UPDATE `dsc_token` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'OS') {
-						$updatePortfolio = "UPDATE `other_services` SET `tax_invoice_number` = '".$tax_invoice_number."', `fees` = `fees` + round(( `fees`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `other_services` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'MOR') {
-						$updatePortfolio = "UPDATE `mobile_repairing` SET `tax_invoice_number` = '".$tax_invoice_number."', `fees` = `fees` + round(( `fees`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `mobile_repairing` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'TND') {
+						$updatePortfolio = "UPDATE `e_tender` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == '24G') {
-						$updatePortfolio = "UPDATE `24g` SET `tax_invoice_number` = '".$tax_invoice_number."', `upload_fees` = `upload_fees` + round(( `upload_fees`/100 * $finalTax ),2) WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `24g` SET `retail_invoice_number` = '".$retail_invoice_number."' WHERE `transaction_id` = '".$serviceId."'";
 					}
 					$run_updatePortfolio = mysqli_query($con,$updatePortfolio);
 				}
 			}
-				
-	    	 $TaxInvoice_add_query = "INSERT INTO `tax_invoice`(`address`,`financial_year`,`procure_type`,`client_id`,`drawee_gst`,`company_id`,`drawee`,`c_name`, `tax_invoice_number`, `reference_number`, `billing_date`, `category`, `client_name`, `gst_number`, `service_id`, `taxable_amount`, `gst_type`, `cgst_tax_percentage`, `cgst_tax_amount`, `sgst_tax_percentage`, `sgst_tax_amount`, `igst_tax_percentage`, `igst_tax_amount`, `total_tax_value`, `modify_by`, `modify_date`) VALUES ('".$client_address."','".$financial_year."','".$procure_type."','".$client_id."','".$drawee_gst_no_temp."','".$_SESSION['company_id']."','".$drawee."','".$c_name."','".$tax_invoice_number."','".$reference_number."', '".$date."','".$category."','".$client_name[1]."','".$gst_no."','".$serviceIds."','".$TotalAmount."','".$gst_type."','".$cgst."','".$tax_cgst."','".$sgst."','".$tax_sgst."','".$igst."','".$tax_igst."','".$totalValue."','".$_SESSION['username']."','".date('Y-m-d H:i:sa')."')";
-				$run_TaxInvoice = mysqli_query($con,$TaxInvoice_add_query);
-				if ($run_TaxInvoice) {
-					$alertMsg = "Record Inserted";
-					$alertClass = "alert alert-success";
-				}
+            $RetailInvoice_add_query = "INSERT INTO `retail_invoice`(`address`,`drawee_id`,`client_id`,`company_id`, `drawee`,`c_name`,`retail_invoice_number`, `reference_number`, `billing_date`, `category`, `client_name`, `gst_number`, `service_id`, `retailable_amount`, `total_retail_value`, `modify_by`, `modify_date`) 
+            VALUES ('".$client_address."','".$Drawee_id."','".$client_id."','".$_SESSION['company_id']."','".$drawee."','".$c_name."','".$retail_invoice_number."','".$reference_number."', '".$date."','".$category."','".$client_name[1]."','".$gst_no."','".$serviceIds."','".$totalValue."','".$totalValue."','".$_SESSION['username']."','".date('Y-m-d H:i:sa')."')";
+            // echo $RetailInvoice_add_query;
+            $run_RetailInvoice = mysqli_query($con,$RetailInvoice_add_query);
+            if ($run_RetailInvoice) {
+                $alertMsg = "Record Inserted";
+                $alertClass = "alert alert-success";
+            }
 		}
 	}
 	if (isset($_POST['gstFees_update'])) {
@@ -174,6 +134,27 @@
 		$billing_year = $_POST['temp_billing_year'];
         $fees_mode = $_POST['fees_mode'];
         $consulting_fees = $_POST['consulting_fees'];
+		/* $payment_mode = $_POST['payment_mode'];
+		if ($payment_mode != "Bank Online") {
+			$payment_description = '';
+		} else {
+			$payment_description = $_POST['payment_description'];
+		}
+		$amount = $_POST['amount'];
+		$remarks = $_POST['remarks']; */
+		/* $fetchAdminId = "SELECT * FROM `users` WHERE `company_id` = '".$_SESSION['company_id']."' AND `admin_status` = '1'";
+		$runAdminId = mysqli_query($con,$fetchAdminId);
+		$AdminIdrow = mysqli_fetch_array($runAdminId);
+		if ($_SESSION['admin_status'] == "1") {
+			if (isset($_POST['users_access'])) {
+				$users_access = $AdminIdrow['id'].",".implode(',', $_POST['users_access']);	
+			}else{
+				$users_access = $AdminIdrow['id'];
+			}			
+		}else{
+			$users_access = $AdminIdrow['id'].",".$_SESSION['user_id'];
+		} */
+        	//echo $gstr_1_File;
 		$checkExistData = "SELECT * FROM `gst_fees` WHERE `billing_year` = '".$billing_year."' AND `client_name` = '".$client_name."' AND `id` != '".$_POST['gstEditID_temp']."' AND `company_id` = '".$_SESSION['company_id']."'";
 		$run_checkExistData = mysqli_query($con,$checkExistData);
 		if(mysqli_num_rows($run_checkExistData) > 0){
@@ -193,12 +174,12 @@
 	$deletedServiceIncomeRecords = false;
 	if (isset($_POST['gstFees_delete'])) {
 		if (isset($_POST['tempGSTIDdel'])) {
-			$fetch_ServiceId = "SELECT * FROM `tax_invoice` WHERE `id` = '".$_POST['tempGSTIDdel']."'";
+            $fetch_ServiceId = "SELECT * FROM `retail_invoice` WHERE `id` = '".$_POST['tempGSTIDdel']."'";
 			$runServiceId = mysqli_query($con, $fetch_ServiceId);
 			$countServiceIncomeRecords = mysqli_num_rows($runServiceId);
 			$rowFetchServiceId = mysqli_fetch_array($runServiceId);
 			// echo $rowFetchServiceId;
-			$finalTax = (($rowFetchServiceId['cgst_tax_percentage'] + $rowFetchServiceId['sgst_tax_percentage'] + $rowFetchServiceId['igst_tax_percentage'] + 100) / 100);
+			// $finalTax = (($rowFetchServiceId['cgst_tax_percentage'] + $rowFetchServiceId['sgst_tax_percentage'] + $rowFetchServiceId['igst_tax_percentage'] + 100) / 100);
 			// echo $tax_percentage;
 			$rowFetchServiceId= $rowFetchServiceId['service_id'];
 			// echo $rowFetchServiceId;
@@ -209,62 +190,66 @@
 					$firstUnderscore = explode("_", $serviceId);
 
 					if ($firstUnderscore[1] == 'CLM') {
-						$updatePortfolio = "UPDATE `client_master` SET `tax_invoice_number` = '', `previous_balance` = `previous_balance`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `client_master` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'GST') {
-						$updatePortfolio = "UPDATE `gst_fees` SET `tax_invoice_number` = '', `consulting_fees` = `consulting_fees`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `gst_fees` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'ITR') {
-						$updatePortfolio = "UPDATE `it_returns` SET `tax_invoice_number` = '', `fees` = `fees`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `it_returns` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'PAN') {
-						$updatePortfolio = "UPDATE `pan` SET `tax_invoice_number` = '', `fees` = `fees`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `pan` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'TAN') {
-						$updatePortfolio = "UPDATE `tan` SET `tax_invoice_number` = '', `fees` = `fees`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `tan` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'TDS') {
-						$updatePortfolio = "UPDATE `e_tds` SET `tax_invoice_number` = '', `fees` = `fees`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `e_tds` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'PSP') {
-						$updatePortfolio = "UPDATE `psp` SET `tax_invoice_number` = '', `fees` = `fees`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `psp` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'DA') {
-						$updatePortfolio = "UPDATE `dsc_subscriber` SET `tax_invoice_number` = '', `fees` = `fees`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `dsc_subscriber` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'DP') {
-						$updatePortfolio = "UPDATE `dsc_reseller` SET `tax_invoice_number` = '', `fees` = `fees`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'TND') {
-						$updatePortfolio = "UPDATE `e_tender` SET `tax_invoice_number` = '', `bill_amu` = `bill_amu`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'DT') {
-						$updatePortfolio = "UPDATE `dsc_token` SET `tax_invoice_number` = '', `fees` = `fees`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `dsc_reseller` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'TRD') {
-						$updatePortfolio = "UPDATE `trade_mark` SET `tax_invoice_number` = '', `bill_amt` = `bill_amt`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'OS') {
-						$updatePortfolio = "UPDATE `other_services` SET `tax_invoice_number` = '', `fees` = `fees`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'MOR') {
-						$updatePortfolio = "UPDATE `mobile_repairing` SET `tax_invoice_number` = '', `fees` = `fees`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'IDS') {
-						$updatePortfolio = "UPDATE `industrial_design` SET `tax_invoice_number` = '', `billing_amount` = `billing_amount`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'TSL') {
-						$updatePortfolio = "UPDATE `sales` SET `tax_invoice_number` = '', `billing_amount` = `billing_amount`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'ADV') {
-						$updatePortfolio = "UPDATE `advocade_case` SET `tax_invoice_number` = '', `fees` = `fees`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `trade_mark` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'COP') {
-						$updatePortfolio = "UPDATE `copy_right` SET `tax_invoice_number` = '', `billing_amount` = `billing_amount`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
-					}else if ($firstUnderscore[1] == 'ADV') {
-						$updatePortfolio = "UPDATE `advocade_case` SET `fees_received` = '', `fees_received` = `fees_received`/$finalTax WHERE `transaction_id` = '".$serviceId."'";	
+    					$updatePortfolio = "UPDATE `copy_right` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'TRS') {
+    					$updatePortfolio = "UPDATE `trade_secret` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'IDS') {
+    					$updatePortfolio = "UPDATE `industrial_design` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == 'PTN') {
-						$updatePortfolio = "UPDATE `patent` SET `tax_invoice_number` = '', `billing_amount` = `billing_amount`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
+    					$updatePortfolio = "UPDATE `patent` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'TSL') {
+						$updatePortfolio = "UPDATE `sales` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'DT') {
+						$updatePortfolio = "UPDATE `dsc_token` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'OS') {
+						$updatePortfolio = "UPDATE `other_services` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'MOR') {
+						$updatePortfolio = "UPDATE `mobile_repairing` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
+					}else if ($firstUnderscore[1] == 'TND') {
+						$updatePortfolio = "UPDATE `e_tender` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
 					}else if ($firstUnderscore[1] == '24G') {
-						$updatePortfolio = "UPDATE `24g` SET `tax_invoice_number` = '', `upload_fees` = `upload_fees`/$finalTax WHERE `transaction_id` = '".$serviceId."'";
+						$updatePortfolio = "UPDATE `24g` SET `retail_invoice_number` = '' WHERE `transaction_id` = '".$serviceId."'";
 					}
 					$run_updatePortfolio = mysqli_query($con,$updatePortfolio);
 				}
 			}
-			$deleteTaxInvoice_query = "DELETE FROM `tax_invoice` WHERE `id` = '".$_POST['tempGSTIDdel']."'";
-			$run_del_query_1 = mysqli_query($con,$deleteTaxInvoice_query);
+
+			$deleteRetailInvoice_query = "DELETE FROM `retail_invoice` WHERE `id` = '".$_POST['tempGSTIDdel']."'";
+			// $deleteServiceIncome_query = "DELETE FROM `service_income` WHERE `service_id` = '".$rowFetchServiceId['transaction_id']."'";
+			$run_del_query_1 = mysqli_query($con,$deleteRetailInvoice_query);
+			// $run_del_query_2 = mysqli_query($con,$deleteServiceIncome_query);
 			if ($run_del_query_1) {
 				$alertMsg = "Record Deleted";
 				$alertClass = "alert alert-danger";
+				// $deletedRecords = true;
 			}
 		}
 	}
+	
 	if (isset($_POST['bulk_delete'])) {
 		if (isset($_POST['tempMultipleIDdel']) && !empty($_POST['tempMultipleIDdel'])) {
 			$MultipleDeleteArray = json_decode(stripslashes($_POST['tempMultipleIDdel']));
+			//$allValues = implode(",", $MultipleDeleteArray);
 			$TransactionCount = 0;
 			$ServiceIncomeCount = 0;
 			$DeletedTransaction = [];
@@ -281,6 +266,7 @@
 					$runServiceId = mysqli_query($con, $fetch_Transaction);
 					while($While_rowFetchServiceId = mysqli_fetch_array($runServiceId)){
 						$tempTransactionArray = [$While_rowFetchServiceId['client_name'].",".$While_rowFetchServiceId['date'].",".$While_rowFetchServiceId['return_type'].",".$While_rowFetchServiceId['billing_year'].",".$While_rowFetchServiceId['fees_mode'].",".$While_rowFetchServiceId['consulting_fees'].",".$While_rowFetchServiceId['fees_received'].",".$While_rowFetchServiceId['transaction_id']];
+						// ,[implode(',', (array)$While_rowFetchServiceId['users_access'])]
 						array_push($DeletedTransaction, $tempTransactionArray);
 						$TransactionCount++;
 					}
@@ -291,9 +277,9 @@
 							$ServiceIncomeCount++;
 						}
 					}
-					$deleteTaxInvoice_query = "DELETE FROM `gst_fees` WHERE `id` IN ('".$deleteList."')";
+					$deleteRetailInvoice_query = "DELETE FROM `gst_fees` WHERE `id` IN ('".$deleteList."')";
 					$deleteServiceIncome_query = "DELETE FROM `service_income` WHERE `service_id` = '".$rowFetchServiceId['transaction_id']."'";
-					$run_del_query_1 = mysqli_query($con,$deleteTaxInvoice_query);
+					$run_del_query_1 = mysqli_query($con,$deleteRetailInvoice_query);
 					$run_del_query_2 = mysqli_query($con,$deleteServiceIncome_query);
 				}
 			}
@@ -317,24 +303,18 @@
 
 <head>
     <title>Vowel Enterprise CMS - GST Fees</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!--<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-<!-- jQuery (required for DataTables) -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<!-- DataTables CSS -->
-<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-<!-- DataTables JS -->
-<script type="text/javascript" src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
         integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
     <!--script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script-->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-    <style>
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+ <style>
+ .hidden {
+    display: none;
+  }
 	.lder {
         width: 90px;
         height: 90px;
@@ -383,6 +363,11 @@
 
 	</style>
     <style type="text/css">
+        /*Multiple Select Checkboxes*/
+        /*:root
+	    {
+	        --text: "Select values";
+	    }*/
         .multiple_select {
             height: 18px;
             width: 90%;
@@ -392,12 +377,14 @@
         }
 
         .multiple_select::before {
+            /* //content: var(--text); */
             display: block;
             margin-left: 5px;
             margin-bottom: 2px;
         }
 
         .multiple_select_active {
+            /* //overflow: visible !important; */
             overflow-y: scroll;
         }
 
@@ -440,24 +427,15 @@
       </div>
     </div>
     <div class="container-fluid">
-        <div style="text-align:center; display:flex;">
-        
-        
-        
-        <div class="showRecordsDiv" style="margin-left:30%; width:40%;">
-        <td align="center" style="margin-left:50%;"><h2 class="pageHeading" id="pageHeading">Tax Invoice Transaction</h2></td>
-    
-    
-        </div>
-        <div style="width:30%; margin-left:15%;">
-    <td><b>Financial Year</b><br><p id="financialYear" class="font-weight-bold p-2" style="font-weight: bold;"></p></td>
-    </div>
-
-
-        </div>
+        <div id="EditUserDiv"></div>
+        <h2 align="center" class="pageHeading" id="pageHeading">Retail Invoice Transaction</h2>
         <div class="row border justify-content-center" id="after-heading">
             <?php 
 			if(isset($_POST['dsc_reseller_csv'])){
+				//var_dump($_FILES['dsc_reseller_file']);
+				//echo var_dump(expression)
+				//echo $_FILES['dsc_reseller_file']['type'];
+				//$info = pathinfo($_FILES['dsc_reseller_file']['tmp_name']);
 				$type = explode(".",$_FILES['dsc_reseller_file']['name']);
 				if(strtolower(end($type)) == 'csv'){
 					$file = $_FILES['dsc_reseller_file']['tmp_name'];
@@ -470,10 +448,12 @@
 					$FormatErrorFlag = false;
 					$ErroneousData = [];
 					$ErroneouslineDataCount = 0;
+					//$stored = [];
 					$NotMatchedlineData = [];
 					$DuplicatelineData = [];
 					$duplicateRow = [];
 					$successCount = 0;
+					//$EmptylineData = [];
 					$EmptylineDataCount = 0;
 					$file = fopen($file, "r");
 					$count = 0;
@@ -506,6 +486,9 @@
 								$row[3] = trim(mysqli_real_escape_string($con,$row[3]));
 								$row[4] = trim(mysqli_real_escape_string($con,$row[4]));
 								$row[5] = trim(mysqli_real_escape_string($con,$row[5]));
+								// $row[6] = trim(mysqli_real_escape_string($con,$row[6]));
+								// $row[7] = trim(mysqli_real_escape_string($con,$row[7]));
+								// $row[8] = trim(mysqli_real_escape_string($con,$row[8]));
 								if ($row[1] != "") {
 									if (strtotime($row[1]) != '') {
 										$row[1] = date("Y-M-d",strtotime($row[1]));
@@ -539,10 +522,16 @@
 									array_push($emptyRow,"Consulting Fees");
 									$ErroneouslineDataCount++;
 								}
+								/* if ($row[6] == "") {
+									array_push($emptyRow,"Users Access");
+									$ErroneouslineDataCount++;
+								} */
+
 								if ($row[0] != "") {
 									$clientQuery = "SELECT `client_name` FROM `client_master` WHERE `gst` = '1' AND `company_id` = '".$_SESSION['company_id']."'";
 									$Result_client = mysqli_query($con,$clientQuery);
 									if(mysqli_num_rows($Result_client) > 0){
+										//echo nl2br("\n".$row[5]);
 										while ($client_name_row = mysqli_fetch_array($Result_client)) {
 											//echo $client_name_row['client_name'];
 											if ($row[0] == $client_name_row['client_name']) {
@@ -570,6 +559,132 @@
 									array_push($notmatchedRow,"Fees Mode");
 									$ErroneouslineDataCount++;
 								}
+
+								// echo explode(",", $row[5])[0];
+								/* if ($row[6] != "") {
+									$tempUsersArrayExplode = explode(",", $row[6]);
+									$tempUsersArrayImplode = [];
+									foreach($tempUsersArrayExplode as $tempUsersArrayValue){
+										array_push($tempUsersArrayImplode, '\''.trim($tempUsersArrayValue).'\'');
+									}
+									// $tempUsersArrayImplode = implode(",", $tempUsersArrayExplode);
+									// print_r($tempUsersArrayImplode);
+									// $tempUsersArray = implode(",", explode(",", $row[6]));
+									$fetchUserAccessId = "SELECT * FROM `users` WHERE `company_id` = '".$_SESSION['company_id']."' AND `username` IN (".implode(",", $tempUsersArrayImplode).")";
+									// $fetchUserAccessId = "SELECT * FROM `users` WHERE `company_id` = '".$_SESSION['company_id']."' AND CONCAT(`firstname`, ' ', `lastname`) IN (".implode(",", $tempUsersArrayImplode).")";
+									// echo $fetchUserAccessId;
+									$runUserAccessId = mysqli_query($con,$fetchUserAccessId);
+									$UserAccessIds = [];
+									while ($UserAccessIdrow = mysqli_fetch_array($runUserAccessId)) {
+										array_push($UserAccessIds, $UserAccessIdrow['id']);
+									}
+									// print_r($UserAccessIds);
+									$fetchAdminId = "SELECT * FROM `users` WHERE `company_id` = '".$_SESSION['company_id']."' AND `admin_status` = '1'";
+									$runAdminId = mysqli_query($con,$fetchAdminId);
+									$AdminIdrow = mysqli_fetch_array($runAdminId);
+									if ($_SESSION['admin_status'] == "1") {
+										if ($row[6] != "") {
+											$users_access = $AdminIdrow['id'].",".implode(',', $UserAccessIds);	
+										}else{
+											$users_access = $AdminIdrow['id'];
+										}			
+									}else{
+										$users_access = $AdminIdrow['id'].",".$_SESSION['user_id'];
+									}
+
+									// print_r($users_access);
+									$checkUserAccessQuery = "SELECT * FROM `users` WHERE `company_id` = '".$_SESSION['company_id']."'";
+									$Result_userAccess = mysqli_query($con,$checkUserAccessQuery);
+									$TempCount = 0;
+									if(mysqli_num_rows($Result_userAccess) > 0){
+										while ($id_row = mysqli_fetch_array($Result_userAccess)) {
+											//echo $id_row['client_name'];
+											foreach($tempUsersArrayExplode as $tempUsersArrayValue){
+												if ($tempUsersArrayValue == $id_row['username']) {
+													$idMatched = true;
+													$TempCount++;
+													break;
+												}else{
+													$idMatched = false;
+												}
+											}
+											// if ($idMatched == false) {
+											// 	break;
+											// }
+										}
+										// echo $TempCount;
+										// echo count($tempUsersArrayExplode);
+										if ($TempCount != count($tempUsersArrayExplode)) {
+											array_push($notmatchedRow,"Users Access");
+											$ErroneouslineDataCount++;
+										}
+									}
+								} */
+								/* if ($row[1] != "") {
+									$checkDSCCompanyQuery = "SELECT dsc_reseller_company FROM `client_master` WHERE `dsc_reseller` = 1 AND `client_name` = '".$row[0]."' AND `company_id` = '".$_SESSION['company_id']."'";
+									$Result_dscCompany = mysqli_query($con,$checkDSCCompanyQuery);
+									if(mysqli_num_rows($Result_dscCompany) > 0){
+										$dsc_company_row = mysqli_fetch_array($Result_dscCompany);
+										//echo $dsc_company_row;
+										$string_version = implode(',', $dsc_company_row);
+										$destination_array = explode(',', $string_version);
+										//echo $destination_array[0];
+										foreach ($destination_array as $val) {
+											//echo $dsc_company_row['client_name'];
+											//$dscAllCompany = explode(',', $val);
+											//echo nl2br("\n".$dscAllCompany."\n");
+											//echo nl2br("\nVal - ".$val);
+											//echo nl2br("\DSCCompany - ".$dsc_company_row);
+											if ($row[1] == $val) {
+												$dscCompanyMatched = true;
+												break;
+											}else{
+												$dscCompanyMatched = false;
+											}
+										}
+										if ($dscCompanyMatched == false) {
+											array_push($notmatchedRow,"DSC Company");
+											$ErroneouslineDataCount++;
+										}
+									}
+								}
+								if ($row[12] == "Bank Online" && $row[13] != "") {
+									$checkbankQuery = "SELECT `bank_name` FROM `company_bank_details` WHERE `user_id` = '".$_SESSION['user_id']."' AND `company_id` = '".$_SESSION['company_id']."'";
+									$Result_bank = mysqli_query($con,$checkbankQuery);
+									if(mysqli_num_rows($Result_bank) > 0){
+										while ($bank_name_row = mysqli_fetch_array($Result_bank)) {
+											//echo $bank_name_row['client_name'];
+											if ($row[13] == $bank_name_row['bank_name']) {
+												$bankMatched = true;
+												break;
+											}else{
+												$bankMatched = false;
+											}
+										}
+										if ($bankMatched == false) {
+											array_push($notmatchedRow,"Payment Description");
+											$ErroneouslineDataCount++;
+										}
+									}
+								}
+								if ($row[8] != "Approved" && $row[8] != "Rejected") {
+									array_push($notmatchedRow,"Status");
+									$ErroneouslineDataCount++;
+								}
+								if ($row[12] != "Cash" && $row[12] != "Bank Online" && $row[12] != "Billing") {
+									array_push($notmatchedRow,"Payment Mode");
+									$ErroneouslineDataCount++;
+								} */
+								/* $serviceIdExist = false;
+								if ($row[8] != "") {
+									$Exist_Query = "SELECT * FROM `gst_fees` WHERE `transaction_id` = '".$row[8]."'";
+									$Result_Exist = mysqli_query($con,$Exist_Query);
+									if(mysqli_num_rows($Result_Exist) > 0){
+										array_push($duplicateRow,"Service Id");
+										$ErroneouslineDataCount++;
+										$serviceIdExist = true;
+									}
+								} */
 								if ($ErroneouslineDataCount > 0) {
 									$erroneous_value = implode(",", $emptyRow)."','". implode(",", $notmatchedRow)."','". implode(",", $duplicateRow)."','". implode("','", $row);
 								}else if (!$second) {
@@ -582,9 +697,34 @@
 								$temp_ErroneouslineDataCount = $ErroneouslineDataCount;
 
 								if ($row[0] == "" || $row[1] == "" || $row[2] == "" || $row[3] == "" || $row[4] == "" || $row[5] == "") {
-									
+									//array_push($NotMatchedlineData,$value2);
 									$EmptylineDataCount++;
 								} else if ($row[0] != "" && $row[1] != "" && $row[2] != "" && $row[3] != "" && $row[4] != "" && $row[5] != "") {
+									//  && ($serviceIdExist == false)
+									/* if ($row[12] == "Bank Online" && $row[13] == "") {
+										$ErroneouslineDataCount++;
+										$EmptylineDataCount++;
+										//echo "<script type='text/javascript'>alert('".$row[11]."')</script>";
+										//echo "<script type='text/javascript'>alert(ronak);</script>";
+									}else{
+										if ($row[12] != "Bank Online") {
+											$row[13] = "";
+										} */
+										//if ($row[7] != "Approved" || $row[7] != "Rejected") {}
+										/* if ($row[7] == "") {
+											$row[7] = 0;
+										}
+										if ($row[8] == '') {
+											$fetchLastTransactionId = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '".$DBName."' AND TABLE_NAME = 'gst_fees'";
+											// echo $fetchLastTransactionId;
+											$run_fetchLastTransactionId = mysqli_query($con,$fetchLastTransactionId);
+											$transaction_id = "VE_GST_954";
+											if (mysqli_num_rows($run_fetchLastTransactionId) > 0) {
+												$FetchlastTransactionID_row = mysqli_fetch_array($run_fetchLastTransactionId);
+												$transaction_id = "VE_GST_".($FetchlastTransactionID_row['AUTO_INCREMENT'] * 954);
+												$row[8] = $transaction_id;
+											}
+										} */
 										$fetchLastTransactionId = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '".$DBName."' AND TABLE_NAME = 'gst_fees'";
 										// echo $fetchLastTransactionId;
 										$run_fetchLastTransactionId = mysqli_query($con,$fetchLastTransactionId);
@@ -592,9 +732,15 @@
 										if (mysqli_num_rows($run_fetchLastTransactionId) > 0) {
 											$FetchlastTransactionID_row = mysqli_fetch_array($run_fetchLastTransactionId);
 											$transaction_id = "VE_GST_".($FetchlastTransactionID_row['AUTO_INCREMENT'] * 954);
+											// $row[8] = $transaction_id;
 										}
+										// '".$transaction_id."',
 										$value = "'".$_SESSION['company_id']."','". implode("','", $row) . "','".$_SESSION['username']."','".date('Y-m-d H:i:sa')."'";
 										$value2 = implode("','", $row);
+										//echo $value;
+										//if (in_array($row[3], $stored)) { continue;}
+										//echo $row[3];
+										// $FinanceYear = strtok($row[5], '-');
 										$fetchGSTNo = "SELECT `gst_no` FROM `client_master` WHERE `client_name` = '".$row[0]."' AND `company_id` = '".$_SESSION['company_id']."'";
 										$runGSTNo = mysqli_query($con,$fetchGSTNo);
 										$gst_no = mysqli_fetch_array($runGSTNo);
@@ -614,13 +760,26 @@
 											//echo $client_name_row['client_name'];
 											$names[] = $client_name_row['client_name'];
 										}
+
+										/* while ($bank_name_row = mysqli_fetch_array($bankResult)) {
+											//echo $client_name_row['client_name'];
+											$bank_names[] = $bank_name_row['bank_name'];
+										} */
 										while ($useraccessEmail_row = mysqli_fetch_array($Result_userAccess)) {
 											//echo $client_name_row['client_name'];
 											$user_accessEmail[] = $useraccessEmail_row['username'];
 										}
+
+										//$client_name_row = mysqli_fetch_array($prevResult);
+										//echo $client_name_row['client_name'];
 										if(mysqli_num_rows($prevResult) > 0){
+											//$NotMatchedlineData = array($value);
 											foreach($names as $name) {
+												//echo nl2br("\n".$name."-".$row[0]);
 												if ($name == $row[0]) {
+													//echo "ROnAK";
+													// $ExistFlag = true;
+													// break;
 													$TempCount = 0;
 													foreach($user_accessEmail as $UsersEmail)
 													{
@@ -633,21 +792,39 @@
 																$ExistFlag = false;
 															}
 														}
+														/* if ($ExistFlag == false) {
+															break;
+														} */
 													}
+													// if ($ExistFlag == true) {
 													if ($TempCount == count($tempUsersArrayExplode)) {
 														break;
 													}
 												}else if ($name != $row[0]) {
 													$ExistFlag = false;
+													//echo "False";
+													//echo nl2br("\n".$name." - ".$row[0]." - ".$row[7]." - ".$row[11]);
 												}
 											}
 											if ($ExistFlag == false) {
 												array_push($NotMatchedlineData,$value2);
-											}else
-                                            {
+											}else{
+												//echo $insert_query;
 												if(mysqli_query($con,$insert_query)){
+													/* if ($row[12] == "Bank Online") {
+														$transaction_type = $row[13];
+													}else if ($row[12] == "Cash") {
+														$transaction_type = "Cash";
+													}else{
+														$transaction_type = "Billing";
+													}
+													$update_transaction = "INSERT INTO `transaction_history` (`company_id`, `transaction_id`, `transaction_type`, `client_name`, `portfolio`, `fees`, `amount_received`) VALUES ('".$_SESSION['company_id']."','".date('d-m-Y H:i:sa')."','".$transaction_type."','".$row[0]."','DSC Reseller','".$row[11]."','".$row[14]."')";
+													//$update_transaction = "INSERT INTO `transaction_history` (`company_id`, `transaction_id`, `client_name`, `portfolio`, `fees`, `amount_received`) VALUES ('".$_SESSION['company_id']."','".date('d-m-Y H:i:sa')."','".$row[0]."','DSC Reseller','".$row[10]."','".$row[13]."')";
+													// echo $update_transaction;
+													$run_transaction = mysqli_query($con,$update_transaction); */
 													$state_csv = true;
 													$successCount++;
+													//$stored[] = $row[3];
 												}else{
 													$state_csv = false;
 												}
@@ -694,64 +871,94 @@
 					if (count($NotMatchedlineData) > 0 || count($DuplicatelineData) > 0) {
 						echo "<script type='text/javascript'>
 						$(document).ready(function(){ $('#notMatchedRecordModal').modal('show'); });</script>"; ?>
-                <!-- Not Matched Record Modal -->
-                <div class="modal fade" data-backdrop="static" data-keyboard="false" id="notMatchedRecordModal"
-                    tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <?php if (count($NotMatchedlineData) > 0 && count($DuplicatelineData) > 0) { ?>
-                                <h5 class="modal-title" id="exampleModalLongTitle">Not Matched & Duplicate Values</h5>
-                                <?php }else
-                                    { ?>
-                                <?php if (count($NotMatchedlineData) > 0){ ?>
-                                <h5 class="modal-title" id="exampleModalLongTitle">Not Matched Values</h5>
-                                <?php }else if (count($DuplicatelineData) > 0){ ?>
-                                <h5 class="modal-title" id="exampleModalLongTitle">Duplicate Values</h5>
-                                <?php }
-                                    } ?>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div class="modal-body">
-                                <?php if (count($NotMatchedlineData) > 0){ ?>
-                                <form method='post' action='Download_gst_fees'>
-                                    Download Not Matched Data
-                                    <?php 
-                                                $_SESSION['array_value'] = $NotMatchedlineData;
-                                            ?>
-                                    <button type='submit' name='Download_NotMatched_gst_fees'
-                                        class='btn btn-primary btn-sm'><i class='fas fa-download'></i> Download</button>
-                                </form>
-                                <?php } ?>
-                                <?php if (count($DuplicatelineData) > 0){ ?>
-                                <form method='post' action='Download_gst_fees' class="mt-2">
-                                    Download Duplicate Data
-                                    <?php 
-                                            $_SESSION['array_Duplicate_value'] = $DuplicatelineData;
-                                        ?>
-                                    <button type='submit' name='Download_Duplicate_gst_fees'
-                                        class='btn btn-primary btn-sm'><i class='fas fa-download'></i> Download</button>
-                                </form>
-                                <?php } ?>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            </div>
+            <!-- Not Matched Record Modal -->
+            <div class="modal fade" data-backdrop="static" data-keyboard="false" id="notMatchedRecordModal"
+                tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <?php if (count($NotMatchedlineData) > 0 && count($DuplicatelineData) > 0) { ?>
+                            <h5 class="modal-title" id="exampleModalLongTitle">Not Matched & Duplicate Values</h5>
+                            <?php }else
+						        { ?>
+                            <?php if (count($NotMatchedlineData) > 0){ ?>
+                            <h5 class="modal-title" id="exampleModalLongTitle">Not Matched Values</h5>
+                            <?php }else if (count($DuplicatelineData) > 0){ ?>
+                            <h5 class="modal-title" id="exampleModalLongTitle">Duplicate Values</h5>
+                            <?php }
+						        } ?>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <?php if (count($NotMatchedlineData) > 0){ ?>
+                            <form method='post' action='Download_gst_fees'>
+                                Download Not Matched Data
+                                <?php 
+											$_SESSION['array_value'] = $NotMatchedlineData;
+										?>
+                                <button type='submit' name='Download_NotMatched_gst_fees'
+                                    class='btn btn-primary btn-sm'><i class='fas fa-download'></i> Download</button>
+                            </form>
+                            <?php } ?>
+                            <?php if (count($DuplicatelineData) > 0){ ?>
+                            <form method='post' action='Download_gst_fees' class="mt-2">
+                                Download Duplicate Data
+                                <?php 
+						      			$_SESSION['array_Duplicate_value'] = $DuplicatelineData;
+						      		?>
+                                <button type='submit' name='Download_Duplicate_gst_fees'
+                                    class='btn btn-primary btn-sm'><i class='fas fa-download'></i> Download</button>
+                            </form>
+                            <?php } ?>
+                            <!--div class="table-responsive">
+									<table class="table">
+										<thead>
+											<th>Id</th>
+											<th>Client Name</th>
+											<th>Date</th>
+											<th>Reference</th>
+											<th>Type</th>
+											<th>Name</th>
+											<th>Stock Transfer Type</th>
+											<th>Certificate Usage</th>
+											<th>Status</th>
+											<th>Price Per Stock</th>
+											<th>Tokken Usage</th>
+											<th>Fees</th>
+											<th>Payment Mode</th>
+											<th>Payment Description</th>
+											<th>Amount</th>
+											<th>Modify By</th>
+											<th>Modify Date</th>
+										</thead>
+										<tbody>
+										<?php 
+										//foreach($NotMatchedlineData as $notmatch){
+										//	echo $notmatch;
+										//}
+										?>
+										</tbody>
+								</table>
+							</div-->
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                         </div>
                     </div>
                 </div>
-                <?php }
-                    } else {
-                        //die("Sorry, mime type not allowed");
-                        $alertMsg = "Please select CSV file only!";
-                        $alertClass = "alert alert-danger";
-                    }
-                }
-            ?>
+            </div>
+            <?php }
+				} else {
+					//die("Sorry, mime type not allowed");
+					$alertMsg = "Please select CSV file only!";
+					$alertClass = "alert alert-danger";
+				}
+			}
+		?>
             <div class="col-sm-12 col-lg-12">
-                <?php if (isset($_POST['TaxInvoice_save']) || isset($_POST['gstFees_update']) || isset($_POST['gstFees_delete']) || isset($_POST['dsc_reseller_csv']) || isset($_POST['bulk_delete'])) { ?>
+                <?php if (isset($_POST['RetailInvoice_save']) || isset($_POST['gstFees_update']) || isset($_POST['gstFees_delete']) || isset($_POST['dsc_reseller_csv']) || isset($_POST['bulk_delete'])) { ?>
                 <div class="<?php echo $alertClass; ?> alert-dismissible" role="alert">
                     <?php
 				  	echo $alertMsg;
@@ -768,9 +975,9 @@
                     <?php }
 				  	}
 					if ($deletedRecords == true) { ?>
-                    <form method='post' action='Download_Deleted_TaxInvoiceFees' class='d-inline'>
-                        <button type='submit' name='Download_Deleted_TaxInvoiceFees'
-                            id='Download_Deleted_TaxInvoiceFees' class='btn btn-primary btn-sm'><i
+                    <form method='post' action='Download_Deleted_RetailInvoiceFees' class='d-inline'>
+                        <button type='submit' name='Download_Deleted_RetailInvoiceFees'
+                            id='Download_Deleted_RetailInvoiceFees' class='btn btn-primary btn-sm'><i
                                 class='fas fa-download'></i> Download Deleted Records - GST Fees</button>
                     </form>
                     <?php
@@ -789,7 +996,7 @@
                 </div>
                 <?php } ?>
             </div>
-            <form method="post" class="form-inline p-2 d-none" id="import_TaxInvoice" enctype="multipart/form-data">
+            <form method="post" class="form-inline p-2 d-none" id="import_RetailInvoice" enctype="multipart/form-data">
                 <input type="file" class="form-control" name="dsc_reseller_file">
                 <input type="submit" class="btn btn-vowel ml-2" name="dsc_reseller_csv" value="Import">&nbsp;
                 <a href="html/csv_gst_fees.csv" target="_blank" download="csv_gst_fees.csv">Click here to download CSV
@@ -799,25 +1006,26 @@
                         Fees Mode, Consulting Fees, Users Access</span></p>
                 <!--https://vivaanintellects.com/vowel-->
             </form>
-            <form method="post" enctype="multipart/form-data" class="col-lg-12 col-sm-12 d-none" id="addNew_TaxInvoice">
+            
+            <form method="post" enctype="multipart/form-data" class="col-lg-12 col-sm-12 d-none" id="addNew_RetailInvoice">
                 <input type="hidden" readonly name="gstEditID_temp" id="gstEditID_temp"
                     value="<?php if (isset($_POST['editGSTFeesbtn'])) echo $_POST['gstEditID']; ?>">
-                    <input type="hidden" id="financialYearInput" name="financial_year" required>
                 <div class="form-inline">
-                    <div class="form-group d-block col-md-3">
-                        <label class="float-left p-2" for="procure_type">Procure Type<span style="color: red;"
-                                class="pl-1">*</span></label>
-                        <select class="form-control w-100" name="procure_type" id="procure_type">
-                            <!--<option value="select">Select</option>-->
-                            <option value="Service" <?php if (isset($_POST['editGSTFeesbtn'])) {
-                                if ($edit_bill_type == "CGST & SGST" ) echo 'selected' ;}?>>Service</option>
-                            <option value="Goods" <?php if (isset($_POST['editGSTFeesbtn'])) {
-                                if ($edit_bill_type == "IGST" ) echo 'selected' ;}?>>Goods</option>
-                        </select>
-                    </div>
-                    <?php 
+                    <?php
+						$fetchLastTransactionId = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '".$DBName."' AND TABLE_NAME = 'tax_invoice'";
+						// echo $fetchLastTransactionId;
+						$run_fetchLastTransactionId = mysqli_query($con,$fetchLastTransactionId);
+						$addNewRetailNumber = "1";
+						if (mysqli_num_rows($run_fetchLastTransactionId) > 0) {
+							$FetchlastTransactionID_row = mysqli_fetch_array($run_fetchLastTransactionId);
+							$addNewRetailNumber = $FetchlastTransactionID_row['AUTO_INCREMENT'];
+						}
+						$add_NewRetail_invoice_number = date('Ymd').'-'.$addNewRetailNumber;
+						// echo $add_NewRetail_invoice_number;
+					?>
+					<?php 
                     // / Query to fetch previous invoice number and reference number
-                        $query = "SELECT tax_invoice_number, reference_number FROM tax_invoice ORDER BY id DESC LIMIT 1";
+                        $query = "SELECT retail_invoice_number, reference_number FROM retail_invoice ORDER BY id DESC LIMIT 1";
                         $result = $con->query($query);
                         
                         $previous_invoice_number = "";
@@ -825,7 +1033,7 @@
                         
                         if ($result->num_rows > 0) {
                             $row = $result->fetch_assoc();
-                            $previous_invoice_number = $row['tax_invoice_number'];
+                            $previous_invoice_number = $row['retail_invoice_number'];
                             $previous_reference_number = $row['reference_number'];
                         }
                     ?>
@@ -834,10 +1042,11 @@
                             Invoice Number <span style="color: red;" class="pl-1">*</span> <!-- Asterisk next to Invoice Number -->
                             <span>Previous No: <span style="color: red;" class="pl-1"><?php echo $previous_invoice_number; ?></span></span>
                         </label>
-                        <input type="number" min="1" required name="invoice_number" class="form-control w-100" id="invoice_number" aria-describedby="emailHelp" autocomplete="off" placeholder="Enter Invoice Number">
+                        <input type="number" min='1' required name="invoice_number" class="form-control w-100"
+                            id="invoice_number" aria-describedby="emailHelp" autocomplete="off"
+                            placeholder="Enter Invoice Number">
                         <span id="invoice_number_status"></span>
                     </div>
-                    
                     <div class="form-group d-block col-md-3">
                         <label for="reference_number" class="float-left p-2">
                             Reference Number <span style="color: red;" class="pl-1">*</span>
@@ -856,6 +1065,7 @@
                         <!--<small id="allowed-pattern" style="color: gray; font-size: 12px;">Allowed: A-Z, a-z, 0-9, /, \\, -</small>-->
                         <small id="error-message" style="color: red; display: none;">Only letters, numbers, /, \, and - are allowed!</small>
                     </div>
+                    
                     <script>
                     document.getElementById("reference_number").addEventListener("input", function(event) {
                         let inputField = event.target;
@@ -890,8 +1100,7 @@
                             <option value="drawee1">Drawee</option>
                         </select>
                     </div>
-                    
-                   <div class="form-group d-block col-md-3">
+                    <div class="form-group d-block col-md-3">
                         <label for="ClientNameSelect1" class="float-left p-2">Client Name <span style="color: red;"
                                 class="pl-1">*</span></label>
                         <div class="d-block">
@@ -900,6 +1109,7 @@
                                                                                                                                                     } ?>>
                                 <option value="" selected disabled hidden>Select</option>
                                 <?php
+                                // Fetch the type from recipient_name_setup
                                 $type_query = "SELECT type FROM recipient_name_setup";
                                 $type_result = mysqli_query($con, $type_query);
                                 $type_row = mysqli_fetch_assoc($type_result);
@@ -952,93 +1162,52 @@
                                 <a href="#" class="float-right add_service_Link pt-2" data-toggle="modal" data-target="#addServiceModal"><i class="fas fa-plus"></i> Add New Drawee</a>
                         <select name="drawee" class="form-control w-100 drawee"
                                 style="width: 100%;" id="drawee">
-                                
+                                <option value="" selected disabled hidden>Select</option>
                             </select>
                             
                     </div>
+                    <div class="form-group d-none col-md-3" id="drawee_id">
+					    <label for="fees_received" class="float-left p-2">Drawee ID</label>			
+					    <input type="text" readonly class="form-control w-100" name="drawee_ID" id="drawee_ID" aria-describedby="emailHelp" placeholder="Enter Fees Received" value="<?php if (isset($_POST['editPanbtn'])) {echo $edit_fees_received;}?>">	
+					</div>
                     <div class="form-group d-block col-md-3">
                         <label for="gst_no_temp" class="float-left p-2">Client Company Name<span style="color: red;"
                                 class="pl-1">*</span></label>
                         <div class="d-block">
-                            <input type="text" readonly required name="cc_name" class="form-control w-100"
+                            <input type="text" readonly name="cc_name" class="form-control w-100"
                                 id="cc_name" aria-describedby="emailHelp" placeholder="Company name"
                                 value="<?php if (isset($_POST['editGSTFeesbtn'])) {echo $edit_gst_no;}?>">
+                            <!--<input type="text" readonly name="Drawee_id" id="Drawee_id">-->
                         </div>
                     </div>
-                    <div class="form-group d-none col-md-3" id="drawee_ID">
-                        <label for="igst" class="float-left p-2">Drawee ID <span style="color: red;"
-                                class="pl-1">*</span></label>
-                           <input type="text" readonly required name="drawee_ID" class="form-control w-100"
-                                id="drawee_ID" aria-describedby="emailHelp" placeholder="Company name"
-                                value="<?php if (isset($_POST['editGSTFeesbtn'])) {echo $edit_gst_no;}?>">     
-                    </div>
-                    
-                   <script>
-    	$('#ClientNameSelect1').on("change", function (e) { 
-		var ClientNameSelect1 = $("#ClientNameSelect1").val();
-		$.ajax({
-            url:"html/Processgst.php",
-            method:"post",
-            data: {ClientNameSelect1:ClientNameSelect1},
-            dataType:"text",
-            success:function(data)
-            {   
-                var jsonData = JSON.parse(data);
-            	$("#gst_no").val(jsonData.gst_no);
-            	$("#gst_no_temp").val(jsonData.gst_no);
-            	$("#client_ID").val(jsonData.client_id);
-            }
-        });
-	});
-	
-	$('#drawee').on("change", function (e) { 
-		var drawee = $('.client_name').find(':selected').val();
-		var drawee = $("#drawee").val();
-		$.ajax({
-			url:"html/fetch_Client_Id.php",
-			method:"post",
-			data: {drawee:drawee},
-			dataType:"text",
-			success:function(data)
-			{
-                $("#drawee_gst_no_temp").val(data);
-			}
-		});
-	});
-
-</script>
+                   
                      <script>
     document.addEventListener("DOMContentLoaded", function () {
         const categorySelect = document.getElementById("category");
         const draweeSection = document.getElementById("drawee1");
         const companySection = document.getElementById("d_comapny");
-        const draweeSectionID = document.getElementById("drawee_ID");
-        const draweeSectionGST = document.getElementById("d_gst_number");
+        const drawee_idSection = document.getElementById("drawee_id");
 
         // Initial state
         if (categorySelect.value === "drawee1") {
             draweeSection.classList.remove("d-none");
             companySection.classList.remove("d-none");
-            draweeSectionID.classList.remove("d-none");
-            draweeSectionGST.classList.remove("d-none");
+            drawee_idSection.classList.remove("d-none");
         }
 
         categorySelect.addEventListener("change", function () {
             if (categorySelect.value === "drawee1") {
                 draweeSection.classList.remove("d-none");
                 companySection.classList.remove("d-none");
-                draweeSectionID.classList.remove("d-none");
-                draweeSectionGST.classList.remove("d-none");
+                drawee_idSection.classList.remove("d-none");
             } else {
                 draweeSection.classList.add("d-none");
                 companySection.classList.add("d-none");
-                draweeSectionID.classList.add("d-none");
-                draweeSectionGST.classList.add("d-none");
+                drawee_idSection.classList.add("d-none");
             }
         });
     });
 </script>
-
  <div class="form-group d-none col-md-3" id="d_comapny">
                         <label for="gst_no_temp" class="float-left p-2">Drawee Company Name<span style="color: red;"
                                 class="pl-1">*</span></label>
@@ -1050,7 +1219,7 @@
                         </div>
                     </div>
                     <div class="form-group d-block col-md-3">
-                        <label for="gst_no_temp" class="float-left p-2">Client GST Number <span style="color: red;"
+                        <label for="gst_no_temp" class="float-left p-2">GST Number<span style="color: red;"
                                 class="pl-1">*</span></label>
                         <div class="d-block">
                             <input type="text" disabled required name="gst_no_temp" class="form-control w-100"
@@ -1060,37 +1229,35 @@
                                 value="<?php if (isset($_POST['editGSTFeesbtn'])) {echo $edit_gst_no;}?>">
                         </div>
                     </div>
-                    <div class="form-group d-none col-md-3" id="d_gst_number">
-                        <label for="gst_no_temp" class="float-left p-2">Drawee GST Number<span style="color: red;"
-                                class="pl-1">*</span></label>
-                        <div class="d-block">
-                            <input type="text" readonly required name="drawee_gst_no_temp" class="form-control w-100"
-                                id="drawee_gst_no_temp" aria-describedby="emailHelp" placeholder="Company name"
-                                value="<?php if (isset($_POST['editGSTFeesbtn'])) {echo $edit_gst_no;}?>">
-                            <!--<input type="text" readonly name="Drawee_id" id="Drawee_id">-->
-                        </div>
-                    </div>
-                    <div class="form-group d-block col-md-3" id="service_id">
+                   
+                    <!--div class="form-group d-block col-md-3">
+					    <label for="exampleInput1" class="float-left p-2">Client Name</label>
+					    <input type="text" name="client_name" class="form-control w-100" id="exampleInput1" aria-describedby="emailHelp" placeholder="Enter Client Name" <?php //if (isset($_POST['editGSTFeesbtn'])) {echo "value=".$edit_client_name;}?>>
+					</div-->
+                    <div class="form-group d-block col-md-3">
                         <label class="float-left p-2" for="return_type">Service Id(s) <span style="color: red;"
                                 class="pl-1">*</span></label>
-                        
+                        <!-- <input type="text" name="temp_serviceIds" id="temp_serviceIds" readonly class="form-control w-100"> -->
                         <textarea name="temp_serviceIds" class="form-control" id="temp_serviceIds" cols="28" rows="3"
                             readonly></textarea>
                         <input type="hidden" name="serviceIds" id="serviceIds"
                             value="<?php if (isset($_POST['editGSTFeesbtn'])) echo $edit_return_type; ?>">
                         <span id="serviceIds_status"></span>
                     </div>
-                    <div class="form-group d-block col-md-3">
-                        <label class="float-left p-2" for="temp_TotalAmount">Taxable Amount (₹) <span
+                    
+                    
+                   
+                    <!-- <div class="form-group d-block col-md-3">
+                        <label class="float-left p-2" for="temp_TotalAmount">Retailable Amount (₹) <span
                                 style="color: red;" class="pl-1">*</span></label>
                         <input type="text" class="form-control w-100" name="temp_TotalAmount" id="temp_TotalAmount"
                             readonly>
                         <input type="hidden" readonly name="TotalAmount" id="TotalAmount"
                             value="<?php if (isset($_POST['editGSTFeesbtn'])) {  echo $edit_temp_TotalAmount; } ?>">
-                    </div>
+                    </div> -->
                     <!-- </div>
 				<div class="form-inline"> -->
-                    <div class="form-group d-block col-md-3">
+                    <!-- <div class="form-group d-block col-md-3">
                         <label class="float-left p-2" for="gst_type">GST Type <span style="color: red;"
                                 class="pl-1">*</span></label>
                         <select class="form-control w-100" name="gst_type" id="gst_type">
@@ -1099,17 +1266,14 @@
                             <option value="IGST" <?php if (isset($_POST['editGSTFeesbtn'])) {
                                 if ($edit_gst_type == "IGST" ) echo 'selected' ;}?>>IGST</option>
                         </select>
-                        \
                     </div>
                     <div class="form-group d-block col-md-3" id="cgst_sgst_DIV">
                         <label for="cgst" class="float-left p-2">CGST & SGST (%) <span style="color: red;"
                                 class="pl-1">*</span></label>
                         <div class="input-group w-100">
                             <div class="input-group-prepend w-50">
-                                <!-- <div class="input-group-text"> -->
                                 <input type="number" min="0" class="form-control w-100" id="cgst" name="cgst"
                                     placeholder="CGST">
-                                <!-- </div> -->
                             </div>
                             <input type="number" min="0" class="form-control" id="sgst" name="sgst" placeholder="SGST">
                         </div>
@@ -1122,32 +1286,30 @@
                             value="<?php if (isset($_POST['editGSTFeesbtn'])) {echo $edit_igst;}?>">
                     </div>
                     <div class="form-group d-block col-md-3" id="tax_cgst_sgst_DIV">
-                        <label for="cgst" class="float-left p-2">Tax Value (₹) <span style="color: red;"
+                        <label for="cgst" class="float-left p-2">Retail Value (₹) <span style="color: red;"
                                 class="pl-1">*</span></label>
                         <div class="input-group w-100">
                             <div class="input-group-prepend w-50">
-                                <!-- <div class="input-group-text"> -->
                                 <input type="number" readonly min="0" class="form-control w-100" id="temp_tax_cgst"
                                     name="temp_tax_cgst" placeholder="CGST">
                                 <input type="hidden" readonly min="0" id="tax_cgst" name="tax_cgst"
-                                    placeholder="CGST Tax">
-                                <!-- </div> -->
+                                    placeholder="CGST Retail">
                             </div>
                             <input type="number" readonly min="0" class="form-control" id="temp_tax_sgst"
                                 name="temp_tax_sgst" placeholder="SGST">
-                            <input type="hidden" readonly min="0" id="tax_sgst" name="tax_sgst" placeholder="SGST Tax">
+                            <input type="hidden" readonly min="0" id="tax_sgst" name="tax_sgst" placeholder="SGST Retail">
                         </div>
                     </div>
                     <div class="form-group d-none col-md-3" id="tax_igst_DIV">
-                        <label for="temp_tax_igst" class="float-left p-2">Tax Value (₹) <span style="color: red;"
+                        <label for="temp_tax_igst" class="float-left p-2">Retail Value (₹) <span style="color: red;"
                                 class="pl-1">*</span></label>
                         <input type="text" readonly class="form-control w-100" name="temp_tax_igst" id="temp_tax_igst"
-                            aria-describedby="emailHelp" placeholder="Tax Value"
+                            aria-describedby="emailHelp" placeholder="Retail Value"
                             value="<?php if (isset($_POST['editGSTFeesbtn'])) {echo $edit_tax_value;}?>">
                         <input type="hidden" readonly name="tax_igst" id="tax_igst" aria-describedby="emailHelp"
-                            placeholder="Tax Value"
+                            placeholder="Retail Value"
                             value="<?php if (isset($_POST['editGSTFeesbtn'])) {echo $edit_tax_value;}?>">
-                    </div>
+                    </div> -->
                     <div class="form-group col-md-3">
                         <label for="temp_totalValue" class="float-left p-2">Total Value (₹) <span style="color: red;"
                                 class="pl-1">*</span></label>
@@ -1168,24 +1330,60 @@
                             aria-describedby="emailHelp" placeholder="Round off Value"
                             value="<?php if (isset($_POST['editGSTFeesbtn'])) {echo $edit_tax_value;}?>">
                     </div>
-                    <div class="form-group col-md-3" id="challan_date">
-                        <label for="challan_date" class="float-left p-2">Challan Date<span style="color: red;"
-                                class="pl-1">*</span></label>
-                        <input type="text" readonly class="form-control w-100" name="challan_date" id="challan_date1"
-                            aria-describedby="emailHelp" placeholder="Round off Value"
-                            value="<?php if (isset($_POST['editGSTFeesbtn'])) {echo $edit_tax_value;}?>">
-                    </div>
-                    <div class="form-group col-md-3" id="challan_no">
-                        <label for="challan_no" class="float-left p-2">Challan No<span style="color: red;"
-                                class="pl-1">*</span></label>
-                        <input type="text" readonly class="form-control w-100" name="challan_no" id="challan_no1"
-                            aria-describedby="emailHelp" placeholder="Round off Value"
-                            value="<?php if (isset($_POST['editGSTFeesbtn'])) {echo $edit_tax_value;}?>">
-                    </div>
-                    
-                    
+                    <!-- <?php if ($_SESSION['admin_status'] == "1") { ?> -->
+                    <!-- <div class="form-group d-block col-md-6">
+							<label for="ClientNameSelect1" class="float-left p-2">Users Access</label>
+							<select name="users_access[]" id="users_access" multiple class="form-control w-100 h-100 multiple_select">
+								<?php 
+									/* $fetch_users = "SELECT * FROM `users` WHERE `company_id` = '".$_SESSION['company_id']."' ORDER BY `username`";
+									$run_users = mysqli_query($con,$fetch_users);
+									while ($row = mysqli_fetch_array($run_users)) 
+									{ if($row['admin_status'] == "1") continue;?>
+										<option value="<?= $row['id']; ?>" <?php if(isset($_POST['editGSTFeesbtn'])){ 
+											foreach ($edit_users_access as $i) if ($i == $row['id']) { echo 'selected'; } } ?>><?= $row['username']; ?></option>
+							<?php	} */ ?>
+							</select>
+		                </div> -->
+                    <!-- <?php } ?> -->
                 </div>
-                
+                <!-- <div class="form-inline">
+					<div class="form-group d-block col-md-3">
+					    <label for="PaymentModeSelect1" class="float-left p-2">Payment Mode <span style="color: red;" class="pl-1">*</span></label>
+					    <div class="d-block">
+						    <select name="payment_mode" class="form-control w-100" id="PaymentModeSelect1">
+						      <option value="Bank Online" <?php if (isset($_POST['editGSTFeesbtn'])) {
+									 if ($edit_payment_mode == "Bank Online" ) echo 'selected' ; }?>>Bank Online</option>
+						      <option value="Cash" <?php if (isset($_POST['editGSTFeesbtn'])) {
+									 if ($edit_payment_mode == "Cash" ) echo 'selected' ; }?>>Cash</option>
+						      <option value="Billing" <?php if (isset($_POST['editGSTFeesbtn'])) {
+									 if ($edit_payment_mode == "Billing" ) echo 'selected' ; }?>>Billing</option>
+						    </select>
+						</div>
+					</div>
+					<input type="hidden" name="payment_description_hidden" id="payment_description_hidden" <?php if (isset($edit_payment_mode)) {echo "value=".$edit_payment_mode;} ?>>
+					<div class="form-group d-block col-md-3" id="payment_descriptionDIV">
+					    <label for="BankNameSelect1" class="float-left p-2">Payment Bank <span style="color: red;" class="pl-1">*</span></label>
+					    <div class="d-block">
+						    <select name="payment_description" class="form-control w-100" id="BankNameSelect1">
+						      <?php 
+						      	// $fetch_Client = "SELECT `bank_name` FROM `company_bank_details` WHERE `company_id` = '".$_SESSION['company_id']."'";
+						      	// $run_fetch_Client = mysqli_query($con,$fetch_Client);
+						      	// while ($row = mysqli_fetch_array($run_fetch_Client)) { ?>
+						  			<option value="<?= $row['bank_name']; ?>" <?php if (isset($_POST['editGSTFeesbtn'])) { if ($edit_payment_description == $row['bank_name']) { echo "selected"; }}?>><?= $row['bank_name']; ?></option>
+						  <?php //}
+						      ?>
+						    </select>
+						</div>
+					</div>
+					<div class="form-group d-block col-md-3">
+					    <label for="amount" class="float-left p-2">Amount Received <span style="color: red;" class="pl-1">*</span></label>			
+					    <input type="number" step=".01" class="form-control w-100" min="0" name="amount" id="amount" aria-describedby="emailHelp" placeholder="Enter Amount Received" value="<?php if (isset($_POST['editGSTFeesbtn'])) {echo $edit_amount;}?>">						
+					</div>
+					<div class="form-group d-block col-md-3">
+					    <label for="remarks" class="float-left p-2">Remarks/Transaction Id</label>			
+					    <input type="text" class="form-control w-100" name="remarks" id="remarks" aria-describedby="emailHelp" placeholder="Enter Remarks/Transaction Id" <?php if (isset($_POST['editDSCSubscriberbtn'])) {echo "value=".$edit_remarks;}?>>						
+					</div>
+				</div> -->
                 <br>
                 <div class="form-inline">
                     <div class="form-group d-block col-md-3">
@@ -1197,99 +1395,332 @@
                     <?php if (isset($_POST['editGSTFeesbtn'])) {
 						echo '<input type="submit" name="gstFees_update" value="UPDATE" class="btn btn-vowel">';
 					}else{
-						echo '<input type="submit" name="TaxInvoice_save" id="TaxInvoice_save" value="SAVE" class="btn btn-vowel">';
-				// 		echo '<input type="button" name="temp_TaxInvoice_save" id="temp_TaxInvoice_save" value="SAVE" class="btn btn-vowel">';
+						echo '<input type="submit" name="RetailInvoice_save" id="RetailInvoice_save" value="SAVE1" class="btn btn-vowel">';
+				// 		echo '<input type="button" name="temp_RetailInvoice_save" id="temp_RetailInvoice_save" value="S1AVE" class="btn btn-vowel">';
 					}?>
                 </div>
                 <div class="bs-example col-lg-12 col-md-12 d-none" id="clientTransaction_dataDIV">
-                    
-                    <table id="clientTransactionTable" class="table-striped"></table>
-                    
-                    <table id="dataTable1" border="1">
-        <thead>
-            <tr>
-                <th></th>
-                <th>Challan Date</th>
-                <th>Challan No</th>
-                <th>Challan Id</th>
-                <th>Recipient Name</th>
-                <th>Billing Amount</th>
-                <th>Payment Recevied</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+                    <!-- <form method='post' action='Download_serviceIncome_client_transactions'>
+						<button type='submit' name='Download_serviceIncome_client_transactions' class='btn btn-primary m-1'><i class='fas fa-download'></i> Download Transactions</button>
+					</form>
+					<p class="text-right m-0" id="advanceAmount"></p>
+					<input type="hidden" readonly class="text-right m-0" id="TextadvanceAmount"/>
+					<p class="text-right" id="pendingAmount"></p> -->
+                    <table id="clientTransactionTable" class="table"></table>
                 </div>
             </form>
+            
+        </div>
+
+    </div>
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="serviceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Terms and Conditions</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form -->
+                    <div id="form-section">
+                        <form>
+                            <div class="form-group">
+                                <div class="row">
+                                    <!-- Position Field -->
+                                    <div class="col-md-2">
+                                        <label for="position_number_txt_drop">Position</label>
+                                        <input type="text" class="form-control form-control-lg" id="position_number_txt_drop" placeholder="Enter Position">
+                                        <!--<span id="Service-status_position"></span>-->
+                                    </div>
+
+                                    <!-- Terms and Conditions Field -->
+                                    <div class="col-md-10">
+                                        <label for="company_name_txt_drop">Add Terms and Conditions</label>
+                                        <input type="text" class="form-control form-control-lg" id="company_name_txt_drop" placeholder="Enter Terms and Conditions">
+                                        <span id="Service-status_company"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </form>
+                        <button type="button" class="btn btn-vowel" name="add_company_name_drop_btn" id="add_company_name_drop_btn">Add</button>
+                    </div>
+
+                    <!-- Table -->
+                    <div id="table-section" style="display:none;">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>s
+                                    <th scope="col">Terms and Conditions</th>
+                                    <th scope="col">Action</th> <!-- New column for delete button -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $sql = "SELECT position, tems_cond_name, id FROM temps_condi_retail_invoice order by position"; // Assuming there is an 'id' column to uniquely identify each row
+                                $result = $con->query($sql);
+                                if ($result->num_rows > 0) {
+                                    $counter = 1;
+                                    while ($row = $result->fetch_assoc()) {
+                                        echo '<tr>
+                                            <th scope="row">' . htmlspecialchars($row['position']) . '</th>
+                                            <td>' . htmlspecialchars($row['tems_cond_name']) . '</td>
+                                            <td>
+                                                <button class="btn btn-danger btn-sm delete-btn" data-id="' . $row['id'] . '">Delete</button>
+                                            </td>
+                                        </tr>';
+                                    }
+                                } else {
+                                    echo '<tr><td colspan="3">No records found.</td></tr>';
+                                }
+                                ?>
+                            </tbody>
+
+                        
+                        </table>
+                        
+                        
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <!-- Toggle buttons -->
+                    <button type="button" class="btn btn-primary" id="view-table-btn">View Records</button>
+                    <button type="button" class="btn btn-primary" id="view-form-btn" style="display:none;">View Form</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+
+                </div>
+            </div>
         </div>
     </div>
-    <div id="searchTaxInvoiceDiv" class="table-responsive d-block"></div>
-    <div id="showTaxInvoice" class="table-responsive d-block"></div>
+        <script>
+        $(document).ready(function() {
+            // $('#serviceModal').DataTable();
+
+            // When "View Records" is clicked, show the table and hide the form
+            $("#view-table-btn").click(function() {
+                $("#form-section").hide(); // Hide the form
+                $("#table-section").show(); // Show the table
+                $("#view-table-btn").hide(); // Hide the "View Records" button
+                $("#view-form-btn").show(); // Show the "View Form" button
+            });
+
+            // When "View Form" is clicked, show the form and hide the table
+            $("#view-form-btn").click(function() {
+                $("#form-section").show(); // Show the form
+                $("#table-section").hide(); // Hide the table
+                $("#view-form-btn").hide(); // Hide the "View Form" button
+                $("#view-table-btn").show(); // Show the "View Records" button
+            });
+        });
+        $(document).ready(function() {
+            // Handle Delete Button Click
+            $(document).on('click', '.delete-btn', function() {
+                var id = $(this).data('id'); // Get the ID of the record
+                var row = $(this).closest('tr'); // Get the row element to remove after deletion
+                
+                // Confirm delete action
+                if (confirm('Are you sure you want to delete this record?')) {
+                    $.ajax({
+                        url: 'html/ProcessRetailInvoice.php', // The server-side script that will handle deletion
+                        type: 'POST',
+                        data: { id: id },
+                        success: function(response) {
+                            if (response == 'success') {
+                                // Remove the row from the table
+                                row.remove();
+                            } else {
+                                alert('Failed to delete the record.');
+                            }
+                        },
+                        error: function() {
+                            alert('Error occurred while deleting.');
+                        }
+                    });
+                }
+            });
+        });
+
+    </script>
+    <div id="searchRetailInvoiceDiv" class="table-responsive d-block"></div>
+    <div id="showRetailInvoice" class="table-responsive d-block"></div>
     <div id="showClient" class="table-responsive d-none"></div>
     <div id="showClientWholeDetails" class="table-responsive d-block"></div>
     <div id="showGSTWholeDetails" class="table-responsive d-none"></div>
 <script>
-    // Your existing script
-    document.getElementById('exampleInput1').addEventListener('input', function() {
-        const date = new Date(this.value);
-        let financialYear;
-
-        if (date.getMonth() + 1 <= 3) { // Months are zero-indexed in JavaScript
-            financialYear = (date.getFullYear() - 1) + '-' + date.getFullYear();
-        } else {
-            financialYear = date.getFullYear() + '-' + (date.getFullYear() + 1);
-        }
-
-        // Display the financial year in both the <p> and <input> elements
-        document.getElementById('financialYear').textContent = financialYear;
-        document.getElementById('financialYearInput').value = financialYear;
-    });
+//     $('#ClientNameSelect1').on("change", function (e) { 
+// 		var ClientNameSelect1 = $("#ClientNameSelect1").val();
+// 		$.ajax({
+//             url:"html/Processgst.php",
+//             method:"post",
+//             data: {ClientNameSelect1:ClientNameSelect1},
+//             dataType:"text",
+//             success:function(data)
+//             {   
+//                 var jsonData = JSON.parse(data);
+//             	$("#gst_no").val(jsonData.gst_no);
+//             	$("#gst_no_temp").val(jsonData.gst_no);
+//             	$("#client_ID").val(jsonData.client_id);
+//             }
+//         });
+// 	});
+	
+	$('#drawee').on("change", function (e) { 
+		var drawee = $('.drawee').find(':selected').val();
+		var drawee = $("#drawee").val();
+		$.ajax({
+			url:"html/fetch_Drawee_Id.php",
+			method:"post",
+			data: {drawee:drawee},
+			dataType:"text",
+			success:function(data)
+			{
+                $("#drawee_ID").val(data);
+			}
+		});
+	});
 </script>
 
-<script>
-    $(document).ready(function () {
-        // Initially hide both sections
-        $("#challan_date").hide();
-        $("#challan_no").hide();
-        // $("#challan_id").hide();
-        $("#dataTable1").hide();
-
-        // Attach an event listener to the dropdown
-        $("#procure_type").change(function () {
-            // Hide both sections
-            $("#clientTransaction_dataDIV").hide();
-            $("#clientTransaction_dataDIV1").hide();
-        
-            // Show the selected section based on the dropdown value
-            if ($(this).val() === "Goods") {
-                $("#temp_TotalAmount").val('');
-                $("#temp_serviceIds").val('');
-                $("#serviceIds").val('');
-                $("#challan_date").show();
-                $("#challan_no").show();
-                // $("#challan_id").show();
-                $("#dataTable1").show();
-                $("#clientTransactionTable").hide();
-                $("label[for='return_type']").text("Challan Id(s)");
-                $("#category option[value='drawee1']").hide();
-                
-            } else if ($(this).val() === "Service") {
-                $("#temp_TotalAmount").val('');
-                $("#temp_serviceIds").val('');
-                $("#serviceIds").val('');
-                $("#challan_date").hide();
-                $("#challan_no").hide();
-                // $("#challan_id").hide();
-                $("#clientTransactionTable").show();
-                $("#dataTable1").hide();
-                // $("#dataTable1").hide();
-                $("#category option[value='drawee1']").show();
-                $("label[for='return_type']").text("Service Id(s)");
-            }
-        });
-
-    });
-</script>
+    <!--Add nre Draweee-->
+    	<div class="modal fade" data-backdrop="static" data-keyboard="false" id="addServiceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+		  <div class="modal-content">
+			<div class="modal-header">
+			  <h5 class="modal-title" id="exampleModalLabel">Add New Drawee</h5>
+			  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			  </button>
+			</div>
+			<div class="modal-body">
+			  <form>
+				<!--<div class="form-group">-->
+				<!--  <label for="Servicetxt">Service</label>-->
+				<!--  <input type="text" class="form-control form-control-lg" id="Servicetxt" placeholder="Enter Service">-->
+				<!--  <span id="Service-status"></span>-->
+				<!--</div>-->
+				<div class="form-inline">
+						  <div class="form-group d-block col-md-3">
+							  <label for="ClientNameSelect1" class="float-left p-2">Name<span style="color: red;" class="pl-1">*</span></label>
+							  <div class="d-block">
+								  <input type="text" required name="name" class="form-control w-100" id="NameTxt" aria-describedby="emailHelp" placeholder="Enter Name" <?php if (isset($_POST['editOtherServicebtn'])) {
+								  echo "value=" . $edit_date;
+							  } ?>>
+								  <input type="hidden" name="temp_client_name" id="temp_client_name" value="<?php if (isset($_POST['editOtherServicebtn'])) {
+									  echo $edit_client_name;
+								  } ?>" readonly>
+							  </div>
+						  </div>
+						  <!--div class="form-group d-block col-md-3">
+							  <label for="exampleInput1" class="float-left p-2">Recipient Name</label>
+							  <input type="text" name="client_name" class="form-control w-100" id="exampleInput1" aria-describedby="emailHelp" placeholder="Enter Recipient Name" <?php //if (isset($_POST['editOtherServicebtn'])) {echo "value=".$edit_client_name;}?>>
+						  </div-->
+						  <div class="form-group d-block col-md-3">
+							  <label for="date" class="float-left p-2">Address <span style="color: red;" class="pl-1">*</span></label>
+							  <input type="text" required name="address" class="form-control w-100" id="AddressTxt" aria-describedby="emailHelp" placeholder="Enter Address" <?php if (isset($_POST['editOtherServicebtn'])) {
+								  echo "value=" . $edit_date;
+							  } ?>>
+						  </div>
+						  <div class="form-group d-block col-md-3">
+							  <label for="city" class="float-left p-2">City</label>
+							  <div class="d-block">
+								  <input type="text" name="city" class="form-control w-100" id="CityTxt" aria-describedby="emailHelp" placeholder="Enter City" <?php if (isset($_POST['editOtherServicebtn'])) {
+									  echo "value=" . $edit_city;
+								  } ?>>
+							  </div>
+						  </div>
+						  <div class="form-group d-block col-md-3">
+							  <label for="applicant_name" class="float-left p-2">State <span style="color: red;" class="pl-1">*</span></label>
+							  <input type="text" required class="form-control w-100" name="state" id="StateTxt" aria-describedby="emailHelp" placeholder="Enter State" value="<?php if (isset($_POST['editOtherServicebtn'])) {
+								  echo $edit_applicant_name;
+							  } ?>">
+						  </div>
+						  
+					  </div>
+					  <div class="form-inline">
+						  <div class="form-group d-block col-md-3">
+							  <label for="ClientNameSelect1" class="float-left p-2">Client Name <span style="color: red;"
+									  class="pl-1">*</span></label>
+							  <div class="d-block">
+								  <select name="client_name" required class="form-control w-100 client_name"
+									  style="width: 100%;" id="ClientNameTxt"
+									  <?php if (isset($_POST['editGSTFeesbtn'])) { echo "disabled"; } ?>>
+									  <?php
+									 
+										$fetch_Client = "SELECT `client_name` FROM `client_master` WHERE `company_id` = '".$_SESSION['company_id']."' ORDER BY `client_name` ASC";
+										$run_fetch_Client = mysqli_query($con,$fetch_Client);
+										while ($row = mysqli_fetch_array($run_fetch_Client)) { ?>
+									  <option value="<?= $row['client_name']; ?>"
+										  <?php if (isset($_POST['editGSTFeesbtn'])) { if ($edit_client_name == $row['client_name']) { echo "selected"; }}?>>
+										  <?= $row['client_name']; ?></option>
+									  <?php }
+									?>
+								  </select>
+								  <input type="hidden" name="temp_client_name" id="temp_client_name"
+									  value="<?php if (isset($_POST['editGSTFeesbtn'])) {  echo $edit_client_name; } ?>"
+									  readonly>
+							  </div>
+						  </div>
+						  <div class="form-group d-block col-md-3">
+							  <label for="address" class="float-left p-2">Company name <span style="color: red;" class="pl-1">*</span></label>
+							  <input type="text" required class="form-control w-100" name="c_name" id="CNameTxt" aria-describedby="emailHelp" placeholder="Enter Company name" value="<?php if (isset($_POST['editOtherServicebtn'])) {
+								  echo $edit_applicant_name;
+							  } ?>">
+						  </div>
+						  <div class="form-group d-block col-md-3">
+							  <label for="applicant_mobile" class="float-left p-2">Mobile No<span style="color: red;" class="pl-1">*</span></label>
+							  <input type="number" required oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="10" class="form-control w-100" name="applicant_mobile" id="ApplicantMobileTxt" aria-describedby="emailHelp" placeholder="Enter Mobile Number" <?php if (isset($_POST['editOtherServicebtn'])) {
+								  echo "value=" . $edit_applicant_mobile;
+							  } ?>>
+							  <span id="mobile_number_status"></span>
+						  </div>
+						  <div class="form-group d-block col-md-3">
+							  <label for="address" class="float-left p-2">Email <span style="color: red;" class="pl-1">*</span></label>
+							  <input type="email" required class="form-control w-100" name="email" id="EmailTxt" aria-describedby="emailHelp" placeholder="Enter Email Id" value="<?php if (isset($_POST['editOtherServicebtn'])) {
+								  echo $edit_applicant_name;
+							  } ?>">
+							  <span id="email_id_1_status"></span>
+						  </div>
+					  </div>
+					  <div class="form-inline">
+						  
+						  <div class="form-group d-block col-md-3">
+							  <label for="address" class="float-left p-2">Pincode <span style="color: red;" class="pl-1">*</span></label>
+							  <input type="number" required class="form-control w-100" name="pin_code" id="PinCodeTxt" aria-describedby="emailHelp" placeholder="Enter Pincode" value="<?php if (isset($_POST['editOtherServicebtn'])) {
+								  echo $edit_applicant_name;
+							  } ?>">
+						  </div>
+						  
+						  
+						  <div class="form-group d-block col-md-3">
+							  <label for="pin_code" class="float-left p-2">GST</label>
+							  <div class="d-block">
+								  <input type="text" name="gst" class="form-control w-100" id="GSTTxt" aria-describedby="emailHelp" placeholder="Enter GST No" value="<?php if (isset($_POST['editOtherServicebtn'])) {
+									  echo $edit_pin_code;
+								  } ?>">
+							  </div>
+							  
+						  </div>
+						  
+					  </div>
+					  
+					  
+					  <br>
+					  <div class="form-inline">
+						  <div class="form-group d-block col-md-3">
+							  <span style="color: red;" class="pl-1">Note : * fields are mandatory</span>
+						  </div>
+					  </div>
+			  </form>
+			</div>
+			<div class="modal-footer">
+			  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			  <button type="button" class="btn btn-vowel" name="add_Service" id="add_Service">Add</button>
+			</div>
+		  </div>
+		</div>
+	  </div>
 
     <!--Add File Confirm Popup-->
     <div class="modal fade" data-backdrop="static" data-keyboard="false" id="fileConfirmMessagePopup" tabindex="-1"
@@ -1350,8 +1781,8 @@
                     </div>
                 </form>
             </div>
-        </div> 
-    </div> 
+        </div>
+    </div>
     <!--Delete Confirm Popup-->
     <div class="modal fade" data-backdrop="static" data-keyboard="false" id="gstConfirmMessagePopup" tabindex="-1"
         role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -1379,255 +1810,47 @@
         </div>
     </div>
 
-    <!--Add nre Draweee-->
-    	<div class="modal fade" data-backdrop="static" data-keyboard="false" id="addServiceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-		  <div class="modal-content">
-			<div class="modal-header">
-			  <h5 class="modal-title" id="exampleModalLabel">Add New Drawee</h5>
-			  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-			  </button>
-			</div>
-			<div class="modal-body">
-			  <form>
-				<div class="form-inline">
-						  <div class="form-group d-block col-md-3">
-							  <label for="ClientNameSelect1" class="float-left p-2">Name<span style="color: red;" class="pl-1">*</span></label>
-							  <div class="d-block">
-								  <input type="text" required name="name" class="form-control w-100" id="NameTxt" aria-describedby="emailHelp" placeholder="Enter Name" <?php if (isset($_POST['editOtherServicebtn'])) {
-								  echo "value=" . $edit_date;
-							  } ?>>
-								  <input type="hidden" name="temp_client_name" id="temp_client_name" value="<?php if (isset($_POST['editOtherServicebtn'])) {
-									  echo $edit_client_name;
-								  } ?>" readonly>
-							  </div>
-						  </div>
-						  <div class="form-group d-block col-md-3">
-							  <label for="date" class="float-left p-2">Address <span style="color: red;" class="pl-1">*</span></label>
-							  <input type="text" required name="address" class="form-control w-100" id="AddressTxt" aria-describedby="emailHelp" placeholder="Enter Address" <?php if (isset($_POST['editOtherServicebtn'])) {
-								  echo "value=" . $edit_date;
-							  } ?>>
-						  </div>
-						  <div class="form-group d-block col-md-3">
-							  <label for="city" class="float-left p-2">City</label>
-							  <div class="d-block">
-								  <input type="text" name="city" class="form-control w-100" id="CityTxt" aria-describedby="emailHelp" placeholder="Enter City" <?php if (isset($_POST['editOtherServicebtn'])) {
-									  echo "value=" . $edit_city;
-								  } ?>>
-							  </div>
-						  </div>
-						  <div class="form-group d-block col-md-3">
-							  <label for="applicant_name" class="float-left p-2">State <span style="color: red;" class="pl-1">*</span></label>
-							  <input type="text" required class="form-control w-100" name="state" id="StateTxt" aria-describedby="emailHelp" placeholder="Enter State" value="<?php if (isset($_POST['editOtherServicebtn'])) {
-								  echo $edit_applicant_name;
-							  } ?>">
-						  </div>
-						  
-					  </div>
-					  <div class="form-inline">
-						  <div class="form-group d-block col-md-3">
-							  <label for="ClientNameSelect1" class="float-left p-2">Client Name <span style="color: red;"
-									  class="pl-1">*</span></label>
-							  <div class="d-block">
-								  <select name="client_name" required class="form-control w-100 client_name1"
-									  style="width: 100%;" id="ClientNameTxt"
-									  <?php if (isset($_POST['editGSTFeesbtn'])) { echo "disabled"; } ?>>
-									  <?php
-									  
-										$fetch_Client = "SELECT `client_name` FROM `client_master` WHERE `company_id` = '".$_SESSION['company_id']."' ORDER BY `client_name` ASC";
-										$run_fetch_Client = mysqli_query($con,$fetch_Client);
-										while ($row = mysqli_fetch_array($run_fetch_Client)) { ?>
-									  <option value="<?= $row['client_name']; ?>"
-										  <?php if (isset($_POST['editGSTFeesbtn'])) { if ($edit_client_name == $row['client_name']) { echo "selected"; }}?>>
-										  <?= $row['client_name']; ?></option>
-									  <?php }
-									?>
-								  </select>
-								  <input type="hidden" name="temp_client_name" id="temp_client_name"
-									  value="<?php if (isset($_POST['editGSTFeesbtn'])) {  echo $edit_client_name; } ?>"
-									  readonly>
-							  </div>
-						  </div>
-						  <div class="form-group d-block col-md-3">
-							  <label for="address" class="float-left p-2">Company name <span style="color: red;" class="pl-1">*</span></label>
-							  <input type="text" required class="form-control w-100" name="c_name" id="CNameTxt" aria-describedby="emailHelp" placeholder="Enter Company name" value="<?php if (isset($_POST['editOtherServicebtn'])) {
-								  echo $edit_applicant_name;
-							  } ?>">
-						  </div>
-						  <div class="form-group d-block col-md-3">
-							  <label for="applicant_mobile" class="float-left p-2">Mobile No<span style="color: red;" class="pl-1">*</span></label>
-							  <input type="number" required oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="10" class="form-control w-100" name="applicant_mobile" id="ApplicantMobileTxt" aria-describedby="emailHelp" placeholder="Enter Mobile Number" <?php if (isset($_POST['editOtherServicebtn'])) {
-								  echo "value=" . $edit_applicant_mobile;
-							  } ?>>
-							  <span id="mobile_number_status"></span>
-						  </div>
-						  <div class="form-group d-block col-md-3">
-							  <label for="address" class="float-left p-2">Email <span style="color: red;" class="pl-1">*</span></label>
-							  <input type="email" required class="form-control w-100" name="email" id="EmailTxt" aria-describedby="emailHelp" placeholder="Enter Email Id" value="<?php if (isset($_POST['editOtherServicebtn'])) {
-								  echo $edit_applicant_name;
-							  } ?>">
-							  <span id="email_id_1_status"></span>
-						  </div>
-					  </div>
-					  <div class="form-inline">
-						  
-						  <div class="form-group d-block col-md-3">
-							  <label for="address" class="float-left p-2">Pincode <span style="color: red;" class="pl-1">*</span></label>
-							  <input type="number" required class="form-control w-100" name="pin_code" id="PinCodeTxt" aria-describedby="emailHelp" placeholder="Enter Pincode" value="<?php if (isset($_POST['editOtherServicebtn'])) {
-								  echo $edit_applicant_name;
-							  } ?>">
-						  </div>
-						  
-						  
-						  <div class="form-group d-block col-md-3">
-							  <label for="pin_code" class="float-left p-2">GST</label>
-							  <div class="d-block">
-								  <input type="text" name="gst" class="form-control w-100" id="GSTTxt" aria-describedby="emailHelp" placeholder="Enter GST No" value="<?php if (isset($_POST['editOtherServicebtn'])) {
-									  echo $edit_pin_code;
-								  } ?>">
-							  </div>
-						  </div>
-					  </div>
-					  <br>
-					  <div class="form-inline">
-						  <div class="form-group d-block col-md-3">
-							  <span style="color: red;" class="pl-1">Note : * fields are mandatory</span>
-						  </div>
-					  </div>
-			  </form>
-			</div>
-			<div class="modal-footer">
-			  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-			  <button type="button" class="btn btn-vowel" name="add_Service" id="add_Service">Add</button>
-			</div>
-		  </div>
-		</div>
-	  </div>
-	  
-	  <div class="modal fade" data-backdrop="static" data-keyboard="false" id="serviceModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <!--Remove File Popup-->
+    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="gstFileRemoveConfirmMessagePopup"
+        tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add Terms and Conditions</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <!-- Form -->
-                    <div id="form-section">
-                        <form>
-                            <div class="form-group">
-                                <div class="row">
-                                    <!-- Position Field -->
-                                    <div class="col-md-2">
-                                        <label for="position_number_txt_drop">Position</label>
-                                        <input type="text" class="form-control form-control-lg" id="position_number_txt_drop" placeholder="Enter Position">
-                                        <!--<span id="Service-status_position"></span>-->
-                                    </div>
-                                    <div class="col-md-10">
-                                        <label for="company_name_txt_drop">Add Terms and Conditions</label>
-                                        <input type="text" class="form-control form-control-lg" id="company_name_txt_drop" placeholder="Enter Terms and Conditions">
-                                        <span id="Service-status_company"></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                        <button type="button" class="btn btn-vowel" name="add_company_name_drop_btn" id="add_company_name_drop_btn">Add</button>
+                <form method="post">
+                    <div class="modal-header">
+                        <img src="<?php echo $main_company_logo; ?>" alt="Vowel" style="width: 150px; height: 55px;"
+                            class="logo navbar-brand mr-auto">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
                     </div>
-
-                    <!-- Table -->
-                    <div id="table-section" style="display:none;">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Terms and Conditions</th>
-                                    <th scope="col">Action</th> <!-- New column for delete button -->
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $sql = "SELECT position, tems_cond_name, id FROM temps_condi_tax_invoice"; // Assuming there is an 'id' column to uniquely identify each row
-                                $result = $con->query($sql);
-                                if ($result->num_rows > 0) {
-                                    $counter = 1;
-                                    while ($row = $result->fetch_assoc()) {
-                                        echo '<tr>
-                                            <th scope="row">' . htmlspecialchars($row['position']) . '</th>
-                                            <td>' . htmlspecialchars($row['tems_cond_name']) . '</td>
-                                            <td>
-                                                <button class="btn btn-danger btn-sm delete-btn" data-id="' . $row['id'] . '">Delete</button>
-                                            </td>
-                                        </tr>';
-                                    }
-                                } else {
-                                    echo '<tr><td colspan="3">No records found.</td></tr>';
-                                }
-                                ?>
-                            </tbody>                        
-                        </table> 
+                    <div class="modal-body bg-light">
+                        <input type="hidden" id="tempAuditIDfile" name="tempAuditIDfile" class="tempAuditIDfile">
+                        <?php echo "<p>Do You Really Want To Remove This File ?</p>"; ?>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <!-- Toggle buttons -->
-                    <button type="button" class="btn btn-primary" id="view-table-btn">View Records</button>
-                    <button type="button" class="btn btn-primary" id="view-form-btn" style="display:none;">View Form</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-
-                </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
+                        <button type="button" class="btn btn-vowel d-none" id="gstr_1closeFileNameBtn">Yes, Remove
+                            It</button>
+                        <button type="button" class="btn btn-vowel d-none" id="gstr_3bcloseFileNameBtn">Yes, Remove
+                            It</button>
+                        <button type="button" class="btn btn-vowel d-none" id="trans_1closeFileNameBtn">Yes, Remove
+                            It</button>
+                        <button type="button" class="btn btn-vowel d-none" id="trans_6closeFileNameBtn">Yes, Remove
+                            It</button>
+                        <button type="button" class="btn btn-vowel d-none" id="gstr_2a_recocloseFileNameBtn">Yes, Remove
+                            It</button>
+                        <button type="button" class="btn btn-vowel d-none" id="trans_4closeFileNameBtn">Yes, Remove
+                            It</button>
+                        <!--button type="submit" name="audit_delete" id="audit_delete" class="btn btn-vowel">YES</button-->
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-        <script>
-        $(document).ready(function() {
-            // When "View Records" is clicked, show the table and hide the form
-            $("#view-table-btn").click(function() {
-                $("#form-section").hide(); // Hide the form
-                $("#table-section").show(); // Show the table
-                $("#view-table-btn").hide(); // Hide the "View Records" button
-                $("#view-form-btn").show(); // Show the "View Form" button
-            });
-
-            // When "View Form" is clicked, show the form and hide the table
-            $("#view-form-btn").click(function() {
-                $("#form-section").show(); // Show the form
-                $("#table-section").hide(); // Hide the table
-                $("#view-form-btn").hide(); // Hide the "View Form" button
-                $("#view-table-btn").show(); // Show the "View Records" button
-            });
-        });
-        $(document).ready(function() {
-            // Handle Delete Button Click
-            $(document).on('click', '.delete-btn', function() {
-                var id = $(this).data('id'); // Get the ID of the record
-                var row = $(this).closest('tr'); // Get the row element to remove after deletion
-                
-                // Confirm delete action
-                if (confirm('Are you sure you want to delete this record?')) {
-                    $.ajax({
-                        url: 'html/ProcessTaxInvoice.php', // The server-side script that will handle deletion
-                        type: 'POST',
-                        data: { id: id },
-                        success: function(response) {
-                            if (response == 'success') {
-                                // Remove the row from the table
-                                row.remove();
-                            } else {
-                                alert('Failed to delete the record.');
-                            }
-                        },
-                        error: function() {
-                            alert('Error occurred while deleting.');
-                        }
-                    });
-                }
-            });
-        });
-
-    </script>
-	     <script type="text/javascript">
+    
+    <!--Drawee Modal-->
+    
+   <script type="text/javascript">
 		
 		$(document).ready(function () {
 		
@@ -1665,6 +1888,10 @@
 					}
 				});
 			}
+			
+			$('#ApplicantMobileTxt').blur(function() {
+				CheckMobileNumberExist();
+			});
 			function toTitleCase(str) {
             return str.replace(/\w\S*/g, function(txt) {
                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -1672,10 +1899,18 @@
         }
 
         $('#add_company_name_drop_btn').click(function() {
+            // console.log('Button Clicked!'); // Check if the click event is firing
+            // alert()
             var serviceValue = toTitleCase($('#company_name_txt_drop').val().toLowerCase());
             var position_number = toTitleCase($('#position_number_txt_drop').val().toLowerCase());
-            alert(position_number);
-            alert(serviceValue);
+            // console.log('Service Value:', serviceValue); // Check the serviceValue
+            // alert(position_number);
+            // alert(serviceValue);
+            // if (serviceValue === "") {
+            //     alert('Input field is empty');
+            // } else {
+            //     // alert(serviceValue); // Check if the alert is firing
+            // }
 
             if (serviceValue === "") {
                 $('#Service-status_company').html('Please Fill This Field!').css({
@@ -1690,9 +1925,10 @@
             }
 
             if (serviceValue !== "" && !serviceValue.includes("(") && !serviceValue.includes(")")) {
+                // $('#pleaseWaitDialog').modal('show');
 
                 $.ajax({
-                    url: "html/ProcessTaxInvoice.php",
+                    url: "html/ProcessRetailInvoice.php",
                     method: "POST",
                     data: {
                         send_temps_cond: serviceValue,
@@ -1721,9 +1957,6 @@
                 });
             }
         });
-			$('#ApplicantMobileTxt').blur(function() {
-				CheckMobileNumberExist();
-			});
 			
 			$('#EmailTxt').blur(function() {
 				CheckEmailIdExist();
@@ -1773,6 +2006,10 @@
 			console.log("addressValue: ", addressValue);
 			
 			var ClientNameSelect1 = $("#ClientNameSelect1").val();
+
+		  //  alert("vcesa");
+// 			alert(ClientNameSelect1);
+			
 			if (nameValue == "") {
 				$('#Name-status').html('Please Fill This Field!').css({'color':'red'});
 				$('#NameTxt').addClass("border border-danger");
@@ -1781,6 +2018,15 @@
 				$('#Name-status').html('Please Use [ ] Instead of ( )').css({'color':'red'});
 				$('#NameTxt').addClass("border border-danger");
 			}
+			
+			// Similar checks for other fields...
+		
+// 			if (nameValue != "" && !nameValue.includes("(") && !nameValue.includes(")") &&
+// 				addressValue != "" && cityValue != "" && stateValue != "" && clientNameValue != "" &&
+// 				cNameValue != "" && applicantMobileValue != "" && emailValue != "" && pinCodeValue != "" && gstValue != "") {
+				
+				// $('#pleaseWaitDialog').modal('show');
+		
 				$.ajax({
 					url: "html/ProcessAdd_Drawee.php",
 					method: "post",
@@ -1819,188 +2065,28 @@
 // 			}
 		});
 });
-
-$('#drawee').on("change", function (e) { 
-		var drawee = $('.drawee').find(':selected').val();
-		var drawee = $("#drawee").val();
-		$.ajax({
-			url:"html/fetch_Drawee_Id.php",
-			method:"post",
-			data: {drawee:drawee},
-			dataType:"text",
-			success:function(data)
-			{
-                $("#drawee_ID").val(data);
-			}
-		});
-	});
-$('#ClientNameSelect1').on("change", function (e) {
-    var ClientNameSelect1 = $("#ClientNameSelect1").val();
-    $.ajax({
-        url: "html/fetch_draweer.php",
-        method: "post",
-        data: { ClientNameSelect1: ClientNameSelect1 },
-        dataType: "text",
-        success: function (data) {
-            var array = JSON.parse(data);
-            $('#drawee').empty();
-            for (var i = 0; i < array.length; i++) {
-                $('#drawee').append(new Option(array[i], array[i]));
-            }
-
-            $('#Drawee_id').val(data);
-        },
-        complete: function () {
-            var drawee = $("#drawee").val();
-            let parts = drawee.split("_");
-            let result = parts[0];
-            // alert(drawee);
-
-            $.ajax({
-                url: "html/fetch_drawee_company_name.php",
-                method: "post",
-                data: { drawee: drawee },
-                dataType: "text",
-                success: function (data) {
-                    $('#c_name').empty();
-                    $('#c_name').val(data); // Use .html() to set content in a div
-                },
-                complete: function () {
-                    var ClientNameSelect1 = $("#ClientNameSelect1").val();
-                    $.ajax({
-                        url: "html/fetch_cc_name.php",
-                        method: "post",
-                        data: { ClientNameSelect1: ClientNameSelect1 }, // Provide a value here
-                        dataType: "text",
-                        success: function (data) {
-                            $('#cc_name').empty();
-                            $('#c_name').empty();
-                            $('#cc_name').val(data); // Use .html() to set content in a div
-                        }
-                    });
-                }
-            });
-        }
-    });
-});
-
-
-$('#ClientNameSelect1').on("change",function(e){
-    // var ClientNameSelect1 = $('.ClientNameSelect1').find(':selected').val();
-    var ClientNameSelect1 = $("#ClientNameSelect1").val();
-		$.ajax({
-			url:"html/fetch_cc_name.php",
-			method:"post",
-			data: {ClientNameSelect1:ClientNameSelect1},
-			dataType:"text",
-			success:function(data)
-			{
-    	        $('#cc_name').empty();
-    	        $('#c_name').empty();
-				$("#cc_name").val(data);
-			}
-});
-});
-
-$('#add_Service').on("change",function(e){
-    var ClientNameSelect1 = $("#ClientNameSelect1").val();
-   
-		$.ajax({
-			url:"html/fetch_cc_name.php",
-			method:"post",
-			data: {ClientNameSelect1:ClientNameSelect1},
-			dataType:"text",
-			success:function(data)
-			{
-    	        $('#cc_name').empty();
-    	        $('#c_name').empty();
-				$("#cc_name").val(data);
-			}
-});
-})
-
-$('#drawee').on("change",function(e){
-    var drawee = $("#drawee").val();
-    
-    // let originalString = "SHUBHAM_11";
-    let parts = drawee.split("_");
-    let result = parts[0];
-    var id=$('#Drawee_id').val();
-		$.ajax({
-			url:"html/fetch_drawee_company_name.php",
-			method:"post",
-			data: {drawee:drawee},
-			dataType:"text",
-			success:function(data)
-			{
-    	        $('#c_name').empty();
-    	        $('#c_name').empty();
-				$("#c_name").val(data);
-			}
-});
-});
 	</script>
-	
-    <!--Remove File Popup-->
-    <div class="modal fade" data-backdrop="static" data-keyboard="false" id="gstFileRemoveConfirmMessagePopup"
-        tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <form method="post">
-                    <div class="modal-header">
-                        <img src="<?php echo $main_company_logo; ?>" alt="Vowel" style="width: 150px; height: 55px;"
-                            class="logo navbar-brand mr-auto">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body bg-light">
-                        <input type="hidden" id="tempAuditIDfile" name="tempAuditIDfile" class="tempAuditIDfile">
-                        <?php echo "<p>Do You Really Want To Remove This File ?</p>"; ?>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">NO</button>
-                        <button type="button" class="btn btn-vowel d-none" id="gstr_1closeFileNameBtn">Yes, Remove
-                            It</button>
-                        <button type="button" class="btn btn-vowel d-none" id="gstr_3bcloseFileNameBtn">Yes, Remove
-                            It</button>
-                        <button type="button" class="btn btn-vowel d-none" id="trans_1closeFileNameBtn">Yes, Remove
-                            It</button>
-                        <button type="button" class="btn btn-vowel d-none" id="trans_6closeFileNameBtn">Yes, Remove
-                            It</button>
-                        <button type="button" class="btn btn-vowel d-none" id="gstr_2a_recocloseFileNameBtn">Yes, Remove
-                            It</button>
-                        <button type="button" class="btn btn-vowel d-none" id="trans_4closeFileNameBtn">Yes, Remove
-                            It</button>
-                        <!--button type="submit" name="audit_delete" id="audit_delete" class="btn btn-vowel">YES</button-->
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     <script type="text/javascript">
     $(".client_name").select2();
-    $(document).ready(function() {
-        $('[data-toggle="tooltip"]').tooltip();
-    });
+    // $(".client_name").select2();
+    
 
     var checkedVal = [];
     var MultipleServiceID = [];
-
+    
     let taxInvoiceCorrect = false;
     $('#invoice_number').blur(function() {
         let invoice_number = $('#invoice_number').val();
-        let financialYearInput = $('#financialYearInput').val();
         $.ajax({
-            url: "html/ProcessTaxInvoice.php",
+            url: "html/ProcessRetailInvoice.php",
             method: "post",
             data: {
-                invoice_number:invoice_number,
-                financialYearInput:financialYearInput,
+                invoice_number
             },
             dataType: "text",
             success: function(data) {
-                if (data == "tax_invoice_exist") {
+                // alert(data);
+                if (data == "retail_invoice_exist") {
                     taxInvoiceCorrect = false;
                     $('#invoice_number').addClass('border-danger');
                     $('#invoice_number_status').html('This Invoice Number already exist').css(
@@ -2009,6 +2095,7 @@ $('#drawee').on("change",function(e){
                     taxInvoiceCorrect = true;
                     $('#invoice_number').removeClass('border-danger');
                     $('#invoice_number_status').html('').css('color', 'green');
+                    // $('#temp_RetailInvoice_save').click();
                 }
             }
         });
@@ -2071,28 +2158,18 @@ $('#drawee').on("change",function(e){
         checkedVal = [];
         MultipleServiceID = [];
     }
+    $('#addServiceModal').on('hidden.bs.modal', function () {
+            //$(this).find('form').trigger('reset');
+            $('#Servicetxt').val('');
+            $('#Service-status').html("").css({'color':'green'});
+            $('#Servicetxt').removeClass("border border-danger");
+        });
 
-    function calculateGSTTax() {
-        let cgst = $('#cgst').val();
-        let sgst = $('#sgst').val();
-        let igst = $('#igst').val();
-        let temp_TotalAmount = $('#temp_TotalAmount').val();
+    function calculateGSTRetail() {
+        let temp_totalValue = $('#temp_totalValue').val();
         resetAllFields();
-        if (temp_TotalAmount != '') {
-            if (cgst != '') {
-                $('#tax_cgst').val(((parseFloat(cgst) * parseFloat(temp_TotalAmount)) / 100).toFixed(2));
-                $('#temp_tax_cgst').val(((parseFloat(cgst) * parseFloat(temp_TotalAmount)) / 100).toFixed(2));
-            }
-            if (sgst != '') {
-                $('#tax_sgst').val(((parseFloat(sgst) * parseFloat(temp_TotalAmount)) / 100).toFixed(2));
-                $('#temp_tax_sgst').val(((parseFloat(sgst) * parseFloat(temp_TotalAmount)) / 100).toFixed(2));
-            }
-            if (igst != '') {
-                $('#tax_igst').val(((parseFloat(igst) * parseFloat(temp_TotalAmount)) / 100).toFixed(2));
-                $('#temp_tax_igst').val(((parseFloat(igst) * parseFloat(temp_TotalAmount)) / 100).toFixed(2));
-
-                let totalAmount = (parseFloat(temp_TotalAmount) + (parseFloat(igst) * parseFloat(temp_TotalAmount)) /
-                    100).toFixed(2);
+        if (temp_totalValue != '') {
+                let totalAmount = parseFloat(temp_totalValue).toFixed(2);
                 let roundOffValue = (parseInt(totalAmount.toString().split(".")[1]) > 50) ? Math.ceil(totalAmount) :
                     Math.floor(totalAmount);
                 $('#totalValue').val(totalAmount);
@@ -2104,27 +2181,27 @@ $('#drawee').on("change",function(e){
                 $('#temp_totalValue').val((parseFloat(temp_TotalAmount) + (parseFloat(igst)*parseFloat(temp_TotalAmount))/100).toFixed(2));
                 $('#temp_roundOff').val(ceil(parseFloat(temp_TotalAmount) + (parseFloat(igst)*parseFloat(temp_TotalAmount))/100).toFixed(2));
                 $('#roundOff').val(ceil(parseFloat(temp_TotalAmount) + (parseFloat(igst)*parseFloat(temp_TotalAmount))/100).toFixed(2)); */
-            }
-            if (cgst != '' && sgst != '') {
-                let totalAmount = (parseFloat(temp_TotalAmount) + (parseFloat(cgst) * parseFloat(temp_TotalAmount)) /
+            // }
+            // if (cgst != '' && sgst != '') {
+                /* let totalAmount = (parseFloat(temp_TotalAmount) + (parseFloat(cgst) * parseFloat(temp_TotalAmount)) /
                     100 + (parseFloat(sgst) * parseFloat(temp_TotalAmount)) / 100).toFixed(2);
                 let roundOffValue = (parseInt(totalAmount.toString().split(".")[1]) > 50) ? Math.ceil(totalAmount) :
                     Math.floor(totalAmount);
                 $('#totalValue').val(totalAmount);
                 $('#temp_totalValue').val(totalAmount);
                 $('#temp_roundOff').val(roundOffValue);
-                $('#roundOff').val(roundOffValue);
-            }
+                $('#roundOff').val(roundOffValue); */
+            // }
         }
     }
     $('#cgst').on("keyup", function(e) {
-        calculateGSTTax();
+        calculateGSTRetail();
     });
     $('#sgst').on("keyup", function(e) {
-        calculateGSTTax();
+        calculateGSTRetail();
     });
     $('#igst').on("keyup", function(e) {
-        calculateGSTTax();
+        calculateGSTRetail();
     });
     $('#gst_type').on("change", function(e) {
         var gst_type = $("#gst_type").val();
@@ -2160,6 +2237,7 @@ $('#drawee').on("change",function(e){
     });
     $('#ClientNameSelect1').on("change", function(e) {
         var ClientNameSelect1 = $("#ClientNameSelect1").val();
+        
         $('#igst').val('');
         $('#cgst').val('');
         $('#sgst').val('');
@@ -2174,9 +2252,6 @@ $('#drawee').on("change",function(e){
             dataType: "text",
             success: function(data) {
                 // alert(data);
-                // $("#gst_no").val(data);
-                // $("#gst_no_temp").val(data);
-                
                 var jsonData = JSON.parse(data);
             	$("#gst_no").val(jsonData.gst_no);
             	$("#gst_no_temp").val(jsonData.gst_no);
@@ -2189,41 +2264,24 @@ $('#drawee').on("change",function(e){
 
                 // $('#amount_creditedIn').val('CASH');
                 var client_name = $('#ClientNameSelect1').val();
-                var procure_type = $('#procure_type').val();
-                var bill_to_value = $('#category').val();
-                // alert(bill_to_value);
                 var Client_id=$('#client_ID').val();
-                resetAllFields();
-                resetServiceId();
-                
-                if(procure_type == "Goods"){
+                // alert(Client_id);
+                if (client_name != "") {
+                    // $('#pleaseWaitDialog').modal('show');
+                    // alert(client_name);
                     $.ajax({
-                        url: "html/process_sales_tax_invoice.php",
+                        url: "html/ProcessRetailInvoice.php",
                         method: "post",
                         data: {
                             client_name: client_name,
-                            procure_type:procure_type
-                        },
-                        dataType: "text",
-                        success: function(data) {
-                            $('#dataTable1 tbody').html(data);
-                        },
-                        complete: function() {
-                        }
-                    });
-                }else if(bill_to_value=="supplementary_invoice"){
-                    if (client_name != "") {
-                    $.ajax({
-                        url: "html/ProcessTaxInvoice.php",
-                        method: "post",
-                        data: {
-                            bill_to_value:bill_to_value,
-                            client_name: client_name,
-                            procure_type:procure_type,
                             Client_id:Client_id
                         },
                         dataType: "text",
                         success: function(data) {
+                            // alert(data);
+                            // $('#clientTransaction_dataDIV').removeClass('d-none');
+                            // $('#clientTransaction_dataDIV').addClass('d-block');
+                            // $('#clientTransactionTable').html(data);
                             var array = JSON.parse(data);
                             // alert(array[3]);
                             if (array[0] !=
@@ -2239,7 +2297,9 @@ $('#drawee').on("change",function(e){
                                         [1, "DESC"]
                                     ]
                                 });
-                                $('#pendingAmorunt').html('Pending Amount : ' + array[1]
+                                // $('#pendingAmountMainPara').removeClass('d-none');
+                                // $('#pendingAmountMainPara').addClass('d-block');
+                                $('#pendingAmount').html('Pending Amount : ' + array[1]
                                     .toFixed(2)).css({
                                     'color': 'red',
                                     'font-size': '16px'
@@ -2268,7 +2328,7 @@ $('#drawee').on("change",function(e){
                         },
                         complete: function() {
                             //$("#wait").css("display", "none");
-                            // $('#pleaseWaitDialog').modal('hide');
+                            $('#pleaseWaitDialog').modal('hide');
                         }
                     });
                 } else {
@@ -2276,97 +2336,177 @@ $('#drawee').on("change",function(e){
                     $('#clientTransaction_dataDIV').addClass('d-none');
                     $('#clientTransactionTable').html('');
                 }
-                }
-                    
-                else{
-                    if (client_name != "") {
-                    $.ajax({
-                        url: "html/ProcessTaxInvoice.php",
-                        method: "post",
-                        data: {
-                            client_name: client_name,
-                            procure_type:procure_type,
-                            Client_id:Client_id
-                        },
-                        dataType: "text",
-                        success: function(data) {
-                            var array = JSON.parse(data);
-                            // alert(array[3]);
-                            if (array[0] !=
-                                "<tr style='text-align:center;'><td colspan='4'>No Record Found!</td></tr>"
-                            ) {
-                                $('#clientTransaction_dataDIV').removeClass('d-none');
-                                $('#clientTransaction_dataDIV').addClass('d-block');
-                                $('#clientTransactionTable').html(array[0]);
-                                $('#clientTransactionTable').DataTable({
-                                    pagingType: "full_numbers",
-                                    "bDestroy": true,
-                                    "order": [
-                                        [1, "DESC"]
-                                    ]
-                                });
-                                $('#pendingAmorunt').html('Pending Amount : ' + array[1]
-                                    .toFixed(2)).css({
-                                    'color': 'red',
-                                    'font-size': '16px'
-                                });
-                                $('#advanceAmount').html('Advance Amount : ' + array[3])
-                                    .css({
-                                        'color': 'red',
-                                        'font-size': '16px'
-                                    });
-                                $('#TextadvanceAmount').val(array[3]);
-                            } else {
-                                $('#clientTransaction_dataDIV').removeClass('d-none');
-                                $('#clientTransaction_dataDIV').addClass('d-block');
-                            
-                                // Clear table and destroy DataTable if initialized
-                                if ($.fn.DataTable.isDataTable('#clientTransactionTable')) {
-                                    $('#clientTransactionTable').DataTable().clear().destroy();
-                                }
-                                $('#clientTransactionTable tbody').empty(); // Clear any existing rows
-                                $('#clientTransactionTable').html(array[0]); // Set "No Record Found!" message
-                            
-                                // Clear pending and advance amounts
-                                $('#pendingAmorunt').html('');
-                                $('#advanceAmount').html('');
-                            }
-                        },
-                        complete: function() {
-                            //$("#wait").css("display", "none");
-                            // $('#pleaseWaitDialog').modal('hide');
-                        }
-                    });
-                } else {
-                    $('#clientTransaction_dataDIV').removeClass('d-block');
-                    $('#clientTransaction_dataDIV').addClass('d-none');
-                    $('#clientTransactionTable').html('');
-                }
-                }
-                // alert(procure_type);
-                
                 // });
             }
         });
     });
 
-function showAlert(radioButton) {
-    var fetch_transaction_id = radioButton.getAttribute('data-invoice');
-    var fetch_date = radioButton.getAttribute('data-date');
-    var fetch_number = radioButton.getAttribute('data-number');
-    var fetch_bill = radioButton.getAttribute('data-bill'); 
+
+$('#ClientNameSelect1').on("change", function (e) {
+    var ClientNameSelect1 = $("#ClientNameSelect1").val();
+    // $('#pleaseWaitDialog').modal('show');
+
+    $.ajax({
+        url: "html/fetch_draweer.php",
+        method: "post",
+        data: { ClientNameSelect1: ClientNameSelect1 },
+        dataType: "text",
+        success: function (data) {
+            var array = JSON.parse(data);
+            $('#drawee').empty();
+            for (var i = 0; i < array.length; i++) {
+                $('#drawee').append(new Option(array[i], array[i]));
+            }
+
+            $('#Drawee_id').val(data);
+        },
+        complete: function () {
+            var drawee = $("#drawee").val();
+            let parts = drawee.split("_");
+            let result = parts[0];
+            // alert(drawee);
+
+            $.ajax({
+                url: "html/fetch_drawee_company_name.php",
+                method: "post",
+                data: { drawee: drawee },
+                dataType: "text",
+                success: function (data) {
+                    $('#c_name').empty();
+                    $('#c_name').val(data); // Use .html() to set content in a div
+                },
+                complete: function () {
+                    var ClientNameSelect1 = $("#ClientNameSelect1").val();
+                    $.ajax({
+                        url: "html/fetch_cc_name.php",
+                        method: "post",
+                        data: { ClientNameSelect1: ClientNameSelect1 }, // Provide a value here
+                        dataType: "text",
+                        success: function (data) {
+                            $('#cc_name').empty();
+                            $('#c_name').empty();
+                            $('#cc_name').val(data); // Use .html() to set content in a div
+                        }
+                    });
+                },
+                complete:function(){
+                    var drawee = $('.drawee').find(':selected').val();
+            		var drawee = $("#drawee").val();
+            		$.ajax({
+            			url:"html/fetch_Drawee_Id.php",
+            			method:"post",
+            			data: {drawee:drawee},
+            			dataType:"text",
+            			success:function(data)
+            			{
+                            $("#drawee_ID").val(data);
+            			}
+            		});
+                },
+            });
+        }
+    });
+});
+
+
+$('#ClientNameSelect1').on("change",function(e){
+    // var ClientNameSelect1 = $('.ClientNameSelect1').find(':selected').val();
+    var ClientNameSelect1 = $("#ClientNameSelect1").val();
     
-    var client_name = $('#ClientNameSelect1').val();
+    // let originalString = "SHUBHAM_11";
 
-    // Update the HTML elements with the fetched values
-    $('#temp_serviceIds').val(fetch_transaction_id);
-    $('#serviceIds').val(fetch_transaction_id);
-    $('#challan_date1').val(fetch_date);
-    $('#challan_no1').val(fetch_number);
-    $('#temp_TotalAmount').val(fetch_bill);
-    $('#TotalAmount').val(fetch_bill);
-}
+    
+    // var result=$("#drawee").val();
+    // alert(ClientNameSelect1);
+    
+// 		$('#pleaseWaitDialog').modal('show');
+// 		var ClientNameSelect1 = $("#ClientNameSelect1").val();
+// 		alert(drawee);
+		$.ajax({
+			url:"html/fetch_cc_name.php",
+			method:"post",
+			data: {ClientNameSelect1:ClientNameSelect1},
+			dataType:"text",
+			success:function(data)
+			{
+				// var array = data.split(',');
+				// var array = JSON.parse(data);//data.split(',');
+				// $('#c_name').empty();
+				// for(var i=0; i<array.length;i++){
+    //                 $('#c_name').append(new Option(array[i], array[i]));
+    //             }
+    	        $('#cc_name').empty();
+    	        $('#c_name').empty();
+				$("#cc_name").val(data);
+			}
+});
+});
 
+$('#add_Service').on("change",function(e){
+    var ClientNameSelect1 = $("#ClientNameSelect1").val();
+    
+    // let originalString = "SHUBHAM_11";
+
+    
+    // var result=$("#drawee").val();
+    // alert(ClientNameSelect1);
+    
+// 		$('#pleaseWaitDialog').modal('show');
+// 		var ClientNameSelect1 = $("#ClientNameSelect1").val();
+// 		alert(drawee);
+		$.ajax({
+			url:"html/fetch_cc_name.php",
+			method:"post",
+			data: {ClientNameSelect1:ClientNameSelect1},
+			dataType:"text",
+			success:function(data)
+			{
+				// var array = data.split(',');
+				// var array = JSON.parse(data);//data.split(',');
+				// $('#c_name').empty();
+				// for(var i=0; i<array.length;i++){
+    //                 $('#c_name').append(new Option(array[i], array[i]));
+    //             }
+    	        $('#cc_name').empty();
+    	        $('#c_name').empty();
+				$("#cc_name").val(data);
+			}
+});
+})
+
+$('#drawee').on("change",function(e){
+    // var ClientNameSelect1 = $('.ClientNameSelect1').find(':selected').val();
+    var drawee = $("#drawee").val();
+    
+    // let originalString = "SHUBHAM_11";
+    let parts = drawee.split("_");
+    let result = parts[0];
+    
+    // var result=$("#drawee").val();
+    // alert(drawee);
+    var id=$('#Drawee_id').val();
+// 		$('#pleaseWaitDialog').modal('show');
+// 		var ClientNameSelect1 = $("#ClientNameSelect1").val();
+// 		alert(drawee);
+		$.ajax({
+			url:"html/fetch_drawee_company_name.php",
+			method:"post",
+			data: {drawee:drawee},
+			dataType:"text",
+			success:function(data)
+			{
+				// var array = data.split(',');
+				// var array = JSON.parse(data);//data.split(',');
+				// $('#c_name').empty();
+				// for(var i=0; i<array.length;i++){
+    //                 $('#c_name').append(new Option(array[i], array[i]));
+    //             }
+    	        $('#c_name').empty();
+    	        $('#c_name').empty();
+				$("#c_name").val(data);
+			}
+});
+});
 
     $(document).ready(function() {
         // To Remove element from array  
@@ -2378,129 +2518,153 @@ function showAlert(radioButton) {
             // alert('roks');
             // alert($(this).find('#thisSeviceId').val());
 
-            let TotalAmount = ($('#TotalAmount').val() > 0) ? $('#TotalAmount').val() : 0;
+            let totalValue = ($('#totalValue').val() > 0) ? $('#totalValue').val() : 0;
             if ($(this).prop("checked") == true) {
+                // $.each($("input[name='addThisService']:checked"), function(){
+                // alert($('#addThisService').is(":checked"));
+                // if($('#addThisService').is(":checked")){
                 checkedVal.push($(this).val());
                 var row_indexDEL = $(this).closest('tr');
                 MultipleServiceID.push(row_indexDEL.find('#thisSeviceId').val());
-                TotalAmount = (parseFloat(TotalAmount) + parseFloat(row_indexDEL.find('#thisAmount')
+                totalValue = (parseFloat(totalValue) + parseFloat(row_indexDEL.find('#thisAmount')
                     .val().replace(/,/g, ''))).toFixed(2);
                 // }
                 $('#temp_serviceIds').val(MultipleServiceID);
                 $('#serviceIds').val(MultipleServiceID);
-                $('#temp_TotalAmount').val(TotalAmount);
-                $('#TotalAmount').val(TotalAmount);
+                $('#temp_totalValue').val(totalValue);
+                $('#totalValue').val(totalValue);
             } else {
+                // var checkedVal = [];
+                // var MultipleServiceID = [];
+                // let totalValue = 0;
+                // $.each($("input[name='addThisService']:checked"), function(){
                 checkedVal.remove($(this).val());
                 var row_indexDEL = $(this).closest('tr');
                 MultipleServiceID.remove(row_indexDEL.find('#thisSeviceId').val());
-                TotalAmount = (parseFloat(TotalAmount) - parseFloat(row_indexDEL.find('#thisAmount')
+                totalValue = (parseFloat(totalValue) - parseFloat(row_indexDEL.find('#thisAmount')
                     .val().replace(/,/g, ''))).toFixed(2);
                 // });
                 $('#temp_serviceIds').val(MultipleServiceID);
                 $('#serviceIds').val(MultipleServiceID);
-                $('#temp_TotalAmount').val(TotalAmount);
-                $('#TotalAmount').val(TotalAmount);
+                $('#temp_totalValue').val(totalValue);
+                $('#totalValue').val(totalValue);
             }
             $('#service_id').val($(this).closest('tr').find('#thisSeviceId').val());
             // $('#amount_creditedIn').val('CASH');
             $('#amount').prop('max', $(this).closest('tr').find('#thisAmount').val().replace(/,/g, ''));
-            calculateGSTTax();
+            calculateGSTRetail();
         });
 
-        var client_name = $('#ClientNameSelect1').val();
-        if (client_name != "") {
-            resetAllFields();
-            resetServiceId();
-            $.ajax({
-                url: "html/ProcessTaxInvoice.php",
-                method: "post",
-                data: {
-                    client_name: client_name
-                },
-                dataType: "text",
-                success: function(data) {
-                    var array = JSON.parse(data);
-                    // alert(array[3]);
-                    if (array[0] !=
-                        "<tr style='text-align:center;'><td colspan='4'>No Record Found!</td></tr>"
-                    ) {
-                        $('#clientTransaction_dataDIV').removeClass('d-none');
-                        $('#clientTransaction_dataDIV').addClass('d-block');
-                        $('#clientTransactionTable').html(array[0]);
-                        $('#clientTransactionTable').DataTable({
-                            pagingType: "full_numbers",
-                            "bDestroy": true,
-                            "order": [
-                                [1, "DESC"]
-                            ]
-                        });
-                        $('#pendingAmount').html('Pending Amount : ' + array[1].toFixed(2)).css({
-                            'color': 'red',
-                            'font-size': '16px'
-                        });
-                        $('#advanceAmount').html('Advance Amount : ' + array[3]).css({
-                            'color': 'red',
-                            'font-size': '16px'
-                        });
-                        $('#TextadvanceAmount').val(array[3]);
-                    } else {
-                        $('#clientTransaction_dataDIV').removeClass('d-none');
-                        $('#clientTransaction_dataDIV').addClass('d-block');
-                        $('#clientTransactionTable').html(array[0]);
-                        $('#pendingAmount').html('');
-                        $('#advanceAmount').html('');
-                    }
-                },
-                complete: function() {
-                    $('#clientTransactionTable tbody tr #selctionServiceIdBtn').on('click',
-                        function() {
-                            $('#service_id').val($(this).closest('tr').find('#thisSeviceId')
-                                .val());
-                            $('#amount').prop('max', $(this).closest('tr').find('#thisAmount')
-                                .val().replace(/,/g, ''));
-                            $('#tempAdv_amount').prop('value', ($('#Original_amount').val()) - (
-                                $(this).closest('tr').find('#thisAmount').val().replace(
-                                    /,/g, '')));
-                            $('#amount').prop('value', $(this).closest('tr').find('#thisAmount')
-                                .val().replace(/,/g, ''));
-                            $('#temp_amount').prop('value', $(this).closest('tr').find(
-                                '#thisAmount').val().replace(/,/g, ''));
-                        });
-                }
-            });
-        } else {
-            $('#clientTransaction_dataDIV').removeClass('d-block');
-            $('#clientTransaction_dataDIV').addClass('d-none');
-            $('#clientTransactionTable').html('');
-        }
+        // var client_name = $('#ClientNameSelect1').val();
+        // if (client_name != "") {
+        //     // $('#pleaseWaitDialog').modal('show');
+        //     // alert(client_name);
+        //     resetAllFields();
+        //     resetServiceId();
+        //     $.ajax({
+        //         url: "html/ProcessRetailInvoice.php",
+        //         method: "post",
+        //         data: {
+        //             client_name: client_name
+        //         },
+        //         dataType: "text",
+        //         success: function(data) {
+        //             // alert(data);
+        //             // $('#clientTransaction_dataDIV').removeClass('d-none');
+        //             // $('#clientTransaction_dataDIV').addClass('d-block');
+        //             // $('#clientTransactionTable').html(data);
+        //             var array = JSON.parse(data);
+        //             // alert(array[3]);
+        //             if (array[0] !=
+        //                 "<tr style='text-align:center;'><td colspan='4'>No Record Found!</td></tr>"
+        //             ) {
+        //                 $('#clientTransaction_dataDIV').removeClass('d-none');
+        //                 $('#clientTransaction_dataDIV').addClass('d-block');
+        //                 $('#clientTransactionTable').html(array[0]);
+        //                 $('#clientTransactionTable').DataTable({
+        //                     pagingType: "full_numbers",
+        //                     "bDestroy": true,
+        //                     "order": [
+        //                         [1, "DESC"]
+        //                     ]
+        //                 });
+        //                 // $('#pendingAmountMainPara').removeClass('d-none');
+        //                 // $('#pendingAmountMainPara').addClass('d-block');
+        //                 $('#pendingAmount').html('Pending Amount : ' + array[1].toFixed(2)).css({
+        //                     'color': 'red',
+        //                     'font-size': '16px'
+        //                 });
+        //                 $('#advanceAmount').html('Advance Amount : ' + array[3]).css({
+        //                     'color': 'red',
+        //                     'font-size': '16px'
+        //                 });
+        //                 $('#TextadvanceAmount').val(array[3]);
+        //             } else {
+        //                 $('#clientTransaction_dataDIV').removeClass('d-none');
+        //                 $('#clientTransaction_dataDIV').addClass('d-block');
+        //                 $('#clientTransactionTable').html(array[0]);
+        //                 // $('#pendingAmountMainPara').removeClass('d-block');
+        //                 // $('#pendingAmountMainPara').addClass('d-none');
+        //                 $('#pendingAmount').html('');
+        //                 $('#advanceAmount').html('');
+        //             }
+        //         },
+        //         complete: function() {
+        //             //$("#wait").css("display", "none");
+        //             $('#pleaseWaitDialog').modal('hide');
+        //             // $('#clientTransactionTable tbody tr').on('click', function(){
+        //             $('#clientTransactionTable tbody tr #selctionServiceIdBtn').on('click',
+        //                 function() {
+        //                     // alert('roks');
+        //                     // alert($(this).find('#thisSeviceId').val());
+        //                     // alert($(this).closest('tr').find('#thisAmount').val().replace(/,/g, ''));
+        //                     $('#service_id').val($(this).closest('tr').find('#thisSeviceId')
+        //                         .val());
+        //                     // $('#amount_creditedIn').val('CASH');
+        //                     $('#amount').prop('max', $(this).closest('tr').find('#thisAmount')
+        //                         .val().replace(/,/g, ''));
+        //                     $('#tempAdv_amount').prop('value', ($('#Original_amount').val()) - (
+        //                         $(this).closest('tr').find('#thisAmount').val().replace(
+        //                             /,/g, '')));
+        //                     $('#amount').prop('value', $(this).closest('tr').find('#thisAmount')
+        //                         .val().replace(/,/g, ''));
+        //                     $('#temp_amount').prop('value', $(this).closest('tr').find(
+        //                         '#thisAmount').val().replace(/,/g, ''));
+        //                 });
+        //         }
+        //     });
+        // } else {
+        //     $('#clientTransaction_dataDIV').removeClass('d-block');
+        //     $('#clientTransaction_dataDIV').addClass('d-none');
+        //     $('#clientTransactionTable').html('');
+        // }
 
         $('#consulting_fees').prop('max', $("#fees").val());
         $("#fees").change(function() {
             $('#consulting_fees').prop('max', $("#fees").val());
         });
         $("#update_income").hide();
-        $('#searchTaxInvoiceDiv').hide();
-        $('#showTaxInvoice').load('html/TaxInvoice_DataList.php').fadeIn("slow");
+        $('#searchRetailInvoiceDiv').hide();
+        $('#showRetailInvoice').load('html/RetailInvoice_DataList.php').fadeIn("slow");
         $('#showClient').load('html/ClientList.php').fadeIn("slow");
 
         if ($("#gstEditID_temp").val() != "") {
-            $("#showTaxInvoice").removeClass("d-block");
-            $("#showTaxInvoice").addClass("d-none");
+            $("#showRetailInvoice").removeClass("d-block");
+            $("#showRetailInvoice").addClass("d-none");
             $("#showClient").removeClass("d-block");
             $("#showClient").addClass("d-none");
             $("#showClientWholeDetails").removeClass("d-block");
             $("#showClientWholeDetails").addClass("d-none");
             $("#showGSTWholeDetails").removeClass("d-block");
             $("#showGSTWholeDetails").addClass("d-none");
-            $("#import_TaxInvoice").removeClass("d-block");
-            $("#import_TaxInvoice").addClass("d-none");
+            $("#import_RetailInvoice").removeClass("d-block");
+            $("#import_RetailInvoice").addClass("d-none");
 
-            $("#addNew_TaxInvoice").removeClass("d-none");
-            $("#addNew_TaxInvoice").addClass("d-block");
-            $('#Export_TaxInvoiceForm').attr('action', 'Export_TaxInvoice');
-            $("#export_TaxInvoice").prop("name", "Export_TaxInvoice");
-            $("#pageHeading").html("Tax Invoice Transaction");
+            $("#addNew_RetailInvoice").removeClass("d-none");
+            $("#addNew_RetailInvoice").addClass("d-block");
+            $('#Export_RetailInvoiceForm').attr('action', 'Export_RetailInvoice');
+            $("#export_RetailInvoice").prop("name", "Export_RetailInvoice");
+            $("#pageHeading").html("Retail Invoice Transaction");
 
             var selectedService = $("#PaymentModeSelect1").children("option:selected").val();
             if (selectedService == "Bank Online") {
@@ -2520,6 +2684,89 @@ function showAlert(radioButton) {
                 $("#payment_descriptionDIV").addClass("d-none");
             }
         }
+
+        $("#temp_RetailInvoice_save").click(function() {
+            // $("#addNew_RetailInvoice").valid();
+			if ($('#addNew_RetailInvoice')[0].checkValidity()) {
+				if (taxInvoiceCorrect) {
+				// the form is valid
+					if ($('#serviceIds').val() == "") {
+						$('#temp_serviceIds').addClass('border-danger');
+						$('#serviceIds_status').html('Please select service(s) from below table').css(
+							'color', 'red');
+					} else {
+						$('#temp_serviceIds').removeClass('border-danger');
+						$('#serviceIds_status').html('').css('color', 'green');
+						$('#RetailInvoice_save').click();
+					}
+				}
+				// alert('Valid');
+				// $('#AskingMakeIncomePaymentPopup').modal('show');
+				//$('#makePaymentLink').attr('href','income');
+			} else {
+				$('#RetailInvoice_save').click();
+				//$('#makePaymentLink').attr('href','#');
+				//alert('In-valid');
+			}
+        });
+        $("#No_makePaymentLink").click(function() {
+            $('#makePayment').val(0);
+            $('#RetailInvoice_save').click();
+        });
+        $("#makePaymentLink").click(function() {
+            $('#makePayment').val(1);
+            $('#RetailInvoice_save').click();
+        });
+
+        $("#add_new_RetailInvoice").click(function() {
+    $("#showRetailInvoice").removeClass("d-block");
+    $("#showRetailInvoice").addClass("d-none");
+    $("#showClient").removeClass("d-block");
+    $("#showClient").addClass("d-none");
+    $("#showClientWholeDetails").removeClass("d-block");
+    $("#showClientWholeDetails").addClass("d-none");
+    $("#showGSTWholeDetails").removeClass("d-block");
+    $("#showGSTWholeDetails").addClass("d-none");
+    $("#import_RetailInvoice").removeClass("d-block");
+    $("#import_RetailInvoice").addClass("d-none");
+
+    // Hide addNew_RetailInvoice and form2 initially
+    $("#addNew_RetailInvoice").removeClass("d-block");
+    $("#addNew_RetailInvoice").addClass("d-none");
+    $("#form2").removeClass("d-block");
+    $("#form2").addClass("d-none");
+
+    // Show addNew_RetailInvoice form and hide form2 if the selected option is "manual"
+    if ($("#category").val() === "manual") {
+        $("#form2").removeClass("d-none");
+        $("#form2").addClass("d-block");
+    } else {
+        $("#addNew_RetailInvoice").removeClass("d-none");
+        $("#addNew_RetailInvoice").addClass("d-block");
+    }
+
+    $('#Export_RetailInvoiceForm').attr('action', 'Export_RetailInvoice');
+    $("#export_RetailInvoice").prop("name", "Export_RetailInvoice");
+    $("#pageHeading").html("Retail Invoice Transaction");
+});
+
+        $("#import_RetailInvoice").click(function() {
+            $("#showRetailInvoice").removeClass("d-block");
+            $("#showRetailInvoice").addClass("d-none");
+            $("#showClient").removeClass("d-block");
+            $("#showClient").addClass("d-none");
+            $("#showClientWholeDetails").removeClass("d-block");
+            $("#showClientWholeDetails").addClass("d-none");
+            $("#addNew_RetailInvoice").removeClass("d-block");
+            $("#addNew_RetailInvoice").addClass("d-none");
+            $('#Export_RetailInvoiceForm').attr('action', 'Export_RetailInvoice');
+            $("#export_RetailInvoice").prop("name", "Export_RetailInvoice");
+            $("#showGSTWholeDetails").removeClass("d-block");
+            $("#showGSTWholeDetails").addClass("d-none");
+            $("#import_RetailInvoice").removeClass("d-none");
+            $("#import_RetailInvoice").addClass("d-block");
+            $("#pageHeading").html("Retail Invoice Transaction");
+        });
         $("#view_Service").click(function() {
     // Hide other sections as per your current logic
     $("#showClient").removeClass("d-block").addClass("d-none");
@@ -2541,118 +2788,99 @@ function showAlert(radioButton) {
     });
     serviceModal.show();
 });
-
-        $("#temp_TaxInvoice_save").click(function() {
-            // $("#addNew_TaxInvoice").valid();
-			if ($('#addNew_TaxInvoice')[0].checkValidity()) {
-				if (taxInvoiceCorrect) {
-				// the form is valid
-					if ($('#serviceIds').val() == "") {
-						$('#temp_serviceIds').addClass('border-danger');
-						$('#serviceIds_status').html('Please select service(s) from below table').css(
-							'color', 'red');
-					} else {
-						$('#temp_serviceIds').removeClass('border-danger');
-						$('#serviceIds_status').html('').css('color', 'green');
-						$('#TaxInvoice_save').click();
-					}
-				}
-			} else {
-				$('#TaxInvoice_save').click();
-			}
-        });
-        $("#No_makePaymentLink").click(function() {
-            $('#makePayment').val(0);
-            $('#TaxInvoice_save').click();
-        });
-        $("#makePaymentLink").click(function() {
-            $('#makePayment').val(1);
-            $('#TaxInvoice_save').click();
-        });
-
-        $("#add_new_TaxInvoice").click(function() {
-            $("#showTaxInvoice").removeClass("d-block");
-            $("#showTaxInvoice").addClass("d-none");
-            $("#showClient").removeClass("d-block");
-            $("#showClient").addClass("d-none");
-            $("#showClientWholeDetails").removeClass("d-block");
-            $("#showClientWholeDetails").addClass("d-none");
+        $("#view_RetailInvoiceClient").click(function() {
+            $("#showRetailInvoice").removeClass("d-block");
+            $("#showRetailInvoice").addClass("d-none");
+            $("#addNew_RetailInvoice").removeClass("d-block");
+            $("#addNew_RetailInvoice").addClass("d-none");
             $("#showGSTWholeDetails").removeClass("d-block");
             $("#showGSTWholeDetails").addClass("d-none");
-            $("#import_TaxInvoice").removeClass("d-block");
-            $("#import_TaxInvoice").addClass("d-none");
-
-            $("#addNew_TaxInvoice").removeClass("d-none");
-            $("#addNew_TaxInvoice").addClass("d-block");
-            $('#Export_TaxInvoiceForm').attr('action', 'Export_TaxInvoice');
-            $("#export_TaxInvoice").prop("name", "Export_TaxInvoice");
-            $("#pageHeading").html("Tax Invoice Transaction");
-        });
-        $("#import_TaxInvoice").click(function() {
-            $("#showTaxInvoice").removeClass("d-block");
-            $("#showTaxInvoice").addClass("d-none");
-            $("#showClient").removeClass("d-block");
-            $("#showClient").addClass("d-none");
-            $("#showClientWholeDetails").removeClass("d-block");
-            $("#showClientWholeDetails").addClass("d-none");
-            $("#addNew_TaxInvoice").removeClass("d-block");
-            $("#addNew_TaxInvoice").addClass("d-none");
-            $('#Export_TaxInvoiceForm').attr('action', 'Export_TaxInvoice');
-            $("#export_TaxInvoice").prop("name", "Export_TaxInvoice");
-            $("#showGSTWholeDetails").removeClass("d-block");
-            $("#showGSTWholeDetails").addClass("d-none");
-            $("#import_TaxInvoice").removeClass("d-none");
-            $("#import_TaxInvoice").addClass("d-block");
-            $("#pageHeading").html("Tax Invoice Transaction");
-        });
-        $("#view_TaxInvoiceClient").click(function() {
-            $("#showTaxInvoice").removeClass("d-block");
-            $("#showTaxInvoice").addClass("d-none");
-            $("#addNew_TaxInvoice").removeClass("d-block");
-            $("#addNew_TaxInvoice").addClass("d-none");
-            $("#showGSTWholeDetails").removeClass("d-block");
-            $("#showGSTWholeDetails").addClass("d-none");
-            $("#import_TaxInvoice").removeClass("d-block");
-            $("#import_TaxInvoice").addClass("d-none");
+            $("#import_RetailInvoice").removeClass("d-block");
+            $("#import_RetailInvoice").addClass("d-none");
 
             $("#showClient").removeClass("d-none");
             $("#showClient").addClass("d-block");
-            $('#Export_TaxInvoiceForm').attr('action', 'Export_Client');
-            $("#export_TaxInvoice").prop("name", "Export_Client");
+            $('#Export_RetailInvoiceForm').attr('action', 'Export_Client');
+            $("#export_RetailInvoice").prop("name", "Export_Client");
             $("#pageHeading").html("GST Clients");
         });
-        var ClientNameSelect1 = $("#ClientNameSelect1").val();
-        $.ajax({
-            url: "html/Processgst.php",
-            method: "post",
-            data: {
-                ClientNameSelect1: ClientNameSelect1
-            },
-            dataType: "text",
-            success: function(data) {
-                var jsonData = JSON.parse(data);
-            	$("#gst_no").val(jsonData.gst_no);
-            	$("#gst_no_temp").val(jsonData.gst_no);
-            	$("#client_ID").val(jsonData.client_id);
-            }
-        });
-        $("#ClientNameSelect1").change(function() {
-            var ClientNameSelect1 = $("#ClientNameSelect1").val();
-            $.ajax({
-                url: "html/Processgst.php",
-                method: "post",
-                data: {
-                    ClientNameSelect1: ClientNameSelect1
-                },
-                dataType: "text",
-                success: function(data) {
-                    var jsonData = JSON.parse(data);
-                	$("#gst_no").val(jsonData.gst_no);
-                	$("#gst_no_temp").val(jsonData.gst_no);
-                	$("#client_ID").val(jsonData.client_id);
-                }
-            });
-        });
+        // var ClientNameSelect1 = $("#ClientNameSelect1").val();
+        // $.ajax({
+        //     url: "html/Processgst.php",
+        //     method: "post",
+        //     data: {
+        //         ClientNameSelect1: ClientNameSelect1
+        //     },
+        //     dataType: "text",
+        //     success: function(data) {
+        //         $("#gst_no").val(data);
+        //         $("#gst_no_temp").val(data);
+        //     }
+        // });
+//         $('#ClientNameSelect1').on("change", function (e) { 
+// 		var ClientNameSelect1 = $("#ClientNameSelect1").val();
+// 		$.ajax({
+//             url:"html/Processgst.php",
+//             method:"post",
+//             data: {ClientNameSelect1:ClientNameSelect1},
+//             dataType:"text",
+//             success:function(data)
+//             {   
+//                 var jsonData = JSON.parse(data);
+//             	$("#gst_no").val(jsonData.gst_no);
+//             	$("#gst_no_temp").val(jsonData.gst_no);
+//             	$("#client_ID").val(jsonData.client_id);
+//             }
+//         });
+// 	});
+//         $('#ClientNameSelect1').on("change", function (e) { 
+// 		var ClientNameSelect1 = $("#ClientNameSelect1").val();
+// 		$.ajax({
+//             url:"html/Processgst.php",
+//             method:"post",
+//             data: {ClientNameSelect1:ClientNameSelect1},
+//             dataType:"text",
+//             success:function(data)
+//             {   
+//                 var jsonData = JSON.parse(data);
+//             	$("#gst_no").val(jsonData.gst_no);
+//             	$("#gst_no_temp").val(jsonData.gst_no);
+//             	$("#client_ID").val(jsonData.client_id);
+//             }
+//         });
+// 	});
+        /* $("#return_type").change(function(){
+        	var selectedReturn = $(this). children("option:selected"). val();
+        	if (selectedReturn == "Composition") {
+        		$("#trans_4DIV").removeClass("d-none");
+        		$("#trans_4DIV").addClass("d-block");
+
+        		$("#gstr_1DIV").removeClass("d-block");
+        		$("#gstr_1DIV").addClass("d-none");
+        		$("#gstr_3BDIV").removeClass("d-block");
+        		$("#gstr_3BDIV").addClass("d-none");
+        		$("#trans_1DIV").removeClass("d-block");
+        		$("#trans_1DIV").addClass("d-none");
+        		$("#trans_6DIV").removeClass("d-block");
+        		$("#trans_6DIV").addClass("d-none");
+        		$("#gstr_2a_recoDIV").removeClass("d-block");
+        		$("#gstr_2a_recoDIV").addClass("d-none");
+        	}else{
+        		$("#trans_4DIV").removeClass("d-block");
+        		$("#trans_4DIV").addClass("d-none");
+
+        		$("#gstr_1DIV").removeClass("d-none");
+        		$("#gstr_1DIV").addClass("d-block");
+        		$("#gstr_3BDIV").removeClass("d-none");
+        		$("#gstr_3BDIV").addClass("d-block");
+        		$("#trans_1DIV").removeClass("d-none");
+        		$("#trans_1DIV").addClass("d-block");
+        		$("#trans_6DIV").removeClass("d-none");
+        		$("#trans_6DIV").addClass("d-block");
+        		$("#gstr_2a_recoDIV").removeClass("d-none");
+        		$("#gstr_2a_recoDIV").addClass("d-block");
+        	}
+        }); */
         $("#PaymentModeSelect1").change(function() {
             var selectedService = $(this).children("option:selected").val();
             if (selectedService == "Bank Online") {
@@ -3323,7 +3551,7 @@ function showAlert(radioButton) {
         $('#lastLink').click(function() {
             var last = $('#last').val();
             $.ajax({
-                url: "html/showTaxInvoiceTable.php",
+                url: "html/showRetailInvoiceTable.php",
                 method: "post",
                 data: {
                     pageno: last
@@ -3341,7 +3569,7 @@ function showAlert(radioButton) {
         $('#firstLink').click(function() {
             var last = $('#first').val();
             $.ajax({
-                url: "html/showTaxInvoiceTable.php",
+                url: "html/showRetailInvoiceTable.php",
                 method: "post",
                 data: {
                     pageno: last
@@ -3358,7 +3586,7 @@ function showAlert(radioButton) {
         $('#nextLink').click(function() {
             var last = $('#next').val();
             $.ajax({
-                url: "html/showTaxInvoiceTable.php",
+                url: "html/showRetailInvoiceTable.php",
                 method: "post",
                 data: {
                     pageno: last
@@ -3375,7 +3603,7 @@ function showAlert(radioButton) {
         $('#prevLink').click(function() {
             var last = $('#prev').val();
             $.ajax({
-                url: "html/showTaxInvoiceTable.php",
+                url: "html/showRetailInvoiceTable.php",
                 method: "post",
                 data: {
                     pageno: last
