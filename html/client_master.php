@@ -8,33 +8,32 @@ date_default_timezone_set('Asia/Kolkata');
 $alertMsg = "";
 $alertClass = "";
 
-if(isset($_POST['rejectClient'])){
-    $rej_ID = $_POST['fetchRejectID'];
-    $query = "select * from `addClient_approval_Status` where `id` = '".$rej_ID."'";
-    $result = mysqli_query($con,$query);
-    $selRow = mysqli_fetch_array($result);
-    $status = "Hot";
-    $crm_query = "insert into `addHot_Status`(`title_id`,`company_id`,`comp_name`,`cont_person`,`mob1`,`mob2`,`email1`,`email2`,`state`,`city`,`pincode`,`website`,`whatsapp`,`designation`,`department`,`reff`,`other`,`keyword`,`leadDate`,`username2`,`status`,`mom`,`remark`,`followUpDate`,`modify_by`,`stat_modify_at`,`created_by`) values('".$selRow['title_id']."','".$selRow['company_id']."','".$selRow['comp_name']."','".$selRow['cont_person']."','".$selRow['mob1']."','".$selRow['mob2']."','".$selRow['email1']."','".$selRow['email2']."','".$selRow['state']."','".$selRow['city']."','".$selRow['pincode']."','".$selRow['website']."','".$selRow['whatsapp']."','".$selRow['designation']."','".$selRow['department']."','".$selRow['reff']."','".$selRow['other']."','".$selRow['keyword']."','".$selRow['leadDate']."','".$selRow['username2']."','".$status."','".$selRow['mom']."','".$selRow['remark']."','".$selRow['followUpDate']."','" . date('Y-m-d') . "','" . date('Y-m-d') . "','" . $selRow['created_by'] . "')";
-    $result = mysqli_query($con,$crm_query);
-    if($result){
-        $delQ = "update `addClient_approval_Status` set `client_approval` = 2,`client_status_by` = '".$_SESSION['email_id']."' where `id` = '".$rej_ID."'";
-        $result1 = mysqli_query($con,$delQ);
-        if($result1){
-            $alertMsg = "Client Approval Rejected";
+if (isset($_POST['rejectClient'])) {
+	$rej_ID = $_POST['fetchRejectID'];
+	$query = "select * from `addClient_approval_Status` where `id` = '" . $rej_ID . "'";
+	$result = mysqli_query($con, $query);
+	$selRow = mysqli_fetch_array($result);
+	$status = "Hot";
+	$crm_query = "insert into `addHot_Status`(`title_id`,`company_id`,`comp_name`,`cont_person`,`mob1`,`mob2`,`email1`,`email2`,`state`,`city`,`pincode`,`website`,`whatsapp`,`designation`,`department`,`reff`,`other`,`keyword`,`leadDate`,`username2`,`status`,`mom`,`remark`,`followUpDate`,`modify_by`,`stat_modify_at`,`created_by`) values('" . $selRow['title_id'] . "','" . $selRow['company_id'] . "','" . $selRow['comp_name'] . "','" . $selRow['cont_person'] . "','" . $selRow['mob1'] . "','" . $selRow['mob2'] . "','" . $selRow['email1'] . "','" . $selRow['email2'] . "','" . $selRow['state'] . "','" . $selRow['city'] . "','" . $selRow['pincode'] . "','" . $selRow['website'] . "','" . $selRow['whatsapp'] . "','" . $selRow['designation'] . "','" . $selRow['department'] . "','" . $selRow['reff'] . "','" . $selRow['other'] . "','" . $selRow['keyword'] . "','" . $selRow['leadDate'] . "','" . $selRow['username2'] . "','" . $status . "','" . $selRow['mom'] . "','" . $selRow['remark'] . "','" . $selRow['followUpDate'] . "','" . date('Y-m-d') . "','" . date('Y-m-d') . "','" . $selRow['created_by'] . "')";
+	$result = mysqli_query($con, $crm_query);
+	if ($result) {
+		$delQ = "update `addClient_approval_Status` set `client_approval` = 2,`client_status_by` = '" . $_SESSION['email_id'] . "' where `id` = '" . $rej_ID . "'";
+		$result1 = mysqli_query($con, $delQ);
+		if ($result1) {
+			$alertMsg = "Client Approval Rejected";
 			$alertClass = "alert alert-success";
-        }
-    }
-    
+		}
+	}
 }
 
-if(isset($_POST['rejectPartner'])){
-    $rej_ID = $_POST['fetchpartnerRejectID'];
-    $query = "update `calling_partner` set `partner_status` = 2 where `id` = '".$rej_ID."'";
-    $result = mysqli_query($con,$query);
-    if($result){
-        $alertMsg = "Partner Approval Rejected";
+if (isset($_POST['rejectPartner'])) {
+	$rej_ID = $_POST['fetchpartnerRejectID'];
+	$query = "update `calling_partner` set `partner_status` = 2 where `id` = '" . $rej_ID . "'";
+	$result = mysqli_query($con, $query);
+	if ($result) {
+		$alertMsg = "Partner Approval Rejected";
 		$alertClass = "alert alert-success";
-    }
+	}
 }
 
 
@@ -75,11 +74,11 @@ if (isset($_POST['editClient_Masterbtn'])) {
 		$mobile_repairing = $row['mobile_repairing'];
 		$advocate = $row['advocate'];
 		$psp = $row['psp'];
-		$trade_mark=$row['trade_mark'];
-        $patent=$row['patent'];
-        $trade_secret=$row['trade_secret'];
-        $copy_right=$row['copy_right'];
-        $industrial_design=$row['industrial_design'];
+		$trade_mark = $row['trade_mark'];
+		$patent = $row['patent'];
+		$trade_secret = $row['trade_secret'];
+		$copy_right = $row['copy_right'];
+		$industrial_design = $row['industrial_design'];
 		$psp_coupon_consumption = $row['psp_coupon_consumption'];
 		//$payment = $row['payment'];
 		$audit = $row['audit'];
@@ -98,11 +97,7 @@ if (isset($_POST['editClient_Masterbtn'])) {
 	}
 }
 if (isset($_POST['client_save'])) {
-	/*if (!isset($_POST['vendor_client'])) {
-			$vendor_client = 0;
-		} else {
-			$vendor_client = 1;
-		}*/
+	 
 	$client_name = strtoupper(trim($_POST['client_name']));
 	$company_name = $_POST['company_name'];
 	$contact_person = $_POST['contact_person'];
@@ -121,17 +116,17 @@ if (isset($_POST['client_save'])) {
 	$bank_name = $_POST['bank_name'];
 	$branch_code = $_POST['branch_code'];
 	$crm_client = $_POST['crm_client'];
-	$expl = explode('_',$crm_client);
+	$expl = explode('_', $crm_client);
 	$CRM = $expl[0];
 	$title_id = $expl[1];
 	$position = strpos($CRM, 'CRM');
-    if ($position !== false) {
-        $CRM_d = 1;
-        $title_name = $title_id;
-    } else {
-        $CRM_d = 0;
-        $title_name = "";
-    }
+	if ($position !== false) {
+		$CRM_d = 1;
+		$title_name = $title_id;
+	} else {
+		$CRM_d = 0;
+		$title_name = "";
+	}
 	if (isset($_POST['dsc_company'])) {
 		$dsc_company = implode(',', $_POST['dsc_company']);
 	} else {
@@ -142,7 +137,7 @@ if (isset($_POST['client_save'])) {
 	$dsc_reseller = 0;
 	$pan = 0;
 	$tan = 0;
-	$e_tender=0;
+	$e_tender = 0;
 	$it_returns = 0;
 	$e_tds = 0;
 	$twenty4g = 0;
@@ -154,11 +149,11 @@ if (isset($_POST['client_save'])) {
 	$psp = 0;
 	$psp_coupon_consumption = 0;
 	$audit = 0;
-	$trade_mark=0;
-    $patent=0;
-    $trade_secret=0;
-    $copy_right=0;
-    $industrial_design=0;
+	$trade_mark = 0;
+	$patent = 0;
+	$trade_secret = 0;
+	$copy_right = 0;
+	$industrial_design = 0;
 	if (isset($_POST['dsc_allows'])) {
 		foreach ($_POST['dsc_allows'] as $key => $value) {
 			if ($_POST['dsc_allows'][$key] == "DSC Applicant") {
@@ -224,7 +219,7 @@ if (isset($_POST['client_save'])) {
 			}
 		}
 	}
-	
+
 	if (isset($_POST['ip_allows'])) {
 		foreach ($_POST['ip_allows'] as $key => $value) {
 			if ($_POST['ip_allows'][$key] == "trade_mark") {
@@ -252,8 +247,8 @@ if (isset($_POST['client_save'])) {
 	} else {
 		//$gst = $_POST['gst'];
 	}
-	
-	
+
+
 	if (!isset($_POST['previous_balance']) || empty($_POST['previous_balance'])) {
 		$previous_balance = 0;
 	} else {
@@ -268,7 +263,7 @@ if (isset($_POST['client_save'])) {
 		//$psp = 0;
 		$psp_vle_id = '';
 	}
-	
+
 	if ($audit == 1) {
 		$cin = $_POST['cin'];
 	} else {
@@ -299,45 +294,43 @@ if (isset($_POST['client_save'])) {
 	} else {
 		if ($pan_no != "") {
 			$checkExistData = "SELECT `id` FROM `client_master` WHERE (`pan_no` = '" . $pan_no . "') AND `company_id` = '" . $_SESSION['company_id'] . "'";
-		} 
-		else if ($pan_no == "") {
+		} else if ($pan_no == "") {
 			$checkExistData = "SELECT `id` FROM `client_master` WHERE (`pan_no` = '" . $pan_no . "') AND `company_id` = '" . $_SESSION['company_id'] . "'";
 		}
 	}
-	
-		$fetchLastTransactionId = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '" . $DBName . "' AND TABLE_NAME = 'client_master'";
-		$run_fetchLastTransactionId = mysqli_query($con, $fetchLastTransactionId);
-// 		$transaction_id = "VE_CLM_954";
-		if (mysqli_num_rows($run_fetchLastTransactionId) > 0) {
-			$FetchlastTransactionID_row = mysqli_fetch_array($run_fetchLastTransactionId);
-// 			$transaction_id = "VE_CLM_" . ($FetchlastTransactionID_row['AUTO_INCREMENT'] * 954);
-			$transaction_id = $_SESSION['company_name_for_transacrion_id'] . "_CLM_" . ($FetchlastTransactionID_row['AUTO_INCREMENT'] * 954);
-		
-		$client_add_query = "INSERT INTO `client_master` (`advocate`,`trade_mark`,`patent`,`trade_secret`,`copy_right`,`industrial_design`,`crm_client`,`title_id`,`transaction_id`, `company_id`, `client_name`, `company_name`, `contact_person`, `mobile_no`, `pan_no`, `landline_no`, `email_1`, `password`, `email_2`, `address`, `state`, `city`, `pincode`, `bank_account_no`, `ifsc_code`, `bank_name`, `branch_code`, `dsc_subscriber`, `dsc_reseller`, `pan`, `tan`, `it_returns`, `e_tds`,`24g`, `gst`, `other_services`,`mobile_repairing`,`e_tender` ,`trading`, `psp`, `psp_coupon_consumption`, `audit`, `gst_no`, `other_description`, `psp_vle_id`, `cin`,`previous_balance`,`advance_balance`,`dsc_reseller_company`,`users_access`,`modify_by`,`modify_date`,`entry_id`) VALUES ('".$advocate."','".$trade_mark."','".$patent."','".$trade_secret."','".$copy_right."','".$industrial_design."','".$CRM_d."','".$title_name."','" . $transaction_id . "', '" . $_SESSION['company_id'] . "','" . $client_name . "','" . $company_name . "','" . $contact_person . "','" . $mobile_number . "','" . $pan_no . "','" . $landline_number . "','" . $email_id_1 . "','" . $password . "','" . $email_id_2 . "','" . $address . "','" . $state . "','" . $city . "','" . $pincode . "','" . $bank_account_no . "','" . $ifsc_code . "','" . $bank_name . "','" . $branch_code . "','" . $dsc_subscriber . "','" . $dsc_reseller . "','" . $pan . "','" . $tan . "','" . $it_returns . "','" . $e_tds . "','" . $twenty4g . "','" . $gst . "','" . $other_services . "','".$mobile_repairing."','" . $e_tender . "','" . $trading . "','" . $psp . "','" . $psp_coupon_consumption . "','" . $audit . "','" . $gst_no . "','" . $other_description . "', '" . $psp_vle_id . "', '" . $cin . "','" . $previous_balance . "','" . $advance_balance . "','" . $dsc_company . "','" . $users_access . "','" . $_SESSION['username'] . "','" . date('Y-m-d H:i:sa') . "','".$_SESSION['employee_id']."')";
+
+	$fetchLastTransactionId = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '" . $DBName . "' AND TABLE_NAME = 'client_master'";
+	$run_fetchLastTransactionId = mysqli_query($con, $fetchLastTransactionId);
+	// 		$transaction_id = "VE_CLM_954";
+	if (mysqli_num_rows($run_fetchLastTransactionId) > 0) {
+		$FetchlastTransactionID_row = mysqli_fetch_array($run_fetchLastTransactionId);
+		// 			$transaction_id = "VE_CLM_" . ($FetchlastTransactionID_row['AUTO_INCREMENT'] * 954);
+		$transaction_id = $_SESSION['company_name_for_transacrion_id'] . "_CLM_" . ($FetchlastTransactionID_row['AUTO_INCREMENT'] * 954);
+
+		$client_add_query = "INSERT INTO `client_master` (`advocate`,`trade_mark`,`patent`,`trade_secret`,`copy_right`,`industrial_design`,`crm_client`,`title_id`,`transaction_id`, `company_id`, `client_name`, `company_name`, `contact_person`, `mobile_no`, `pan_no`, `landline_no`, `email_1`, `password`, `email_2`, `address`, `state`, `city`, `pincode`, `bank_account_no`, `ifsc_code`, `bank_name`, `branch_code`, `dsc_subscriber`, `dsc_reseller`, `pan`, `tan`, `it_returns`, `e_tds`,`24g`, `gst`, `other_services`,`mobile_repairing`,`e_tender` ,`trading`, `psp`, `psp_coupon_consumption`, `audit`, `gst_no`, `other_description`, `psp_vle_id`, `cin`,`previous_balance`,`advance_balance`,`dsc_reseller_company`,`users_access`,`modify_by`,`modify_date`,`entry_id`) VALUES ('" . $advocate . "','" . $trade_mark . "','" . $patent . "','" . $trade_secret . "','" . $copy_right . "','" . $industrial_design . "','" . $CRM_d . "','" . $title_name . "','" . $transaction_id . "', '" . $_SESSION['company_id'] . "','" . $client_name . "','" . $company_name . "','" . $contact_person . "','" . $mobile_number . "','" . $pan_no . "','" . $landline_number . "','" . $email_id_1 . "','" . $password . "','" . $email_id_2 . "','" . $address . "','" . $state . "','" . $city . "','" . $pincode . "','" . $bank_account_no . "','" . $ifsc_code . "','" . $bank_name . "','" . $branch_code . "','" . $dsc_subscriber . "','" . $dsc_reseller . "','" . $pan . "','" . $tan . "','" . $it_returns . "','" . $e_tds . "','" . $twenty4g . "','" . $gst . "','" . $other_services . "','" . $mobile_repairing . "','" . $e_tender . "','" . $trading . "','" . $psp . "','" . $psp_coupon_consumption . "','" . $audit . "','" . $gst_no . "','" . $other_description . "', '" . $psp_vle_id . "', '" . $cin . "','" . $previous_balance . "','" . $advance_balance . "','" . $dsc_company . "','" . $users_access . "','" . $_SESSION['username'] . "','" . date('Y-m-d H:i:sa') . "','" . $_SESSION['employee_id'] . "')";
 		$run_client_add = mysqli_query($con, $client_add_query);
 		if ($run_client_add) {
-            if(strpos($title_id, 'PARTNER') !== false){
-                if($run_client_add){
-    	            $partnerQuery = "update `calling_partner` set `part_id` = '".$transaction_id."',`partner_status` = 1,`approved_by` = '".$_SESSION['username']."' where `part_id` = '".$title_name."'";
-    	            $partnerResult = mysqli_query($con,$partnerQuery);
-	            }
-            }
-		    if($CRM === "CRM"){
-		        $selQuery = "select c1.transaction_id,a1.title_id,a1.company_id,a1.comp_name,a1.cont_person,a1.mob1,a1.mob2,a1.email1,a1.email2,a1.state,a1.city,a1.pincode,a1.website,a1.whatsapp,a1.designation,a1.department,a1.reff,a1.other,a1.keyword,a1.leadDate,a1.username2,a1.status,a1.mom,a1.remark,a1.followUpDate,a1.modify_by,a1.stat_modify_at,a1.created_by from `client_master` c1 right join `addClient_approval_Status` a1 on c1.title_id=a1.title_id where c1.title_id = '".$title_name."'";
-		        $selQuery = mysqli_query($con,$selQuery);
-		        $selRow = mysqli_fetch_array($selQuery);
-		        $client = "Client";
-		        date_default_timezone_set('Asia/Kolkata');
-                $currentTime = date( 'Y-m-d', time () );
-                $date = date('Y-m-d');
-		        $crm_query = "insert into `addClient_Status`(`client_id`,`title_id`,`company_id`,`comp_name`,`cont_person`,`mob1`,`mob2`,`email1`,`email2`,`state`,`city`,`pincode`,`website`,`whatsapp`,`designation`,`department`,`reff`,`other`,`keyword`,`leadDate`,`username2`,`status`,`mom`,`remark`,`followUpDate`,`modify_by`,`stat_modify_at`,`created_by`) values('".$selRow['transaction_id']."','".$selRow['title_id']."','".$selRow['company_id']."','".$selRow['comp_name']."','".$selRow['cont_person']."','".$selRow['mob1']."','".$selRow['mob2']."','".$selRow['email1']."','".$selRow['email2']."','".$selRow['state']."','".$selRow['city']."','".$selRow['pincode']."','".$selRow['website']."','".$selRow['whatsapp']."','".$selRow['designation']."','".$selRow['department']."','".$selRow['reff']."','".$selRow['other']."','".$selRow['keyword']."','".$selRow['leadDate']."','".$selRow['username2']."','".$client."','".$selRow['mom']."','".$selRow['remark']."','".$selRow['followUpDate']."','" . date('Y-m-d') . "','" . date('Y-m-d') . "','" . $selRow['created_by'] . "')";
-		        $crm_result = mysqli_query($con,$crm_query);
-		        if($crm_result){
-		            $upQuery = "update `addClient_approval_Status` set `client_approval` = 1,`client_status_by` = '".$_SESSION['email_id']."' where `title_id` = '".$title_name."'";
-		            $upResult = mysqli_query($con,$upQuery);
-		        }
-		        
-		    }
+			if (strpos($title_id, 'PARTNER') !== false) {
+				if ($run_client_add) {
+					$partnerQuery = "update `calling_partner` set `part_id` = '" . $transaction_id . "',`partner_status` = 1,`approved_by` = '" . $_SESSION['username'] . "' where `part_id` = '" . $title_name . "'";
+					$partnerResult = mysqli_query($con, $partnerQuery);
+				}
+			}
+			if ($CRM === "CRM") {
+				$selQuery = "select c1.transaction_id,a1.title_id,a1.company_id,a1.comp_name,a1.cont_person,a1.mob1,a1.mob2,a1.email1,a1.email2,a1.state,a1.city,a1.pincode,a1.website,a1.whatsapp,a1.designation,a1.department,a1.reff,a1.other,a1.keyword,a1.leadDate,a1.username2,a1.status,a1.mom,a1.remark,a1.followUpDate,a1.modify_by,a1.stat_modify_at,a1.created_by from `client_master` c1 right join `addClient_approval_Status` a1 on c1.title_id=a1.title_id where c1.title_id = '" . $title_name . "'";
+				$selQuery = mysqli_query($con, $selQuery);
+				$selRow = mysqli_fetch_array($selQuery);
+				$client = "Client";
+				date_default_timezone_set('Asia/Kolkata');
+				$currentTime = date('Y-m-d', time());
+				$date = date('Y-m-d');
+				$crm_query = "insert into `addClient_Status`(`client_id`,`title_id`,`company_id`,`comp_name`,`cont_person`,`mob1`,`mob2`,`email1`,`email2`,`state`,`city`,`pincode`,`website`,`whatsapp`,`designation`,`department`,`reff`,`other`,`keyword`,`leadDate`,`username2`,`status`,`mom`,`remark`,`followUpDate`,`modify_by`,`stat_modify_at`,`created_by`) values('" . $selRow['transaction_id'] . "','" . $selRow['title_id'] . "','" . $selRow['company_id'] . "','" . $selRow['comp_name'] . "','" . $selRow['cont_person'] . "','" . $selRow['mob1'] . "','" . $selRow['mob2'] . "','" . $selRow['email1'] . "','" . $selRow['email2'] . "','" . $selRow['state'] . "','" . $selRow['city'] . "','" . $selRow['pincode'] . "','" . $selRow['website'] . "','" . $selRow['whatsapp'] . "','" . $selRow['designation'] . "','" . $selRow['department'] . "','" . $selRow['reff'] . "','" . $selRow['other'] . "','" . $selRow['keyword'] . "','" . $selRow['leadDate'] . "','" . $selRow['username2'] . "','" . $client . "','" . $selRow['mom'] . "','" . $selRow['remark'] . "','" . $selRow['followUpDate'] . "','" . date('Y-m-d') . "','" . date('Y-m-d') . "','" . $selRow['created_by'] . "')";
+				$crm_result = mysqli_query($con, $crm_query);
+				if ($crm_result) {
+					$upQuery = "update `addClient_approval_Status` set `client_approval` = 1,`client_status_by` = '" . $_SESSION['email_id'] . "' where `title_id` = '" . $title_name . "'";
+					$upResult = mysqli_query($con, $upQuery);
+				}
+			}
 			$alertMsg = "Record Inserted";
 			$alertClass = "alert alert-success";
 		}
@@ -345,11 +338,7 @@ if (isset($_POST['client_save'])) {
 }
 if ($_SESSION['admin_status'] == "1") {
 	if (isset($_POST['client_save_duplicate'])) {
-		/*if (!isset($_POST['vendor_client'])) {
-				$vendor_client = 0;
-			} else {
-				$vendor_client = 1;
-			}*/
+		
 		$client_name = strtoupper(trim($_POST['client_name']));
 		$company_name = $_POST['company_name'];
 		$contact_person = $_POST['contact_person'];
@@ -385,12 +374,12 @@ if ($_SESSION['admin_status'] == "1") {
 		$other_services = 0;
 		$mobile_repairing = 0;
 		$advocate = 0;
-		$e_tender=0;
-		$trade_mark=0;
-        $patent=0;
-        $trade_secret=0;
-        $copy_right=0;
-        $industrial_design=0;
+		$e_tender = 0;
+		$trade_mark = 0;
+		$patent = 0;
+		$trade_secret = 0;
+		$copy_right = 0;
+		$industrial_design = 0;
 		$psp = 0;
 		$psp_coupon_consumption = 0;
 		$audit = 0;
@@ -459,26 +448,26 @@ if ($_SESSION['admin_status'] == "1") {
 				}
 			}
 		}
-		
+
 		if (isset($_POST['ip_allows'])) {
-    		foreach ($_POST['ip_allows'] as $key => $value) {
-    			if ($_POST['ip_allows'][$key] == "trade_mark") {
-    				$trade_mark = 1;
-    			}
-    			if ($_POST['ip_allows'][$key] == "patent") {
-    				$patent = 1;
-    			}
-    			if ($_POST['ip_allows'][$key] == "trade_secret") {
-    				$trade_secret = 1;
-    			}
-    			if ($_POST['ip_allows'][$key] == "copy_right") {
-    				$copy_right = 1;
-    			}
-    			if ($_POST['ip_allows'][$key] == "industrial_design") {
-    				$industrial_design = 1;
-    			}
-    		}
-    	}
+			foreach ($_POST['ip_allows'] as $key => $value) {
+				if ($_POST['ip_allows'][$key] == "trade_mark") {
+					$trade_mark = 1;
+				}
+				if ($_POST['ip_allows'][$key] == "patent") {
+					$patent = 1;
+				}
+				if ($_POST['ip_allows'][$key] == "trade_secret") {
+					$trade_secret = 1;
+				}
+				if ($_POST['ip_allows'][$key] == "copy_right") {
+					$copy_right = 1;
+				}
+				if ($_POST['ip_allows'][$key] == "industrial_design") {
+					$industrial_design = 1;
+				}
+			}
+		}
 
 		$gst_no = $_POST['gst_no'];
 		if ($gst == 1) {
@@ -487,56 +476,7 @@ if ($_SESSION['admin_status'] == "1") {
 			//$gst = 0;
 			// $gst_no = '';
 		}
-		//$gst = $_POST['gst'];
-		/*if(!isset($_POST['dsc_subscriber']))
-			{
-			     $dsc_subscriber = 0;
-			} else {
-			     $dsc_subscriber = $_POST['dsc_subscriber'];
-			}
-			//$dsc_subscriber = $_POST['dsc_subscriber'];
-			if(!isset($_POST['dsc_reseller']))
-			{
-			     $dsc_reseller = 0;
-			} else {
-			     $dsc_reseller = $_POST['dsc_reseller'];
-			}
-			//$dsc_reseller = $_POST['dsc_reseller'];
-			if(!isset($_POST['pan']))
-			{
-			     $pan = 0;
-			} else {
-			     $pan = $_POST['pan'];
-			}
-			//$pan = $_POST['pan'];
-			if(!isset($_POST['tan']))
-			{
-			     $tan = 0;
-			} else {
-			     $tan = $_POST['tan'];
-			}
-			//$tan = $_POST['tan'];
-			if(!isset($_POST['it_returns']))
-			{
-			     $it_returns = 0;
-			} else {
-			     $it_returns = $_POST['it_returns'];
-			}
-			//$it_returns = $_POST['it_returns'];
-			if(!isset($_POST['e_tds']))
-			{
-			     $e_tds = 0;
-			} else {
-			     $e_tds = $_POST['e_tds'];
-			}
-			//$e_tds = $_POST['e_tds'];
-			if(!isset($_POST['other_services']))
-			{
-			     $other_services = 0;
-			} else {
-			     $other_services = $_POST['other_services'];
-			}*/
-		//$other_services = $_POST['other_services'];
+		
 		if (!isset($_POST['previous_balance']) || empty($_POST['previous_balance'])) {
 			$previous_balance = 0;
 		} else {
@@ -551,27 +491,6 @@ if ($_SESSION['admin_status'] == "1") {
 			//$psp = 0;
 			$psp_vle_id = '';
 		}
-		//$psp = $_POST['psp'];
-		/*if(!isset($_POST['psp_coupon_consumption']))
-			{
-			     $psp_coupon_consumption = 0;
-			} else {
-			     $psp_coupon_consumption = $_POST['psp_coupon_consumption'];
-			}*/
-		//$psp_coupon_consumption = $_POST['psp_coupon_consumption'];
-		//if(!isset($_POST['payment']))
-		//{
-		//     $payment = 0;
-		//} else {
-		//     $payment = $_POST['payment'];
-		//}
-		//$payment = $_POST['payment'];
-		/*if(!isset($_POST['audit']))
-			{
-			     $audit = 0;
-			} else {
-			     $audit = $_POST['audit'];
-			}*/
 		if ($audit == 1) {
 			$cin = $_POST['cin'];
 		} else {
@@ -593,27 +512,16 @@ if ($_SESSION['admin_status'] == "1") {
 			// $users_access = $AdminIdrow['id'].",".$_SESSION['user_id'];
 			$users_access = $AdminIdrow['id'] . "," . implode(',', $_POST['users_access']);
 		}
-		/*if (isset($_POST['psp_vle_id'])) {
-				$psp_vle_id = $_POST['psp_vle_id'];
-			}else{
-				$psp_vle_id = '';
-			}*/
-		/*$checkExistData = "SELECT `id` FROM `client_master` WHERE `pan_no` = '".$pan_no."'";
-	        $run_checkExistData = mysqli_query($con,$checkExistData);
-	        if(mysqli_num_rows($run_checkExistData) > 0){
-	        	$alertMsg = "Record with this pan number already exist!";
-				$alertClass = "alert alert-danger";
-	        } else{*/
 		$fetchLastTransactionId = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '" . $DBName . "' AND TABLE_NAME = 'client_master'";
 		$run_fetchLastTransactionId = mysqli_query($con, $fetchLastTransactionId);
-// 		$transaction_id = "VE_CLM_954";
+		// 		$transaction_id = "VE_CLM_954";
 		if (mysqli_num_rows($run_fetchLastTransactionId) > 0) {
 			$FetchlastTransactionID_row = mysqli_fetch_array($run_fetchLastTransactionId);
-// 			$transaction_id = "VE_CLM_" . ($FetchlastTransactionID_row['AUTO_INCREMENT'] * 954);
+			// 			$transaction_id = "VE_CLM_" . ($FetchlastTransactionID_row['AUTO_INCREMENT'] * 954);
 			$transaction_id = $_SESSION['company_name_for_transacrion_id'] . "_CLM_" . ($FetchlastTransactionID_row['AUTO_INCREMENT'] * 954);
 		}
 
-		$client_add_query = "INSERT INTO `client_master` (`advocate`,`transaction_id`, `company_id`, `client_name`, `company_name`, `contact_person`, `mobile_no`, `pan_no`, `landline_no`, `email_1`, `password`, `email_2`, `address`, `state`, `city`, `pincode`, `bank_account_no`, `ifsc_code`, `bank_name`, `branch_code`, `dsc_subscriber`, `dsc_reseller`, `pan`, `tan`, `it_returns`, `e_tds`, `24g`, `gst`, `other_services`,`mobile_repairing`,`e_tender`, `trading`, `psp`, `psp_coupon_consumption`, `audit`, `gst_no`, `other_description`, `psp_vle_id`,`cin`,`previous_balance`,`advance_balance`,`dsc_reseller_company`,`users_access`,`modify_by`,`modify_date`) VALUES ('".$advocate."','" . $transaction_id . "', '" . $_SESSION['company_id'] . "','" . $client_name . "','" . $company_name . "','" . $contact_person . "','" . $mobile_number . "','" . $pan_no . "','" . $landline_number . "','" . $email_id_1 . "', '" . $password . "','" . $email_id_2 . "','" . $address . "','" . $state . "','" . $city . "','" . $pincode . "','" . $bank_account_no . "','" . $ifsc_code . "','" . $bank_name . "','" . $branch_code . "','" . $dsc_subscriber . "','" . $dsc_reseller . "','" . $pan . "','" . $tan . "','" . $it_returns . "','" . $e_tds . "','" . $twenty4g . "','" . $gst . "','" . $other_services . "','".$mobile_repairing."','" . $e_tender . "','" . $trading . "','" . $psp . "','" . $psp_coupon_consumption . "','" . $audit . "','" . $gst_no . "','" . $other_description . "', '" . $psp_vle_id . "', '" . $cin . "','" . $previous_balance . "','" . $advance_balance . "','" . $dsc_company . "','" . $users_access . "','" . $_SESSION['username'] . "','" . date('Y-m-d H:i:sa') . "')";
+		$client_add_query = "INSERT INTO `client_master` (`advocate`,`transaction_id`, `company_id`, `client_name`, `company_name`, `contact_person`, `mobile_no`, `pan_no`, `landline_no`, `email_1`, `password`, `email_2`, `address`, `state`, `city`, `pincode`, `bank_account_no`, `ifsc_code`, `bank_name`, `branch_code`, `dsc_subscriber`, `dsc_reseller`, `pan`, `tan`, `it_returns`, `e_tds`, `24g`, `gst`, `other_services`,`mobile_repairing`,`e_tender`, `trading`, `psp`, `psp_coupon_consumption`, `audit`, `gst_no`, `other_description`, `psp_vle_id`,`cin`,`previous_balance`,`advance_balance`,`dsc_reseller_company`,`users_access`,`modify_by`,`modify_date`) VALUES ('" . $advocate . "','" . $transaction_id . "', '" . $_SESSION['company_id'] . "','" . $client_name . "','" . $company_name . "','" . $contact_person . "','" . $mobile_number . "','" . $pan_no . "','" . $landline_number . "','" . $email_id_1 . "', '" . $password . "','" . $email_id_2 . "','" . $address . "','" . $state . "','" . $city . "','" . $pincode . "','" . $bank_account_no . "','" . $ifsc_code . "','" . $bank_name . "','" . $branch_code . "','" . $dsc_subscriber . "','" . $dsc_reseller . "','" . $pan . "','" . $tan . "','" . $it_returns . "','" . $e_tds . "','" . $twenty4g . "','" . $gst . "','" . $other_services . "','" . $mobile_repairing . "','" . $e_tender . "','" . $trading . "','" . $psp . "','" . $psp_coupon_consumption . "','" . $audit . "','" . $gst_no . "','" . $other_description . "', '" . $psp_vle_id . "', '" . $cin . "','" . $previous_balance . "','" . $advance_balance . "','" . $dsc_company . "','" . $users_access . "','" . $_SESSION['username'] . "','" . date('Y-m-d H:i:sa') . "')";
 		$run_client_add = mysqli_query($con, $client_add_query);
 		if ($run_client_add) {
 			$alertMsg = "Record Inserted";
@@ -631,9 +539,6 @@ if (isset($_POST['client_update'])) {
 	$landline_number = $_POST['landline_number'];
 	$email_id_1 = $_POST['email_id_1'];
 	$password = $_POST['password'];
-	/* if ($_POST['password'] == "") {
-			$password = $_POST['temp_password'];
-		} */
 	$email_id_2 = $_POST['email_id_2'];
 	$address = mysqli_real_escape_string($con, $_POST['address']);
 	$city = $_POST['city'];
@@ -660,12 +565,12 @@ if (isset($_POST['client_update'])) {
 	$other_services = 0;
 	$mobile_repairing = 0;
 	$advocate = 0;
-	$e_tender=0;
-	$trade_mark=0;
-    $patent=0;
-    $trade_secret=0;
-    $copy_right=0;
-    $industrial_design=0;
+	$e_tender = 0;
+	$trade_mark = 0;
+	$patent = 0;
+	$trade_secret = 0;
+	$copy_right = 0;
+	$industrial_design = 0;
 	$trading = 0;
 	$psp = 0;
 	$psp_coupon_consumption = 0;
@@ -735,7 +640,7 @@ if (isset($_POST['client_update'])) {
 			}
 		}
 	}
-	
+
 	if (isset($_POST['ip_allows'])) {
 		foreach ($_POST['ip_allows'] as $key => $value) {
 			if ($_POST['ip_allows'][$key] == "trade_mark") {
@@ -758,69 +663,12 @@ if (isset($_POST['client_update'])) {
 	if ($dsc_reseller == 0) {
 		$dsc_company = '';
 	}
-
-	/*if ($_POST['uti_allows'][$key] == "PSP Coupon Consumption") {
-			$psp_coupon_consumption = 1;
-		}*/
-	//echo nl2br("\n".$_POST['transaction_allows'][$key]);
-
-	/*if(!isset($_POST['dsc_subscriber']))
-		{
-		     $dsc_subscriber = 0;
-		} else {
-		     $dsc_subscriber = $_POST['dsc_subscriber'];
-		}
-		//$dsc_subscriber = $_POST['dsc_subscriber'];
-		if(!isset($_POST['dsc_reseller']))
-		{
-		     $dsc_reseller = 0;
-		} else {
-		     $dsc_reseller = $_POST['dsc_reseller'];
-		}
-		//$dsc_reseller = $_POST['dsc_reseller'];
-		if(!isset($_POST['pan']))
-		{
-		     $pan = 0;
-		} else {
-		     $pan = $_POST['pan'];
-		}
-		//$pan = $_POST['pan'];
-		if(!isset($_POST['tan']))
-		{
-		     $tan = 0;
-		} else {
-		     $tan = $_POST['tan'];
-		}
-		//$tan = $_POST['tan'];
-		if(!isset($_POST['it_returns']))
-		{
-		     $it_returns = 0;
-		} else {
-		     $it_returns = $_POST['it_returns'];
-		}
-		//$it_returns = $_POST['it_returns'];
-		if(!isset($_POST['e_tds']))
-		{
-		     $e_tds = 0;
-		} else {
-		     $e_tds = $_POST['e_tds'];
-		}
-		//$e_tds = $_POST['e_tds'];*/
 	$gst_no = $_POST['gst_no'];
 	if ($gst == 1) {
 		//$gst = $_POST['gst'];
 	} else {
-		//$gst = 0;
-		// $gst_no = '';
+		
 	}
-	//$gst = $_POST['gst'];
-	/* if(!isset($_POST['other_services']))
-		{
-		     $other_services = 0;
-		} else {
-		     $other_services = $_POST['other_services'];
-		} */
-	//$other_services = $_POST['other_services'];
 	if (!isset($_POST['previous_balance']) || empty($_POST['previous_balance'])) {
 		$previous_balance = 0;
 	} else {
@@ -834,27 +682,6 @@ if (isset($_POST['client_update'])) {
 		//$psp = 0;
 		$psp_vle_id = '';
 	}
-	//$psp = $_POST['psp'];
-	/*if(!isset($_POST['psp_coupon_consumption']))
-		{
-		     $psp_coupon_consumption = 0;
-		} else {
-		     $psp_coupon_consumption = $_POST['psp_coupon_consumption'];
-		}
-		//$psp_coupon_consumption = $_POST['psp_coupon_consumption'];
-		if(!isset($_POST['payment']))
-		{
-		     $payment = 0;
-		} else {
-		     $payment = $_POST['payment'];
-		}*/
-	//$payment = $_POST['payment'];
-	/*if(!isset($_POST['audit']))
-		{
-		     $audit = 0;
-		} else {
-		     $audit = $_POST['audit'];
-		}*/
 	if ($audit == 1) {
 		$cin = $_POST['cin'];
 	} else {
@@ -862,11 +689,7 @@ if (isset($_POST['client_update'])) {
 	}
 	//$audit = $_POST['audit'];
 	$other_description = $_POST['other_description'];
-	/*if (isset($_POST['psp_vle_id'])) {
-			$psp_vle_id = $_POST['psp_vle_id'];
-		}else{
-			$psp_vle_id = '';
-		}*/
+	
 	$fetchAdminId = "SELECT * FROM `users` WHERE `company_id` = '" . $_SESSION['company_id'] . "' AND `admin_status` = '1'";
 	$runAdminId = mysqli_query($con, $fetchAdminId);
 	$AdminIdrow = mysqli_fetch_array($runAdminId);
@@ -911,55 +734,50 @@ if (isset($_POST['client_update'])) {
 		$alertMsg = "Record already exist! ";
 		$alertClass = "alert alert-danger";
 	} else {
-	    
-	    $old_data_query = "SELECT `updated_user`, `updated_time`, `updated_id` FROM `client_master` WHERE `id` = '".$_POST['panEditID_temp']."'";
-            // Execute the query and fetch the result, assuming you have a database connection
-            $old_data_result = mysqli_query($con, $old_data_query);
-            $old_data_row = mysqli_fetch_assoc($old_data_result);
-            
-            // Assuming you fetched old data from the database
-            $old_updated_user = $old_data_row['updated_user'];
-            $old_updated_time = $old_data_row['updated_time'];
-            $old_updated_id = $old_data_row['updated_id'];
-            
-            // Prepare new data
-            $new_updated_user = $_SESSION['username'];
-            $new_updated_time = date('Y-m-d H:i:sa');
-            $new_updated_id = $_SESSION['employee_id'];
-            
-            // Construct additional update values
-            $additional_update_values = array();
-            
-            // Check if old data exists and add it to the update query
-            if ($old_updated_user) {
-                $additional_update_values[] = "`updated_user`=('" . $old_updated_user . "," . $new_updated_user . "')";
-            } else {
-                $additional_update_values[] = "`updated_user`=('" . $new_updated_user . "')";
-            }
-            
-            if ($old_updated_time) {
-                $additional_update_values[] = "`updated_time`=('" . $old_updated_time . "," . $new_updated_time . "')";
-            } else {
-                $additional_update_values[] = "`updated_time`=('" . $new_updated_time . "')";
-            }
-            
-            if ($old_updated_id) {
-                $additional_update_values[] = "`updated_id`=('" . $old_updated_id . "," . $new_updated_id . "')";
-            } else {
-                $additional_update_values[] = "`updated_id`=('" . $new_updated_id . "')";
-            }
 
-            
-            // Implode additional update values
-            $additional_update_query = implode(", ", $additional_update_values);
-            
-            
-		// if ($_SESSION['admin_status'] == "1") {
-		$client_master_update_query = "UPDATE `client_master` SET `company_id` = '" . $_SESSION['company_id'] . "',`trade_mark`='" . $trade_mark . "',`patent`='" . $patent . "',`trade_secret`='" . $trade_secret . "',`copy_right`='" . $copy_right . "',`industrial_design`='" . $industrial_design . "',`client_name`='" . $client_name . "',`company_name`='" . $company_name . "',`contact_person`='" . $contact_person . "',`mobile_no`='" . $mobile_number . "',`pan_no`='" . $pan_no . "',`landline_no`='" . $landline_number . "',`email_1`='" . $email_id_1 . "',`password`='" . $password . "',`email_2`='" . $email_id_2 . "',`address`='" . $address . "',`state`='" . $state . "',`city`='" . $city . "',`pincode`='" . $pincode . "',`bank_account_no`='" . $bank_account_no . "',`ifsc_code`='" . $ifsc_code . "',`bank_name`='" . $bank_name . "',`branch_code`='" . $branch_code . "',`dsc_subscriber`='" . $dsc_subscriber . "',`dsc_reseller`='" . $dsc_reseller . "',`pan`='" . $pan . "',`tan`='" . $tan . "',`it_returns`='" . $it_returns . "',`e_tds`='" . $e_tds . "',`24g`='" . $twenty4g . "',`gst`='" . $gst . "',`other_services`='" . $other_services . "',`mobile_repairing`='".$mobile_repairing."',`advocate`='".$advocate."',`e_tender`='" . $e_tender . "',`trading`='" . $trading . "',`psp`='" . $psp . "',`psp_coupon_consumption`='" . $psp_coupon_consumption . "',`audit`='" . $audit . "',`gst_no`='" . $gst_no . "',`other_description`='" . $other_description . "', `psp_vle_id` = '" . $psp_vle_id . "', `cin` = '" . $cin . "', `previous_balance`='" . $previous_balance . "', `dsc_reseller_company`='" . $dsc_company . "', `users_access` = '" . $users_access . "', ".$additional_update_query." WHERE `id` = '" . $_POST['client_masterEditID_temp'] . "'";
-		// }else{
-		// 	$client_master_update_query = "UPDATE `client_master` SET `company_id` = '".$_SESSION['company_id']."',`client_name`='".$client_name."',`company_name`='".$company_name."',`contact_person`='".$contact_person."',`mobile_no`='".$mobile_number."',`pan_no`='".$pan_no."',`landline_no`='".$landline_number."',`email_1`='".$email_id_1."',`password`='".$password."',`email_2`='".$email_id_2."',`address`='".$address."',`state`='".$state."',`city`='".$city."',`pincode`='".$pincode."',`bank_account_no`='".$bank_account_no."',`ifsc_code`='".$ifsc_code."',`bank_name`='".$bank_name."',`branch_code`='".$branch_code."',`dsc_subscriber`='".$dsc_subscriber."',`dsc_reseller`='".$dsc_reseller."',`pan`='".$pan."',`tan`='".$tan."',`it_returns`='".$it_returns."',`e_tds`='".$e_tds."',`24g`='".$twenty4g."',`gst`='".$gst."',`other_services`='".$other_services."',`psp`='".$psp."',`psp_coupon_consumption`='".$psp_coupon_consumption."',`audit`='".$audit."',`gst_no`='".$gst_no."',`other_description`='".$other_description."', `psp_vle_id` = '".$psp_vle_id."', `cin` = '".$cin."', `previous_balance`='".$previous_balance."',`modify_by`='".$_SESSION['username']."',`modify_date`='".date('Y-m-d H:i:sa')."', `dsc_reseller_company`='".$dsc_company."' WHERE `id` = '".$_POST['client_masterEditID_temp']."'";
+		$old_data_query = "SELECT `updated_user`, `updated_time`, `updated_id` FROM `client_master` WHERE `id` = '" . $_POST['panEditID_temp'] . "'";
+		// Execute the query and fetch the result, assuming you have a database connection
+		$old_data_result = mysqli_query($con, $old_data_query);
+		$old_data_row = mysqli_fetch_assoc($old_data_result);
 
-		// }
+		// Assuming you fetched old data from the database
+		$old_updated_user = $old_data_row['updated_user'];
+		$old_updated_time = $old_data_row['updated_time'];
+		$old_updated_id = $old_data_row['updated_id'];
+
+		// Prepare new data
+		$new_updated_user = $_SESSION['username'];
+		$new_updated_time = date('Y-m-d H:i:sa');
+		$new_updated_id = $_SESSION['employee_id'];
+
+		// Construct additional update values
+		$additional_update_values = array();
+
+		// Check if old data exists and add it to the update query
+		if ($old_updated_user) {
+			$additional_update_values[] = "`updated_user`=('" . $old_updated_user . "," . $new_updated_user . "')";
+		} else {
+			$additional_update_values[] = "`updated_user`=('" . $new_updated_user . "')";
+		}
+
+		if ($old_updated_time) {
+			$additional_update_values[] = "`updated_time`=('" . $old_updated_time . "," . $new_updated_time . "')";
+		} else {
+			$additional_update_values[] = "`updated_time`=('" . $new_updated_time . "')";
+		}
+
+		if ($old_updated_id) {
+			$additional_update_values[] = "`updated_id`=('" . $old_updated_id . "," . $new_updated_id . "')";
+		} else {
+			$additional_update_values[] = "`updated_id`=('" . $new_updated_id . "')";
+		}
+
+
+		// Implode additional update values
+		$additional_update_query = implode(", ", $additional_update_values);
+
+		$client_master_update_query = "UPDATE `client_master` SET `company_id` = '" . $_SESSION['company_id'] . "',`trade_mark`='" . $trade_mark . "',`patent`='" . $patent . "',`trade_secret`='" . $trade_secret . "',`copy_right`='" . $copy_right . "',`industrial_design`='" . $industrial_design . "',`client_name`='" . $client_name . "',`company_name`='" . $company_name . "',`contact_person`='" . $contact_person . "',`mobile_no`='" . $mobile_number . "',`pan_no`='" . $pan_no . "',`landline_no`='" . $landline_number . "',`email_1`='" . $email_id_1 . "',`password`='" . $password . "',`email_2`='" . $email_id_2 . "',`address`='" . $address . "',`state`='" . $state . "',`city`='" . $city . "',`pincode`='" . $pincode . "',`bank_account_no`='" . $bank_account_no . "',`ifsc_code`='" . $ifsc_code . "',`bank_name`='" . $bank_name . "',`branch_code`='" . $branch_code . "',`dsc_subscriber`='" . $dsc_subscriber . "',`dsc_reseller`='" . $dsc_reseller . "',`pan`='" . $pan . "',`tan`='" . $tan . "',`it_returns`='" . $it_returns . "',`e_tds`='" . $e_tds . "',`24g`='" . $twenty4g . "',`gst`='" . $gst . "',`other_services`='" . $other_services . "',`mobile_repairing`='" . $mobile_repairing . "',`advocate`='" . $advocate . "',`e_tender`='" . $e_tender . "',`trading`='" . $trading . "',`psp`='" . $psp . "',`psp_coupon_consumption`='" . $psp_coupon_consumption . "',`audit`='" . $audit . "',`gst_no`='" . $gst_no . "',`other_description`='" . $other_description . "', `psp_vle_id` = '" . $psp_vle_id . "', `cin` = '" . $cin . "', `previous_balance`='" . $previous_balance . "', `dsc_reseller_company`='" . $dsc_company . "', `users_access` = '" . $users_access . "', " . $additional_update_query . " WHERE `id` = '" . $_POST['client_masterEditID_temp'] . "'";
+		
 		$run_client_master_update = mysqli_query($con, $client_master_update_query);
 		if ($run_client_master_update) {
 			$alertMsg = "Record Updated";
@@ -1006,12 +824,12 @@ if ($_SESSION['admin_status'] == "1") {
 		$other_services = 0;
 		$mobile_repairing = 0;
 		$advocate = 0;
-		$e_tender=0;
-		$trade_mark=0;
-        $patent=0;
-        $trade_secret=0;
-        $copy_right=0;
-        $industrial_design=0;
+		$e_tender = 0;
+		$trade_mark = 0;
+		$patent = 0;
+		$trade_secret = 0;
+		$copy_right = 0;
+		$industrial_design = 0;
 		$trading = 0;
 		$psp = 0;
 		$psp_coupon_consumption = 0;
@@ -1081,91 +899,36 @@ if ($_SESSION['admin_status'] == "1") {
 				}
 			}
 		}
-		
+
 		if (isset($_POST['ip_allows'])) {
-    		foreach ($_POST['ip_allows'] as $key => $value) {
-    			if ($_POST['ip_allows'][$key] == "trade_mark") {
-    				$trade_mark = 1;
-    			}
-    			if ($_POST['ip_allows'][$key] == "patent") {
-    				$patent = 1;
-    			}
-    			if ($_POST['ip_allows'][$key] == "trade_secret") {
-    				$trade_secret = 1;
-    			}
-    			if ($_POST['ip_allows'][$key] == "copy_right") {
-    				$copy_right = 1;
-    			}
-    			if ($_POST['ip_allows'][$key] == "industrial_design") {
-    				$industrial_design = 1;
-    			}
-    		}
-    	}
+			foreach ($_POST['ip_allows'] as $key => $value) {
+				if ($_POST['ip_allows'][$key] == "trade_mark") {
+					$trade_mark = 1;
+				}
+				if ($_POST['ip_allows'][$key] == "patent") {
+					$patent = 1;
+				}
+				if ($_POST['ip_allows'][$key] == "trade_secret") {
+					$trade_secret = 1;
+				}
+				if ($_POST['ip_allows'][$key] == "copy_right") {
+					$copy_right = 1;
+				}
+				if ($_POST['ip_allows'][$key] == "industrial_design") {
+					$industrial_design = 1;
+				}
+			}
+		}
 		if ($dsc_reseller == 0) {
 			$dsc_company = '';
 		}
-		/*if ($_POST['uti_allows'][$key] == "PSP Coupon Consumption") {
-				$psp_coupon_consumption = 1;
-			}*/
-		//echo nl2br("\n".$_POST['transaction_allows'][$key]);
-
-		/*if(!isset($_POST['dsc_subscriber']))
-			{
-			     $dsc_subscriber = 0;
-			} else {
-			     $dsc_subscriber = $_POST['dsc_subscriber'];
-			}
-			//$dsc_subscriber = $_POST['dsc_subscriber'];
-			if(!isset($_POST['dsc_reseller']))
-			{
-			     $dsc_reseller = 0;
-			} else {
-			     $dsc_reseller = $_POST['dsc_reseller'];
-			}
-			//$dsc_reseller = $_POST['dsc_reseller'];
-			if(!isset($_POST['pan']))
-			{
-			     $pan = 0;
-			} else {
-			     $pan = $_POST['pan'];
-			}
-			//$pan = $_POST['pan'];
-			if(!isset($_POST['tan']))
-			{
-			     $tan = 0;
-			} else {
-			     $tan = $_POST['tan'];
-			}
-			//$tan = $_POST['tan'];
-			if(!isset($_POST['it_returns']))
-			{
-			     $it_returns = 0;
-			} else {
-			     $it_returns = $_POST['it_returns'];
-			}
-			//$it_returns = $_POST['it_returns'];
-			if(!isset($_POST['e_tds']))
-			{
-			     $e_tds = 0;
-			} else {
-			     $e_tds = $_POST['e_tds'];
-			}
-			//$e_tds = $_POST['e_tds'];*/
+		
 		$gst_no = $_POST['gst_no'];
 		if ($gst == 1) {
 			//$gst = $_POST['gst'];
 		} else {
-			//$gst = 0;
-			// $gst_no = '';
 		}
-		//$gst = $_POST['gst'];
-		/*if(!isset($_POST['other_services']))
-			{
-			     $other_services = 0;
-			} else {
-			     $other_services = $_POST['other_services'];
-			}
-			//$other_services = $_POST['other_services'];*/
+		
 		if (!isset($_POST['previous_balance']) || empty($_POST['previous_balance'])) {
 			$previous_balance = 0;
 		} else {
@@ -1179,42 +942,11 @@ if ($_SESSION['admin_status'] == "1") {
 			//$psp = 0;
 			$psp_vle_id = '';
 		}
-		// $alertMsg = $psp;
-		// $alertClass = "alert alert-success";
-		//$psp = $_POST['psp'];
-		/*if(!isset($_POST['psp_coupon_consumption']))
-			{
-			     $psp_coupon_consumption = 0;
-			} else {
-			     $psp_coupon_consumption = $_POST['psp_coupon_consumption'];
-			}
-			//$psp_coupon_consumption = $_POST['psp_coupon_consumption'];
-			if(!isset($_POST['payment']))
-			{
-			     $payment = 0;
-			} else {
-			     $payment = $_POST['payment'];
-			}*/
-		//$payment = $_POST['payment'];
-		/*if(!isset($_POST['audit']))
-			{
-			     $audit = 0;
-			} else {
-			     $audit = $_POST['audit'];
-			}*/
-		// if ($cin == 1) {
-			$cin = $_POST['cin'];
-		/* } else {
-			$cin = '';
-		} */
-		//$audit = $_POST['audit'];
+		
+		$cin = $_POST['cin'];
+		
 		$other_description = $_POST['other_description'];
-		/*if (isset($_POST['psp_vle_id'])) {
-				$psp_vle_id = $_POST['psp_vle_id'];
-			}else{
-				$psp_vle_id = '';
-			}*/
-
+		
 		$fetchAdminId = "SELECT * FROM `users` WHERE `company_id` = '" . $_SESSION['company_id'] . "' AND `admin_status` = '1'";
 		$runAdminId = mysqli_query($con, $fetchAdminId);
 		$AdminIdrow = mysqli_fetch_array($runAdminId);
@@ -1228,51 +960,51 @@ if ($_SESSION['admin_status'] == "1") {
 			// $users_access = $AdminIdrow['id'].",".$_SESSION['user_id'];
 			$users_access = $AdminIdrow['id'] . "," . implode(',', $_POST['users_access']);
 		}
-        
-        // Fetch old data
-            $old_data_query = "SELECT `updated_user`, `updated_time`, `updated_id` FROM `client_master` WHERE `id` = '".$_POST['panEditID_temp']."'";
-            // Execute the query and fetch the result, assuming you have a database connection
-            $old_data_result = mysqli_query($con, $old_data_query);
-            $old_data_row = mysqli_fetch_assoc($old_data_result);
-            
-            // Assuming you fetched old data from the database
-            $old_updated_user = $old_data_row['updated_user'];
-            $old_updated_time = $old_data_row['updated_time'];
-            $old_updated_id = $old_data_row['updated_id'];
-            
-            // Prepare new data
-            $new_updated_user = $_SESSION['username'];
-            $new_updated_time = date('Y-m-d H:i:sa');
-            $new_updated_id = $_SESSION['employee_id'];
-            
-            // Construct additional update values
-            $additional_update_values = array();
-            
-            // Check if old data exists and add it to the update query
-            if ($old_updated_user) {
-                $additional_update_values[] = "`updated_user`=('" . $old_updated_user . "," . $new_updated_user . "')";
-            } else {
-                $additional_update_values[] = "`updated_user`=('" . $new_updated_user . "')";
-            }
-            
-            if ($old_updated_time) {
-                $additional_update_values[] = "`updated_time`=('" . $old_updated_time . "," . $new_updated_time . "')";
-            } else {
-                $additional_update_values[] = "`updated_time`=('" . $new_updated_time . "')";
-            }
-            
-            if ($old_updated_id) {
-                $additional_update_values[] = "`updated_id`=('" . $old_updated_id . "," . $new_updated_id . "')";
-            } else {
-                $additional_update_values[] = "`updated_id`=('" . $new_updated_id . "')";
-            }
 
-            
-            // Implode additional update values
-            $additional_update_query = implode(", ", $additional_update_values);
-            
-            
-		$client_master_update_query = "UPDATE `client_master` SET `company_id` = '" . $_SESSION['company_id'] . "',`client_name`='" . $client_name . "',`trade_mark`='" . $trade_mark . "',`patent`='" . $patent . "',`trade_secret`='" . $trade_secret . "',`copy_right`='" . $copy_right . "',`industrial_design`='" . $industrial_design . "',`company_name`='" . $company_name . "',`contact_person`='" . $contact_person . "',`mobile_no`='" . $mobile_number . "',`pan_no`='" . $pan_no . "',`landline_no`='" . $landline_number . "',`email_1`='" . $email_id_1 . "',`password`='" . $password . "',`email_2`='" . $email_id_2 . "',`address`='" . $address . "',`state`='" . $state . "',`city`='" . $city . "',`pincode`='" . $pincode . "',`bank_account_no`='" . $bank_account_no . "',`ifsc_code`='" . $ifsc_code . "',`bank_name`='" . $bank_name . "',`branch_code`='" . $branch_code . "',`dsc_subscriber`='" . $dsc_subscriber . "',`dsc_reseller`='" . $dsc_reseller . "',`pan`='" . $pan . "',`tan`='" . $tan . "',`it_returns`='" . $it_returns . "',`e_tds`='" . $e_tds . "',`24g`='" . $twenty4g . "',`gst`='" . $gst . "',`other_services`='" . $other_services . "',`e_tender`='" . $e_tender . "',`mobile_repairing`='" . $mobile_repairing . "',`advocate`='".$advocate."',`trading`='" . $trading . "',`psp`='" . $psp . "',`psp_coupon_consumption`='" . $psp_coupon_consumption . "',`audit`='" . $audit . "',`gst_no`='" . $gst_no . "',`other_description`='" . $other_description . "', `psp_vle_id` = '" . $psp_vle_id . "', `cin` = '" . $cin . "', `previous_balance` = '" . $previous_balance . "',',`dsc_reseller_company`='" . $dsc_company . "', `users_access` = '" . $users_access . "', ".$additional_update_query." WHERE `id` = '" . $_POST['client_masterEditID_temp'] . "'";
+		// Fetch old data
+		$old_data_query = "SELECT `updated_user`, `updated_time`, `updated_id` FROM `client_master` WHERE `id` = '" . $_POST['panEditID_temp'] . "'";
+		// Execute the query and fetch the result, assuming you have a database connection
+		$old_data_result = mysqli_query($con, $old_data_query);
+		$old_data_row = mysqli_fetch_assoc($old_data_result);
+
+		// Assuming you fetched old data from the database
+		$old_updated_user = $old_data_row['updated_user'];
+		$old_updated_time = $old_data_row['updated_time'];
+		$old_updated_id = $old_data_row['updated_id'];
+
+		// Prepare new data
+		$new_updated_user = $_SESSION['username'];
+		$new_updated_time = date('Y-m-d H:i:sa');
+		$new_updated_id = $_SESSION['employee_id'];
+
+		// Construct additional update values
+		$additional_update_values = array();
+
+		// Check if old data exists and add it to the update query
+		if ($old_updated_user) {
+			$additional_update_values[] = "`updated_user`=('" . $old_updated_user . "," . $new_updated_user . "')";
+		} else {
+			$additional_update_values[] = "`updated_user`=('" . $new_updated_user . "')";
+		}
+
+		if ($old_updated_time) {
+			$additional_update_values[] = "`updated_time`=('" . $old_updated_time . "," . $new_updated_time . "')";
+		} else {
+			$additional_update_values[] = "`updated_time`=('" . $new_updated_time . "')";
+		}
+
+		if ($old_updated_id) {
+			$additional_update_values[] = "`updated_id`=('" . $old_updated_id . "," . $new_updated_id . "')";
+		} else {
+			$additional_update_values[] = "`updated_id`=('" . $new_updated_id . "')";
+		}
+
+
+		// Implode additional update values
+		$additional_update_query = implode(", ", $additional_update_values);
+
+
+		$client_master_update_query = "UPDATE `client_master` SET `company_id` = '" . $_SESSION['company_id'] . "',`client_name`='" . $client_name . "',`trade_mark`='" . $trade_mark . "',`patent`='" . $patent . "',`trade_secret`='" . $trade_secret . "',`copy_right`='" . $copy_right . "',`industrial_design`='" . $industrial_design . "',`company_name`='" . $company_name . "',`contact_person`='" . $contact_person . "',`mobile_no`='" . $mobile_number . "',`pan_no`='" . $pan_no . "',`landline_no`='" . $landline_number . "',`email_1`='" . $email_id_1 . "',`password`='" . $password . "',`email_2`='" . $email_id_2 . "',`address`='" . $address . "',`state`='" . $state . "',`city`='" . $city . "',`pincode`='" . $pincode . "',`bank_account_no`='" . $bank_account_no . "',`ifsc_code`='" . $ifsc_code . "',`bank_name`='" . $bank_name . "',`branch_code`='" . $branch_code . "',`dsc_subscriber`='" . $dsc_subscriber . "',`dsc_reseller`='" . $dsc_reseller . "',`pan`='" . $pan . "',`tan`='" . $tan . "',`it_returns`='" . $it_returns . "',`e_tds`='" . $e_tds . "',`24g`='" . $twenty4g . "',`gst`='" . $gst . "',`other_services`='" . $other_services . "',`e_tender`='" . $e_tender . "',`mobile_repairing`='" . $mobile_repairing . "',`advocate`='" . $advocate . "',`trading`='" . $trading . "',`psp`='" . $psp . "',`psp_coupon_consumption`='" . $psp_coupon_consumption . "',`audit`='" . $audit . "',`gst_no`='" . $gst_no . "',`other_description`='" . $other_description . "', `psp_vle_id` = '" . $psp_vle_id . "', `cin` = '" . $cin . "', `previous_balance` = '" . $previous_balance . "',',`dsc_reseller_company`='" . $dsc_company . "', `users_access` = '" . $users_access . "', " . $additional_update_query . " WHERE `id` = '" . $_POST['client_masterEditID_temp'] . "'";
 		$run_client_master_update = mysqli_query($con, $client_master_update_query);
 		if ($run_client_master_update) {
 			$alertMsg = "Record Updated";
@@ -1440,19 +1172,19 @@ if (isset($_POST['bulk_delete'])) {
 		}
 
 		.dsc_company::before {
-			//content: var(--text);
+			/* content: var(--text); */
 			display: block;
 			margin-left: 5px;
 			margin-bottom: 2px;
 		}
 
 		.dsc_company_active {
-			//overflow: visible !important;
+			/* overflow: visible !important; */
 			overflow-y: scroll;
 		}
 
 		.dsc_company option {
-			//display: none;
+			/* display: none; */
 			height: 18px;
 			background-color: white;
 		}
@@ -1484,19 +1216,19 @@ if (isset($_POST['bulk_delete'])) {
 		}
 
 		.taxation_allows::before {
-			//content: var(--text);
+			/* content: var(--text); */
 			display: block;
 			margin-left: 5px;
 			margin-bottom: 2px;
 		}
 
 		.taxation_allows_active {
-			//overflow: visible !important;
+			/* overflow: visible !important; */
 			overflow-y: scroll;
 		}
 
 		.taxation_allows option {
-			//display: none;
+			/* display: none; */
 			height: 18px;
 			background-color: white;
 		}
@@ -1528,19 +1260,19 @@ if (isset($_POST['bulk_delete'])) {
 		}
 
 		.nsdl_allows::before {
-			//content: var(--text);
+			/* content: var(--text); */
 			display: block;
 			margin-left: 5px;
 			margin-bottom: 2px;
 		}
 
 		.nsdl_allows_active {
-			//overflow: visible !important;
+			/* overflow: visible !important; */
 			overflow-y: scroll;
 		}
 
 		.nsdl_allows option {
-			//display: none;
+			/* display: none; */
 			height: 18px;
 			background-color: white;
 		}
@@ -1572,19 +1304,19 @@ if (isset($_POST['bulk_delete'])) {
 		}
 
 		.dsc_allows::before {
-			//content: var(--text);
+			/* content: var(--text); */
 			display: block;
 			margin-left: 5px;
 			margin-bottom: 2px;
 		}
 
 		.dsc_allows_active {
-			//overflow: visible !important;
+			/* overflow: visible !important; */
 			overflow-y: scroll;
 		}
 
 		.dsc_allows option {
-			//display: none;
+			/* display: none; */
 			height: 18px;
 			background-color: white;
 		}
@@ -1616,19 +1348,19 @@ if (isset($_POST['bulk_delete'])) {
 		}
 
 		.otherServices_allows::before {
-			//content: var(--text);
+			/* //content: var(--text); */
 			display: block;
 			margin-left: 5px;
 			margin-bottom: 2px;
 		}
 
 		.otherServices_allows_active {
-			//overflow: visible !important;
+			/* overflow: visible !important; */
 			overflow-y: scroll;
 		}
 
 		.otherServices_allows option {
-			//display: none;
+			/* display: none; */
 			height: 18px;
 			background-color: white;
 		}
@@ -1660,19 +1392,19 @@ if (isset($_POST['bulk_delete'])) {
 		}
 
 		.uti_allows::before {
-			//content: var(--text);
+			/* //content: var(--text); */
 			display: block;
 			margin-left: 5px;
 			margin-bottom: 2px;
 		}
 
 		.uti_allows_active {
-			//overflow: visible !important;
+			/* //overflow: visible !important; */
 			overflow-y: scroll;
 		}
 
 		.uti_allows option {
-			//display: none;
+			/* //display: none; */
 			height: 18px;
 			background-color: white;
 		}
@@ -1693,9 +1425,9 @@ if (isset($_POST['bulk_delete'])) {
 			font-family: "Font Awesome 5 Free";
 			content: "\f14a ";
 		}
-		
-		
-		
+
+
+
 		/*Intellectual Property Allows*/
 		.ip_allows {
 			height: 180px;
@@ -1706,19 +1438,19 @@ if (isset($_POST['bulk_delete'])) {
 		}
 
 		.ip_allows::before {
-			//content: var(--text);
+			/* //content: var(--text); */
 			display: block;
 			margin-left: 5px;
 			margin-bottom: 2px;
 		}
 
 		.ip_allows_active {
-			//overflow: visible !important;
+			/* //overflow: visible !important; */
 			overflow-y: scroll;
 		}
 
 		.ip_allows option {
-			//display: none;
+			/* //display: none; */
 			height: 18px;
 			background-color: white;
 		}
@@ -1750,14 +1482,14 @@ if (isset($_POST['bulk_delete'])) {
 		}
 
 		.multiple_select::before {
-			//content: var(--text);
+			/* content: var(--text); */
 			display: block;
 			margin-left: 5px;
 			margin-bottom: 2px;
 		}
 
 		.multiple_select_active {
-			//overflow: visible !important;
+			/* overflow: visible !important; */
 			overflow-y: scroll;
 		}
 
@@ -1783,41 +1515,92 @@ if (isset($_POST['bulk_delete'])) {
 			font-family: "Font Awesome 5 Free";
 			content: "\f14a ";
 		}
-		
+
 		/* Style the tab */
-        .tab {
-          overflow: hidden;
-          border: 1px solid #ccc;
-          background-color: #f1f1f1;
-        }
-        
-        /* Style the buttons inside the tab */
-        .tab button {
-          background-color: inherit;
-          float: left;
-          border: none;
-          outline: none;
-          cursor: pointer;
-          padding: 14px 16px;
-          transition: 0.3s;
-          font-size: 17px;
-        }
-        
-        /* Change background color of buttons on hover */
-        .tab button:hover {
-          background-color: #ddd;
-        }
-        
-        /* Create an active/current tablink class */
-        .tab button.active {
-          background-color: #ccc;
-        }
-        
-        /* Style the tab content */
-        .tabcontent {
-          display: none;
-          border-top: none;
-        }
+		.tab {
+			overflow: hidden;
+			border: 1px solid #ccc;
+			background-color: #f1f1f1;
+		}
+
+		/* Style the buttons inside the tab */
+		.tab button {
+			background-color: inherit;
+			float: left;
+			border: none;
+			outline: none;
+			cursor: pointer;
+			padding: 14px 16px;
+			transition: 0.3s;
+			font-size: 17px;
+		}
+
+		/* Change background color of buttons on hover */
+		.tab button:hover {
+			background-color: #ddd;
+		}
+
+		/* Create an active/current tablink class */
+		.tab button.active {
+			background-color: #ccc;
+		}
+
+		/* Style the tab content */
+		.tabcontent {
+			display: none;
+			border-top: none;
+		}
+
+		/* Container for the toggle */
+		.toggle-switch {
+			position: relative;
+			display: inline-block;
+			width: 50px;
+			height: 24px;
+		}
+
+		/* Hide the default checkbox */
+		.toggle-switch input {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+
+		/* The track */
+		.slider {
+			position: absolute;
+			cursor: pointer;
+			background-color: #ccc;
+			border-radius: 12px;
+			/* Rounded corners for the track */
+			width: 100%;
+			height: 100%;
+			transition: background-color 0.3s;
+		}
+
+		/* The circular slider */
+		.slider::before {
+			content: "";
+			position: absolute;
+			height: 16px;
+			width: 16px;
+			left: 4px;
+			bottom: 4px;
+			background-color: white;
+			border-radius: 50%;
+			transition: transform 0.3s;
+		}
+
+		/* Toggled state (when the checkbox is checked) */
+		.toggle-switch input:checked+.slider {
+			background-color: #4caf50;
+			/* Green when toggled */
+		}
+
+		.toggle-switch input:checked+.slider::before {
+			transform: translateX(26px);
+			/* Move slider to the right */
+		}
 	</style>
 	<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
 	<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
@@ -1857,7 +1640,7 @@ if (isset($_POST['bulk_delete'])) {
 							$firstFormat = implode(",", $row);
 							// ,Fees Received,Service Id
 							if ($firstFormat != "Recipient Name,Company Name,Contact Person,Mobile Number,Pan Number,Landline Number,E-Mail ID - 1,E-Mail ID - 2,Address,State,City,Pincode,Bank Account Number,IFSC Code,Bank Name,Branch Code,GST Number,Other Description,DSC Applicant,DSC Partner,PAN,TAN,IT Returns,e-TDS,24G,GST,Other Services,PSP,PSP Coupon Consumption,Audit,PSP VLE ID,CIN,Previous Balance,DSC Company,Password,Trade Mark,Patent,Trade Secret,Copy Right,Industrial Design,Bank EmPanelment") {
-							// if ($firstFormat != "Recipient Name,Company Name,Contact Person,Mobile Number,Pan Number,Landline Number,E-Mail ID - 1,E-Mail ID - 2,Address,State,City,Pincode,Bank Account Number,IFSC Code,Bank Name,Branch Code,GST Number,Other Description,DSC Applicant,DSC Partner,PAN,TAN,IT Returns,e-TDS,24G,GST,Other Services,PSP,PSP Coupon Consumption,Audit,PSP VLE ID,CIN,Previous Balance,DSC Company,Password,Fees Received,Service Id") {
+								// if ($firstFormat != "Recipient Name,Company Name,Contact Person,Mobile Number,Pan Number,Landline Number,E-Mail ID - 1,E-Mail ID - 2,Address,State,City,Pincode,Bank Account Number,IFSC Code,Bank Name,Branch Code,GST Number,Other Description,DSC Applicant,DSC Partner,PAN,TAN,IT Returns,e-TDS,24G,GST,Other Services,PSP,PSP Coupon Consumption,Audit,PSP VLE ID,CIN,Previous Balance,DSC Company,Password,Fees Received,Service Id") {
 								//echo "Not Matched";
 								$FormatErrorFlag = true;
 								$HeaderRow = false;
@@ -2056,9 +1839,9 @@ if (isset($_POST['bulk_delete'])) {
 									array_push($emptyRow, "DSC Company");
 									$ErroneouslineDataCount++;
 									$Allow_DscComapny = false;
-								// 	echo "Nor ing";
+									// 	echo "Nor ing";
 								} else if ($row[19] == '1' && $row[33] != '') {
-								    // echo "IN DSC";
+									// echo "IN DSC";
 									$arr = explode(',', $row[33]);
 									foreach ($arr as $dscCompany) {
 										//echo nl2br("\n".$dscCompany);
@@ -2086,7 +1869,7 @@ if (isset($_POST['bulk_delete'])) {
 								if ($ErroneouslineDataCount > 0) {
 									$erroneous_value = implode(",", $emptyRow) . "','" . implode(",", $duplicateRow) . "','" . implode(",", $NotMatchedlineData) . "','" . implode("','", $row);
 								} else if (!$second) {
-								    echo "s";
+									echo "s";
 									$erroneous_value = "Uploaded" . "','" . "','" . "','" . implode("','", $row);
 								}
 								if ($temp_ErroneouslineDataCount == $ErroneouslineDataCount && $temp_ErroneouslineDataCount != 0) {
@@ -2138,60 +1921,7 @@ if (isset($_POST['bulk_delete'])) {
 										if ($allowToProceedOne == true && $allowToProceedTwo == true) {
 											//echo 'here - IN';
 											$runInsertPostion = true;
-											/* $value = "'".$_SESSION['company_id']."','". implode("','", $row) . "','".$_SESSION['username']."','".date('Y-m-d H:i:sa')."'";
-												//$value2 = "<tr><td>". $count."</td><td>". implode("<td>", $row) . "</td></tr>";
-												$value2 = implode("','", $row);
-												$insert_query = "INSERT INTO `client_master` (`company_id`, `client_name`, `company_name`, `contact_person`, `mobile_no`, `pan_no`, `landline_no`, `email_1`, `email_2`, `address`, `state`, `city`, `pincode`, `bank_account_no`, `ifsc_code`, `bank_name`, `branch_code`, `gst_no`, `other_description`, `dsc_subscriber`, `dsc_reseller`, `pan`, `tan`, `it_returns`, `e_tds`, `24g`, `gst`, `other_services`, `psp`, `psp_coupon_consumption`, `audit`, `psp_vle_id`, `cin`,`previous_balance`,`dsc_reseller_company`,`modify_by`,`modify_date`) VALUES (". $value .")";
-											    //echo $insert_query;
-												if ($row[16] != "") {
-													$prevQuery = "SELECT `id` FROM `client_master` WHERE (`mobile_no` = '".$row[3]."' OR `gst_no` = '".$row[16]."') AND `company_id` = '".$_SESSION['company_id']."'";
-													//echo nl2br("\nNot Null ".$prevQuery);
-												}else if ($row[16] == ""){
-													$prevQuery = "SELECT `id` FROM `client_master` WHERE (`mobile_no` = '".$row[3]."') AND `company_id` = '".$_SESSION['company_id']."'";
-													//echo nl2br("\nNull ".$prevQuery);
-												} */
-											/*if ($row[16] != "") {
-											    	// /*if ($row[4] != "") {
-											    	// 	$prevQuery = "SELECT `id` FROM `client_master` WHERE (`mobile_no` = '".$row[3]."' OR `pan_no` = '".$row[4]."' OR `gst_no` = '".$row[16]."') AND `company_id` = '".$_SESSION['company_id']."'";
-											    	// }else
-													 if ($row[4] == ""){
-											    		$prevQuery = "SELECT `id` FROM `client_master` WHERE (`mobile_no` = '".$row[3]."' OR `gst_no` = '".$row[16]."') AND `company_id` = '".$_SESSION['company_id']."'";
-											    	}
-											    }else if ($row[16] == ""){
-											    	// /*if ($row[4] != "") {
-											    	// 	$prevQuery = "SELECT `id` FROM `client_master` WHERE (`mobile_no` = '".$row[3]."' OR `pan_no` = '".$row[4]."') AND `company_id` = '".$_SESSION['company_id']."'";
-											    	// }else
-													 if ($row[4] == "") {
-											    		$prevQuery = "SELECT `id` FROM `client_master` WHERE (`mobile_no` = '".$row[3]."') AND `company_id` = '".$_SESSION['company_id']."'";
-											    	}
-											    }*/
-											/* $arr = explode(',', $row[33]);
-								                $prevResult = mysqli_query($con,$prevQuery);
-								                if(mysqli_num_rows($prevResult) > 0){
-													array_push($DuplicatelineData,$value2);
-								                	//echo "Bro Here";
-								                }else{
-													if ($row[19] == '1' && $row[33] != '') {
-														foreach ($arr as $dscCompany) {
-															//echo nl2br("\n".$dscCompany);
-															if ($dscCompany == "Capricorn" || $dscCompany == "Siffy" || $dscCompany == "Emudra" || $dscCompany == "Vsign" || $dscCompany == "IDsign" || $dscCompany == "Pantasign") {
-																$ExistFlag = true;
-																break;
-															}
-														}												
-													}
-													echo nl2br("\nhere - ".$ExistFlag." ".$row[32]." ".$row[33]);
-													if ($ExistFlag == false) {
-														array_push($NotMatchedlineData,$value2);
-													}else{
-														if(mysqli_query($con,$insert_query)){
-															$state_csv = true;
-															$successCount++;
-														}else{
-															$state_csv = false;
-														}
-													}
-												} */
+											
 										} else {
 											$runInsertPostion = false;
 										}
@@ -2201,25 +1931,13 @@ if (isset($_POST['bulk_delete'])) {
 										$runInsertPostion = true;
 									}
 									if ($runInsertPostion == true) {
-										/* if ($row[35] != "") {
-												$row[35] = 0;
-											}
-											if ($row[36] == '') {
-												$fetchLastTransactionId = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '".$DBName."' AND TABLE_NAME = 'client_master'";
-												$run_fetchLastTransactionId = mysqli_query($con,$fetchLastTransactionId);
-												$transaction_id = "VE_CLM_54";
-												if (mysqli_num_rows($run_fetchLastTransactionId) > 0) {
-													$FetchlastTransactionID_row = mysqli_fetch_array($run_fetchLastTransactionId);
-													$transaction_id = "VE_CLM_".($FetchlastTransactionID_row['AUTO_INCREMENT'] * 54);
-													$row[36] = $transaction_id;
-												}
-											} */
+										
 										$fetchLastTransactionId = "SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_SCHEMA = '" . $DBName . "' AND TABLE_NAME = 'client_master'";
 										$run_fetchLastTransactionId = mysqli_query($con, $fetchLastTransactionId);
-								// 		$transaction_id = "VE_CLM_954";
+										// 		$transaction_id = "VE_CLM_954";
 										if (mysqli_num_rows($run_fetchLastTransactionId) > 0) {
 											$FetchlastTransactionID_row = mysqli_fetch_array($run_fetchLastTransactionId);
-								// 			$transaction_id = "VE_CLM_" . ($FetchlastTransactionID_row['AUTO_INCREMENT'] * 954);
+											// 			$transaction_id = "VE_CLM_" . ($FetchlastTransactionID_row['AUTO_INCREMENT'] * 954);
 											$transaction_id = $_SESSION['company_name_for_transacrion_id'] . "_CLM_" . ($FetchlastTransactionID_row['AUTO_INCREMENT'] * 954);
 											// $row[36] = $transaction_id;
 										}
@@ -2241,50 +1959,34 @@ if (isset($_POST['bulk_delete'])) {
 										$prevResult = mysqli_query($con, $prevQuery);
 										if (mysqli_num_rows($prevResult) > 0) {
 											array_push($DuplicatelineData, $value2);
-								// 			echo "Bro Here";
+											// 			echo "Bro Here";
 										} else {
-										  //  echo "Fsff";
-										    $ExistFlag = true;
+											//  echo "Fsff";
+											$ExistFlag = true;
 											if ($row[19] == '1' && $row[33] != '') {
 												foreach ($arr as $dscCompany) {
-												// 	echo nl2br("\n".$dscCompany);
-												// echo "Check DSC";
+													// 	echo nl2br("\n".$dscCompany);
+													// echo "Check DSC";
 													if ($dscCompany == "Capricorn" || $dscCompany == "Siffy" || $dscCompany == "Emudra" || $dscCompany == "Vsign" || $dscCompany == "IDsign" || $dscCompany == "Pantasign" || $dscCompany == "Xtra Trust") {
 														$ExistFlag = true;
 														break;
 													}
 												}
 											}
-								// 			echo nl2br("\n - ".$ExistFlag." ".$row[32]." ".$row[33]);
-								// 			if ($ExistFlag == false) {
-								// 				array_push($NotMatchedlineData, $value2);
-								// 				echo "not";
-								// 			} else {
-								// 				if (mysqli_query($con, $insert_query)) {
-								// 				    echo "insert";
-								// 					$state_csv = true;
-								// 					$successCount++;
-								// 				} else {
-								// 					$state_csv = false;
-								// 				}
-								// 			}
-								
-								// echo nl2br("\n - " . $ExistFlag . " " . $row[32] . " " . $row[33]);
-                                
-                                if ($ExistFlag == false) {
-                                    array_push($NotMatchedlineData, $value2);
-                                    // echo "not";
-                                } else {
-                                    // var_dump($ExistFlag);  // Add this line for debugging
-                                    // echo "insert";
-                                    if (mysqli_query($con, $insert_query)) {
-                                        $state_csv = true;
-                                        $successCount++;
-                                    } else {
-                                        $state_csv = false;
-                                    }
-                                }
-
+											
+											if ($ExistFlag == false) {
+												array_push($NotMatchedlineData, $value2);
+												// echo "not";
+											} else {
+												// var_dump($ExistFlag);  // Add this line for debugging
+												// echo "insert";
+												if (mysqli_query($con, $insert_query)) {
+													$state_csv = true;
+													$successCount++;
+												} else {
+													$state_csv = false;
+												}
+											}
 										}
 									}
 								}
@@ -2345,56 +2047,21 @@ if (isset($_POST['bulk_delete'])) {
 											?>
 											<button type='submit' name='Download_duplicate_Client' class='btn btn-primary btn-sm'><i class='fas fa-download'></i> Download</button>
 										</form>
-										<!--div class="table-responsive">
-				<table class="table">
-					<thead>
-						<th>Id</th>
-						<th>Recipient Name</th>
-						<th>Company Name</th>
-						<th>Contact Person</th>
-						<th>Mobile Number</th>
-						<th>Pan Number</th>
-						<th>Landline</th>
-						<th>Email ID - 1</th>
-						<th>Email ID - 2</th>
-						<th>Address</th>
-						<th>State</th>
-						<th>City</th>
-						<th>Pioncode</th>
-						<th>Bank Account No.</th>
-						<th>IFSC Code</th>
-						<th>Bank Name</th>
-						<th>Branch Code</th>
-						<th>DSC Applicant</th>
-						<th>DSC Partner</th>
-						<th>PAN</th>
-						<th>TAN</th>
-						<th>IT Returns</th>
-						<th>e-TDS</th>
-						<th>GST</th>
-						<th>Other Services</th>
-						<th>PSP</th>
-						<th>PSP Coupon Consumption</th>
-						<th>Audit</th>
-						<th>Other Description</th>
-					</thead>
-					<tbody>
+									
 					<?php
-						//foreach($DuplicatelineData as $duplicate){
-						//	echo $duplicate;
-						//}
+						
 					?>
 					</tbody>
 				</table>
 				</div-->
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+									</div>
+								</div>
+							</div>
 						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-						</div>
-					</div>
-				</div>
-				</div>
-				<?php }
+			<?php }
 				} else {
 					//die("Sorry, mime type not allowed");
 					$alertMsg = "Please select CSV file only!";
@@ -2402,149 +2069,149 @@ if (isset($_POST['bulk_delete'])) {
 				}
 			}
 			?>
-			
-			<div class="modal fade clientApproval_modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
-              <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                  
-                  <div class="modal-body">
-                      <div class="tab">
-                          <button class="tablinks" onclick="openCity(event, 'client_approval')">Client Approval</button>
-                          <button class="tablinks" onclick="openCity(event, 'partner_approval')">Associate Approval</button>
-                        </div>
 
-                        <div id="client_approval" class="tabcontent">
-                          <!--<h3>Client</h3>-->
-                          <form method="post" action="html/allCallData_Export.php"><button name="export_clientApprovals" class="btn btn-success">Client Approvals Export</button></form>
-                          <table class="table table-striped" id="ClientApproval_table">
-                          <thead>
-                            <tr>
-                              <th scope="col">No</th>
-                              <th scope="col">Title ID</th>
-                              <th scope="col">Company</th>
-                              <th scope="col">Contact Person</th>
-                              <th scope="col">Mobile</th>
-                              <th scope="col">State</th>
-                              <th scope="col">Approve</th>
-                              <th scope="col">Reject</th>
-                            </tr>
-                          </thead>
-                          <tbody class="approveTbody">
-                              <?php
-                                $no = 1;
-                                $client_query = "SELECT * FROM `addClient_approval_Status` WHERE client_approval = 0";
-                                $Cresult = mysqli_query($con,$client_query);
-                                while($Cshow = mysqli_fetch_array($Cresult)) {
-                              ?>
-                            <tr id="approvetr">
-                              <th scope="row"><?= $no; ?></th>
-                              <td><?= $Cshow['title_id']; ?></td>
-                              <td><?= $Cshow['comp_name']; ?></td>
-                              <td><?= $Cshow['cont_person']; ?></td>
-                              <td><?= $Cshow['mob1']; ?></td>
-                              <td><?= $Cshow['state']; ?></td>
-                              <td><input type="hidden" id="clientApproval_id" value="<?= $Cshow['id']; ?>"><button type="button" class="btn btn-success" id="clientApproval_Appbtn">Approve</button></td>
-                              <td><input type="hidden" id="clientApproval_rejid" value="<?= $Cshow['id']; ?>"><button type="button" data-toggle="modal" data-target="#rejectModal" class="btn btn-danger" id="clientApproval_Rejbtn">Reject</button></td>
-                            </tr>
-                            <?php $no++; } ?>
-                          </tbody>
-                        </table>
-                        </div>
-                        
-                        <div id="partner_approval" class="tabcontent">
-                          <!--<h3>Tokyo</h3>-->
-                          <form method="post" action="html/allCallData_Export.php"><button name="export_partnerApprovals" class="btn btn-success">Partner Approvals Export</button></form>
-                          <table class="table table-striped" id="PartnerApproval_table">
-                          <thead>
-                            <tr>
-                              <th scope="col">No</th>
-                              <th scope="col">Title ID</th>
-                              <th scope="col">Company</th>
-                              <th scope="col">Contact Person</th>
-                              <th scope="col">Mobile</th>
-                              <th scope="col">State</th>
-                              <th scope="col">Approve</th>
-                              <th scope="col">Reject</th>
-                            </tr>
-                          </thead>
-                          <tbody class="approveTbody1">
-                              <?php
-                                $no = 1;
-                                $client_query = "SELECT `id`,`part_id` as unique_id,`partner_name` as comp_name,`cont_person`,`mob1`,`state` FROM `calling_partner` where partner_status = 0";
-                                $Cresult = mysqli_query($con,$client_query);
-                                while($Cshow = mysqli_fetch_array($Cresult)) {
-                              ?>
-                            <tr id="approvetr1">
-                              <th scope="row"><?= $no; ?></th>
-                              <td><?= $Cshow['unique_id']; ?></td>
-                              <td><?= $Cshow['comp_name']; ?></td>
-                              <td><?= $Cshow['cont_person']; ?></td>
-                              <td><?= $Cshow['mob1']; ?></td>
-                              <td><?= $Cshow['state']; ?></td>
-                              <td><input type="hidden" id="partnerApproval_id" value="<?= $Cshow['id']; ?>"><button type="button" class="btn btn-success" id="partnerApproval_Appbtn">Approve</button></td>
-                              <td><input type="hidden" id="partnerApproval_rejid" value="<?= $Cshow['id']; ?>"><button type="button" data-toggle="modal" data-target="#rejectPartnerModal" class="btn btn-danger" id="partnerApproval_Rejbtn">Reject</button></td>
-                            </tr>
-                            <?php $no++; } ?>
-                          </tbody>
-                        </table>
-                        </div>
-                  </div>
-                  <div class="modal-footer">
-                    <!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
-                    <!--<button type="button" class="btn btn-primary">Save changes</button>-->
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Modal -->
-            <div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Reject Client Approval</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    Are you sure to reject client approval?
-                  </div>
-                  <div class="modal-footer">
-                      <form method="post">
-                      <input type="hidden" name="fetchRejectID" id="fetchRejectID">
-                    <!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
-                    <button type="submit" name="rejectClient" class="btn btn-primary">Reject Approval</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <!-- Modal -->
-            <div class="modal fade" id="rejectPartnerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Reject Associate Approval</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                      <span aria-hidden="true">&times;</span>
-                    </button>
-                  </div>
-                  <div class="modal-body">
-                    Are you sure to reject partner approval?
-                  </div>
-                  <div class="modal-footer">
-                      <form method="post">
-                      <input type="hidden" name="fetchpartnerRejectID" id="fetchpartnerRejectID">
-                    <!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
-                    <button type="submit" name="rejectPartner" class="btn btn-primary">Reject Approval</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-        
+			<div class="modal fade clientApproval_modal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-lg" role="document">
+					<div class="modal-content">
+
+						<div class="modal-body">
+							<div class="tab">
+								<button class="tablinks" onclick="openCity(event, 'client_approval')">Client Approval</button>
+								<button class="tablinks" onclick="openCity(event, 'partner_approval')">Associate Approval</button>
+							</div>
+
+							<div id="client_approval" class="tabcontent">
+								<!--<h3>Client</h3>-->
+								<form method="post" action="html/allCallData_Export.php"><button name="export_clientApprovals" class="btn btn-success">Client Approvals Export</button></form>
+								<table class="table table-striped" id="ClientApproval_table">
+									<thead>
+										<tr>
+											<th scope="col">No</th>
+											<th scope="col">Title ID</th>
+											<th scope="col">Company</th>
+											<th scope="col">Contact Person</th>
+											<th scope="col">Mobile</th>
+											<th scope="col">State</th>
+											<th scope="col">Approve</th>
+											<th scope="col">Reject</th>
+										</tr>
+									</thead>
+									<tbody class="approveTbody">
+										<?php
+										$no = 1;
+										$client_query = "SELECT * FROM `addClient_approval_Status` WHERE client_approval = 0";
+										$Cresult = mysqli_query($con, $client_query);
+										while ($Cshow = mysqli_fetch_array($Cresult)) {
+										?>
+											<tr id="approvetr">
+												<th scope="row"><?= $no; ?></th>
+												<td><?= $Cshow['title_id']; ?></td>
+												<td><?= $Cshow['comp_name']; ?></td>
+												<td><?= $Cshow['cont_person']; ?></td>
+												<td><?= $Cshow['mob1']; ?></td>
+												<td><?= $Cshow['state']; ?></td>
+												<td><input type="hidden" id="clientApproval_id" value="<?= $Cshow['id']; ?>"><button type="button" class="btn btn-success" id="clientApproval_Appbtn">Approve</button></td>
+												<td><input type="hidden" id="clientApproval_rejid" value="<?= $Cshow['id']; ?>"><button type="button" data-toggle="modal" data-target="#rejectModal" class="btn btn-danger" id="clientApproval_Rejbtn">Reject</button></td>
+											</tr>
+										<?php $no++;
+										} ?>
+									</tbody>
+								</table>
+							</div>
+
+							<div id="partner_approval" class="tabcontent">
+								<!--<h3>Tokyo</h3>-->
+								<form method="post" action="html/allCallData_Export.php"><button name="export_partnerApprovals" class="btn btn-success">Partner Approvals Export</button></form>
+								<table class="table table-striped" id="PartnerApproval_table">
+									<thead>
+										<tr>
+											<th scope="col">No</th>
+											<th scope="col">Title ID</th>
+											<th scope="col">Company</th>
+											<th scope="col">Contact Person</th>
+											<th scope="col">Mobile</th>
+											<th scope="col">State</th>
+											<th scope="col">Approve</th>
+											<th scope="col">Reject</th>
+										</tr>
+									</thead>
+									<tbody class="approveTbody1">
+										<?php
+										$no = 1;
+										$client_query = "SELECT `id`,`part_id` as unique_id,`partner_name` as comp_name,`cont_person`,`mob1`,`state` FROM `calling_partner` where partner_status = 0";
+										$Cresult = mysqli_query($con, $client_query);
+										while ($Cshow = mysqli_fetch_array($Cresult)) {
+										?>
+											<tr id="approvetr1">
+												<th scope="row"><?= $no; ?></th>
+												<td><?= $Cshow['unique_id']; ?></td>
+												<td><?= $Cshow['comp_name']; ?></td>
+												<td><?= $Cshow['cont_person']; ?></td>
+												<td><?= $Cshow['mob1']; ?></td>
+												<td><?= $Cshow['state']; ?></td>
+												<td><input type="hidden" id="partnerApproval_id" value="<?= $Cshow['id']; ?>"><button type="button" class="btn btn-success" id="partnerApproval_Appbtn">Approve</button></td>
+												<td><input type="hidden" id="partnerApproval_rejid" value="<?= $Cshow['id']; ?>"><button type="button" data-toggle="modal" data-target="#rejectPartnerModal" class="btn btn-danger" id="partnerApproval_Rejbtn">Reject</button></td>
+											</tr>
+										<?php $no++;
+										} ?>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="modal-footer">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Modal -->
+			<div class="modal fade" id="rejectModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Reject Client Approval</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							Are you sure to reject client approval?
+						</div>
+						<div class="modal-footer">
+							<form method="post">
+								<input type="hidden" name="fetchRejectID" id="fetchRejectID">
+								<!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+								<button type="submit" name="rejectClient" class="btn btn-primary">Reject Approval</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Modal -->
+			<div class="modal fade" id="rejectPartnerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">Reject Associate Approval</h5>
+							<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							Are you sure to reject partner approval?
+						</div>
+						<div class="modal-footer">
+							<form method="post">
+								<input type="hidden" name="fetchpartnerRejectID" id="fetchpartnerRejectID">
+								<!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+								<button type="submit" name="rejectPartner" class="btn btn-primary">Reject Approval</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div class="col-lg-12 col-sm-12">
 				<?php if (isset($_POST['client_save']) || isset($_POST['client_update']) || isset($_POST['client_delete']) || isset($_POST['bulk_delete']) || isset($_POST['client_master_csv']) || isset($_POST['client_save_duplicate']) || isset($_POST['client_update_duplicate'])) { ?>
 					<div class="<?php echo $alertClass; ?> alert-dismissible" role="alert">
@@ -2576,57 +2243,66 @@ if (isset($_POST['bulk_delete'])) {
 				<p style="color: red;" class="form-horizontal">Unique fields : <span style="color: #000; margin-top: 15px;"> Mobile Number, Pan Number, GST Number</span></p>
 				<!--https://vivaanintellects.com/vowel-->
 			</form>
+
 			<form method="post" class="col-lg-12 col-sm-12 d-none" id="addNew_client">
-                        <div class="accordion" id="accordionExample">
-                            <div class="card">
-								<div class="row">
-							<div class="col-md-6">
-                                <div class="card-header" id="headingOne">
-                                    <h2 class="mb-0">
-                                        <button class="btn btn-link btn-block text-left" type="button"
-                                            data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
-                                            aria-controls="collapseOne">
-                                            Primary Details
-                                        </button>
-                                    </h2>
-                                </div>
+				<label class="toggle-switch square">
+					<input type="checkbox" id="layoutToggle" class="layout-toggle">
+					<span class="slider"></span>
+				</label>
+				<div class="accordion" id="accordionExample">
+					<div class="card">
+						<div class="row">
+							<div class="col-md-6" id="personalDetails">
+								<div class="card-header" id="headingOne">
+									<h2 class="mb-0">
+										<button class="btn btn-link btn-block text-left" type="button"
+											data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+											aria-controls="collapseOne">
+											Primary Details
+										</button>
+									</h2>
+								</div>
 								<input type="hidden" name="crm_client" id="crm_client" class="crm_client">
 								<input type="hidden" name="client_masterEditID_temp" id="client_masterEditID_temp" value="<?php if (isset($_POST['editClient_Masterbtn'])) echo $_POST['client_masterEditID']; ?>">
 								<div id="collapseOne" class="collapse show" aria-labelledby="headingOne"
-                                    data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <div class=" row">
-                                            <div class="form-group d-block col-md-6">
+									data-parent="#accordionExample">
+									<div class="card-body">
+										<div class=" row">
+											<div class="form-group d-block col-md-6">
 												<label for="exampleInput1" class="float-left p-2">Recipient Name <span style="color: red;" class="pl-1">*</span></label>
-												<input type="text" name="client_name" pattern = "[a-zA-Z\& ]+" class="form-control w-100 client_name" id="exampleInput1" aria-describedby="emailHelp" required value="<?php if (isset($_POST['editClient_Masterbtn'])) {
-																																														echo $edit_client_name;
-																																													} ?>" <?php if (isset($_POST['editClient_Masterbtn'])) {
+												<input type="text" name="client_name" pattern="[a-zA-Z\& ]+" class="form-control w-100 client_name" id="exampleInput1" aria-describedby="emailHelp" required value="<?php if (isset($_POST['editClient_Masterbtn'])) {
+																																																						echo $edit_client_name;
+																																																					} ?>" <?php if (isset($_POST['editClient_Masterbtn'])) {
 																																																echo 'readonly';
 																																															} ?>>
 											</div>
 											<div class="form-group d-block col-md-6">
 												<label for="exampleInput1" class="float-left p-2">Company Name <span style="color: red;" class="pl-1">*</span></label>
 												<input type="text" name="company_name" pattern="^[a-zA-Z0-9\/\\\-=_@.&,#?+ ]+$" class="form-control w-100 company_name" id="exampleInput1" aria-describedby="emailHelp" required value="<?php if (isset($_POST['editClient_Masterbtn'])) {
-																																														echo $edit_company_name;
-																																													} ?>">
+																																																											echo $edit_company_name;
+																																																										} ?>">
 											</div>
 											<div class="form-group d-block col-md-6">
 												<label for="exampleInput2" class="float-left p-2">Contact Person <span style="color: red;" class="pl-1">*</span></label>
 												<div class="d-block">
-													<input type="text" pattern = "[a-zA-Z ]+" required name="contact_person" class="form-control w-100 contact_person" id="exampleInput2" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
-																																															echo $edit_contact_person;
-																																														} ?>">
+													<input type="text" pattern="[a-zA-Z ]+" required name="contact_person" class="form-control w-100 contact_person" id="exampleInput2" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
+																																																								echo $edit_contact_person;
+																																																							} ?>">
 												</div>
 											</div>
 											<div class="form-group d-block col-md-6">
 												<label for="exampleInput3" class="float-left p-2">Mobile Number <span style="color: red;" class="pl-1">*</span></label>
-												<input type="number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="10" class="form-control w-100 mobile_number" name="mobile_number" required id="mobile_number" aria-describedby="emailHelp" <?php if (isset($_POST['editClient_Masterbtn'])) {echo "value=" . $edit_mobile_number;} ?>>
+												<input type="number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" maxlength="10" class="form-control w-100 mobile_number" name="mobile_number" required id="mobile_number" aria-describedby="emailHelp" <?php if (isset($_POST['editClient_Masterbtn'])) {
+																																																																																echo "value=" . $edit_mobile_number;
+																																																																															} ?>>
 												<span id="mobile_number_status"></span>
 											</div>
 											<div class="form-group d-block col-md-6">
 												<label for="exampleInput2" class="float-left p-2">E-Mail ID - 1 <span style="color: red;" class="pl-1">*</span></label>
 												<div class="d-block">
-													<input type="email" required name="email_id_1" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" class="form-control w-100 email_id_1" id="email_id_1" aria-describedby="emailHelp" <?php if (isset($_POST['editClient_Masterbtn'])) { echo "value=" . $edit_email_id_1; } ?>>
+													<input type="email" required name="email_id_1" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" class="form-control w-100 email_id_1" id="email_id_1" aria-describedby="emailHelp" <?php if (isset($_POST['editClient_Masterbtn'])) {
+																																																													echo "value=" . $edit_email_id_1;
+																																																												} ?>>
 													<span id="email_id_1_status"></span>
 												</div>
 											</div>
@@ -2640,24 +2316,26 @@ if (isset($_POST['bulk_delete'])) {
 														<span class="input-group-text"><a href="" id="add_acc_passLink"><i class="fa fa-eye-slash" aria-hidden="true"></i></a></span>
 													</div>
 												</div>
-												<!-- <input type="hidden" readonly name="temp_password" value="<?php if (isset($_POST['editClient_Masterbtn'])) { echo $edit_password; } ?>"> -->
+												<!-- <input type="hidden" readonly name="temp_password" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
+																													echo $edit_password;
+																												} ?>"> -->
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 
-							<div class="col-md-6">
+							<div class="col-md-6" id="permissions">
 								<div class="card-header" id="headingFour">
-                                    <h2 class="mb-0">
-									<button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
-										Permissions
-									</button>
-                                    </h2>
-                                </div>
+									<h2 class="mb-0">
+										<button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse" data-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour">
+											Permissions
+										</button>
+									</h2>
+								</div>
 
-                                <div id="collapseFour" class="collapse show" aria-labelledby="headingFour" data-parent="#accordionExample">
-                                    <div class="card-body">
+								<div id="collapseFour" class="collapse show" aria-labelledby="headingFour" data-parent="#accordionExample">
+									<div class="card-body">
 										<div class="row">
 											<div class="form-group d-block col-md-6">
 												<label for="taxation_allows" class="float-left p-2">Taxation</label>
@@ -2674,7 +2352,7 @@ if (isset($_POST['bulk_delete'])) {
 																				} ?>>Audit</option>
 													</select>
 												</div>
-											</div>	
+											</div>
 											<div class="form-group d-block col-md-6">
 												<label for="nsdl_allows" class="float-left p-2">NSDL</label>
 												<div class="d-block">
@@ -2713,11 +2391,21 @@ if (isset($_POST['bulk_delete'])) {
 												<label for="otherServices_allows" class="float-left p-2">Other Services</label>
 												<div class="d-block">
 													<select name="otherServices_allows[]" multiple class="form-control otherServices_allows w-100 h-100" id="otherServices_allows">
-														<option value="Other Services" <?php if (isset($_POST['editClient_Masterbtn'])) { if ($other_services == 1) echo 'selected'; } ?>>Other Service</option>
-														<option value="Trading" <?php if (isset($_POST['editClient_Masterbtn'])) { if ($trading == 1) echo 'selected'; } ?>>Trading</option>
-														<option value="E-Tender" <?php if (isset($_POST['editClient_Masterbtn'])) { if ($e_tender == 1) echo 'selected'; } ?>>E-Tender</option>
-														<option value="Mobile Repairing" <?php if (isset($_POST['editClient_Masterbtn'])) { if ($mobile_repairing == 1) echo 'selected'; } ?>>Mobile Repairing</option>
-														<option value="Advocate" <?php if (isset($_POST['editClient_Masterbtn'])) { if ($advocate == 1) echo 'selected'; } ?>>Advocate</option>
+														<option value="Other Services" <?php if (isset($_POST['editClient_Masterbtn'])) {
+																							if ($other_services == 1) echo 'selected';
+																						} ?>>Other Service</option>
+														<option value="Trading" <?php if (isset($_POST['editClient_Masterbtn'])) {
+																					if ($trading == 1) echo 'selected';
+																				} ?>>Trading</option>
+														<option value="E-Tender" <?php if (isset($_POST['editClient_Masterbtn'])) {
+																						if ($e_tender == 1) echo 'selected';
+																					} ?>>E-Tender</option>
+														<option value="Mobile Repairing" <?php if (isset($_POST['editClient_Masterbtn'])) {
+																								if ($mobile_repairing == 1) echo 'selected';
+																							} ?>>Mobile Repairing</option>
+														<option value="Advocate" <?php if (isset($_POST['editClient_Masterbtn'])) {
+																						if ($advocate == 1) echo 'selected';
+																					} ?>>Advocate</option>
 													</select>
 												</div>
 											</div>
@@ -2736,20 +2424,20 @@ if (isset($_POST['bulk_delete'])) {
 												<div class="d-block">
 													<select name="ip_allows[]" multiple class="form-control ip_allows w-100 h-100" id="ip_allows">
 														<option value="trade_mark" <?php if (isset($_POST['editClient_Masterbtn'])) {
-																				if ($trade_mark == 1) echo 'selected';
-																			} ?>>Trade Mark</option>
+																						if ($trade_mark == 1) echo 'selected';
+																					} ?>>Trade Mark</option>
 														<option value="patent" <?php if (isset($_POST['editClient_Masterbtn'])) {
-																				if ($patent == 1) echo 'selected';
-																			} ?>>Patent</option>
+																					if ($patent == 1) echo 'selected';
+																				} ?>>Patent</option>
 														<option value="trade_secret" <?php if (isset($_POST['editClient_Masterbtn'])) {
-																				if ($trade_secret == 1) echo 'selected';
-																			} ?>>Trade Secret</option>
+																							if ($trade_secret == 1) echo 'selected';
+																						} ?>>Trade Secret</option>
 														<option value="copy_right" <?php if (isset($_POST['editClient_Masterbtn'])) {
-																				if ($copy_right == 1) echo 'selected';
-																			} ?>>Copy Right</option>
+																						if ($copy_right == 1) echo 'selected';
+																					} ?>>Copy Right</option>
 														<option value="industrial_design" <?php if (isset($_POST['editClient_Masterbtn'])) {
-																				if ($industrial_design == 1) echo 'selected';
-																			} ?>>Industrial Design</option>
+																								if ($industrial_design == 1) echo 'selected';
+																							} ?>>Industrial Design</option>
 													</select>
 												</div>
 											</div>
@@ -2790,123 +2478,133 @@ if (isset($_POST['bulk_delete'])) {
 														}
 													} ?>
 													<select name="dsc_company[]" multiple class="form-control dsc_company w-100" id="dsc_company">
-														<?php 
-															$fetch_Client = "SELECT `dsc_company_name` FROM `dsc_company` WHERE `company_id` = '".$_SESSION['company_id']."' ORDER BY `dsc_company_name` ASC";
-															$run_fetch_Client = mysqli_query($con,$fetch_Client);
-															while ($row = mysqli_fetch_array($run_fetch_Client)) { ?>
-																<option value="<?= $row['dsc_company_name']; ?>" <?php if (isset($_POST['editClient_Masterbtn'])) { if (in_array($row['dsc_company_name'], $edit_dsc_company)) { echo "selected"; }}?>><?= $row['dsc_company_name']; ?></option>
-													<?php } ?>
+														<?php
+														$fetch_Client = "SELECT `dsc_company_name` FROM `dsc_company` WHERE `company_id` = '" . $_SESSION['company_id'] . "' ORDER BY `dsc_company_name` ASC";
+														$run_fetch_Client = mysqli_query($con, $fetch_Client);
+														while ($row = mysqli_fetch_array($run_fetch_Client)) { ?>
+															<option value="<?= $row['dsc_company_name']; ?>" <?php if (isset($_POST['editClient_Masterbtn'])) {
+																													if (in_array($row['dsc_company_name'], $edit_dsc_company)) {
+																														echo "selected";
+																													}
+																												} ?>><?= $row['dsc_company_name']; ?></option>
+														<?php } ?>
 													</select>
 												</div>
 											</div>
 											<div class="form-group d-block col-md-6">
-													<label for="ClientNameSelect1" class="float-left p-2">Users Access</label>
-													<br>
-													<div class="col d-flex justify-content-left float-left">
-														<div class="custom-control custom-checkbox pl-2">
-															<input type="checkbox" class="custom-control-input" id="select_allUsers" name="select_allUsers">
-															<label class="custom-control-label pl-3" for="select_allUsers">Select All</label>
-														</div>
+												<label for="ClientNameSelect1" class="float-left p-2">Users Access</label>
+												<br>
+												<div class="col d-flex justify-content-left float-left">
+													<div class="custom-control custom-checkbox pl-2">
+														<input type="checkbox" class="custom-control-input" id="select_allUsers" name="select_allUsers">
+														<label class="custom-control-label pl-3" for="select_allUsers">Select All</label>
 													</div>
-													<select name="users_access[]" id="users_access" multiple class="form-control w-100 h-100 multiple_select">
-														<?php
-														$fetch_users = "SELECT * FROM `users` WHERE `company_id` = '" . $_SESSION['company_id'] . "' ORDER BY `username`";
-														$run_users = mysqli_query($con, $fetch_users);
-														while ($row = mysqli_fetch_array($run_users)) {
-															if ($row['admin_status'] == "1") continue; ?>
-																<option value="<?= $row['id']; ?>" <?php if (isset($_POST['editClient_Masterbtn'])) {
-																		foreach ($edit_users_access as $i) if ($i == $row['id']) {
-																			echo 'selected';
-																		}
-																	} else {
-																		echo 'selected';
-																	} ?>><?= $row['username'] . ' (' . $row['firstname'] . ')'; ?></option>
-														<?php } ?>
-													</select>
-											</div>	
-										</div>
-									</div> 
-								</div>
-							</div>
-							</div>
-								<d class="card">
-                                <div class="card-header" id="headingTwo">
-                                    <h2 class="mb-0">
-                                        <button class="btn btn-link btn-block text-left collapsed" type="button"
-                                            data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
-                                            aria-controls="collapseTwo">
-                                            Secondary details
-                                        </button>
-                                    </h2>
-                                </div>
-                                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
-                                    data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <div class="row">
-											<div class="form-group d-block col-md-3">
-												<label for="exampleInput3" class="float-left p-2">Pan Number </label>
-												<input type="text" maxlength="10" pattern="[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}" class="form-control w-100" name="pan_no" id="pan_no" aria-describedby="emailHelp" <?php if (isset($_POST['editClient_Masterbtn'])) {echo "value=" . $edit_pan_number;} ?>>
-											</div>
-											<div class="form-group d-block col-md-3">
-												<label for="exampleInput1" class="float-left p-2">Landline number</label>
-												<input type="text" name="landline_number" class="form-control w-100 landline_number" id="exampleInput1" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {echo $edit_landline_number;} ?>">
-											</div>
-											
-											<div class="form-group d-block col-md-3">
-												<label for="exampleInput2" class="float-left p-2">E-Mail ID - 2</label>
-												<div class="d-block">
-													<input type="email" name="email_id_2" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" class="form-control w-100 email_id_2" id="exampleInput2" aria-describedby="emailHelp" <?php if (isset($_POST['editClient_Masterbtn'])) {
-																																											echo "value=" . $edit_email_id_2;
-																																										} ?>>
 												</div>
+												<select name="users_access[]" id="users_access" multiple class="form-control w-100 h-100 multiple_select">
+													<?php
+													$fetch_users = "SELECT * FROM `users` WHERE `company_id` = '" . $_SESSION['company_id'] . "' ORDER BY `username`";
+													$run_users = mysqli_query($con, $fetch_users);
+													while ($row = mysqli_fetch_array($run_users)) {
+														if ($row['admin_status'] == "1") continue; ?>
+														<option value="<?= $row['id']; ?>" <?php if (isset($_POST['editClient_Masterbtn'])) {
+																								foreach ($edit_users_access as $i) if ($i == $row['id']) {
+																									echo 'selected';
+																								}
+																							} else {
+																								echo 'selected';
+																							} ?>><?= $row['username'] . ' (' . $row['firstname'] . ')'; ?></option>
+													<?php } ?>
+												</select>
 											</div>
-											<div class="form-group d-block col-md-3">
-												<label for="exampleInput3" class="float-left p-2">Address</label>
-												<input type="text" pattern="^[a-zA-Z0-9\/\\\-=_@.&,#?+ ]+$" class="form-control w-100" name="address" id="exampleInput3" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
-																																										echo $edit_address;
-																																									} ?>">
-											</div>
-											<div class="form-group d-block col-md-3">
-												<label for="exampleInput1" class="float-left p-2">State</label>
-												<input type="text" class="form-control w-100 state" name="state" id="exampleInput1" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
-																																										echo $edit_state;
-																																									} ?>">
-												
-											</div>
-											<div class="form-group d-block col-md-3">
-												<label for="exampleInput2" class="float-left p-2">City</label>
-												<div class="d-block">
-													<input type="text" pattern = "[a-zA-Z ]+" name="city" class="form-control w-100 city" id="exampleInput2" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
-																																											echo $edit_city;
-																																										} ?>">
-												</div>
-											</div>
-											<div class="form-group d-block col-md-3">
-												<label for="exampleInput2" class="float-left p-2">Pincode</label>
-												<div class="d-block">
-													<input type="number" name="pincode" class="form-control w-100 pincode" id="exampleInput2" aria-describedby="emailHelp" <?php if (isset($_POST['editClient_Masterbtn'])) {
-																																										echo "value=" . $edit_pincode;
-																																									} ?>>
-												</div>
-											</div>
-
 										</div>
 									</div>
 								</div>
-								<div class="card">
-                                <div class="card-header" id="headingThree">
-                                    <h2 class="mb-0">
-                                        <button class="btn btn-link btn-block text-left collapsed" type="button"
-                                            data-toggle="collapse" data-target="#collapseThree" aria-expanded="false"
-                                            aria-controls="collapseThree">
-                                            Bank Details
-                                        </button>
-                                    </h2>
-                                </div>
-                                <div id="collapseThree" class="collapse" aria-labelledby="headingThree"
-                                    data-parent="#accordionExample">
-                                    <div class="card-body">
-                                        <div class=" row">
+							</div>
+						</div>
+					
+						<div class="card " id="SecondaryDetail">
+							<div class="card-header" id="headingTwo">
+								<h2 class="mb-0">
+									<button class="btn btn-link btn-block text-left collapsed" type="button"
+										data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false"
+										aria-controls="collapseTwo">
+										Secondary details
+									</button>
+								</h2>
+							</div>
+							<div id="collapseTwo" class="collapse" aria-labelledby="headingTwo"
+								data-parent="#accordionExample">
+								<div class="card-body">
+									<div class="row">
+										<div class="form-group d-block col-md-3">
+											<label for="exampleInput3" class="float-left p-2">Pan Number </label>
+											<input type="text" maxlength="10" pattern="[a-zA-Z]{5}[0-9]{4}[a-zA-Z]{1}" class="form-control w-100" name="pan_no" id="pan_no" aria-describedby="emailHelp" <?php if (isset($_POST['editClient_Masterbtn'])) {
+																																																				echo "value=" . $edit_pan_number;
+																																																			} ?>>
+										</div>
+										<div class="form-group d-block col-md-3">
+											<label for="exampleInput1" class="float-left p-2">Landline number</label>
+											<input type="text" name="landline_number" class="form-control w-100 landline_number" id="exampleInput1" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
+																																															echo $edit_landline_number;
+																																														} ?>">
+										</div>
+
+										<div class="form-group d-block col-md-3">
+											<label for="exampleInput2" class="float-left p-2">E-Mail ID - 2</label>
+											<div class="d-block">
+												<input type="email" name="email_id_2" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" class="form-control w-100 email_id_2" id="exampleInput2" aria-describedby="emailHelp" <?php if (isset($_POST['editClient_Masterbtn'])) {
+																																																											echo "value=" . $edit_email_id_2;
+																																																										} ?>>
+											</div>
+										</div>
+										<div class="form-group d-block col-md-3">
+											<label for="exampleInput3" class="float-left p-2">Address</label>
+											<input type="text" pattern="^[a-zA-Z0-9\/\\\-=_@.&,#?+ ]+$" class="form-control w-100" name="address" id="exampleInput3" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
+																																																				echo $edit_address;
+																																																			} ?>">
+										</div>
+										<div class="form-group d-block col-md-3">
+											<label for="exampleInput1" class="float-left p-2">State</label>
+											<input type="text" class="form-control w-100 state" name="state" id="exampleInput1" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
+																																			echo $edit_state;
+																																		} ?>">
+
+										</div>
+										<div class="form-group d-block col-md-3">
+											<label for="exampleInput2" class="float-left p-2">City</label>
+											<div class="d-block">
+												<input type="text" pattern="[a-zA-Z ]+" name="city" class="form-control w-100 city" id="exampleInput2" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
+																																																echo $edit_city;
+																																															} ?>">
+											</div>
+										</div>
+										<div class="form-group d-block col-md-3">
+											<label for="exampleInput2" class="float-left p-2">Pincode</label>
+											<div class="d-block">
+												<input type="number" name="pincode" class="form-control w-100 pincode" id="exampleInput2" aria-describedby="emailHelp" <?php if (isset($_POST['editClient_Masterbtn'])) {
+																																											echo "value=" . $edit_pincode;
+																																										} ?>>
+											</div>
+										</div>
+
+									</div>
+								</div>
+							</div>
+					
+							<div class="card " id="bankDetail">
+								<div class="card-header" id="headingThree">
+									<h2 class="mb-0">
+										<button class="btn btn-link btn-block text-left collapsed" type="button"
+											data-toggle="collapse" data-target="#collapseThree" aria-expanded="false"
+											aria-controls="collapseThree">
+											Bank Details
+										</button>
+									</h2>
+								</div>
+								<div id="collapseThree" class="collapse" aria-labelledby="headingThree"
+									data-parent="#accordionExample">
+									<div class="card-body">
+										<div class=" row">
 											<div class="form-group d-block col-md-3">
 												<label for="exampleInput3" class="float-left p-2">Bank Account Number</label>
 												<input type="number" class="form-control w-100" name="bank_account_no" id="exampleInput3" aria-describedby="emailHelp" <?php if (isset($_POST['editClient_Masterbtn'])) {
@@ -2915,36 +2613,38 @@ if (isset($_POST['bulk_delete'])) {
 											</div>
 											<div class="form-group d-block col-md-3">
 												<label for="exampleInput1" class="float-left p-2">IFSC Code</label>
-												<input type="text" pattern = "[a-zA-Z0-9 ]+" name="ifsc_code" class="form-control w-100" id="exampleInput1" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
-																																											echo $edit_ifsc_code;
-																																										} ?>">
+												<input type="text" pattern="[a-zA-Z0-9 ]+" name="ifsc_code" class="form-control w-100" id="exampleInput1" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
+																																																	echo $edit_ifsc_code;
+																																																} ?>">
 											</div>
 											<div class="form-group d-block col-md-3">
 												<label for="exampleInput2" class="float-left p-2">Bank Name</label>
 												<div class="d-block">
-													<input type="text" pattern = "[a-zA-Z ]+" name="bank_name" class="form-control w-100" id="exampleInput2" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
-																																												echo $edit_bank_name;
-																																											} ?>">
+													<input type="text" pattern="[a-zA-Z ]+" name="bank_name" class="form-control w-100" id="exampleInput2" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
+																																																	echo $edit_bank_name;
+																																																} ?>">
 												</div>
 											</div>
 											<div class="form-group d-block col-md-3">
 												<label for="exampleInput2" class="float-left p-2">Branch Code</label>
 												<div class="d-block">
-													<input type="text" pattern = "[a-zA-Z0-9 ]+" name="branch_code" class="form-control w-100" id="exampleInput2" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
-																																												echo $edit_branch_code;
-																																											} ?>">
+													<input type="text" pattern="[a-zA-Z0-9 ]+" name="branch_code" class="form-control w-100" id="exampleInput2" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
+																																																		echo $edit_branch_code;
+																																																	} ?>">
 												</div>
 											</div>
 											<div class="form-group col-md-3">
-												<label for="gst_no" class="float-left p-2">GST Number <span id="asterisk" style="color: red; display: none;" class="pl-1">*</span></label> 
+												<label for="gst_no" class="float-left p-2">GST Number <span id="asterisk" style="color: red; display: none;" class="pl-1">*</span></label>
 
-												<input type="text" pattern = "[a-zA-Z0-9 ]+" name="gst_no" class="form-control w-100" id="gst_no" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {echo $gst_no;} ?>">
+												<input type="text" pattern="[a-zA-Z0-9 ]+" name="gst_no" class="form-control w-100" id="gst_no" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
+																																														echo $gst_no;
+																																													} ?>">
 											</div>
 											<div class="form-group d-block col-md-3">
 												<label for="other_description" class="float-left p-2">Other Description</label>
 												<input type="text" pattern="^[a-zA-Z0-9\/\\\-=_@#?+ ]+$" name="other_description" class="form-control w-100" id="other_description" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
-																																														echo $other_description;
-																																													} ?>">
+																																																							echo $other_description;
+																																																						} ?>">
 											</div>
 											<div class="form-group d-block col-md-3">
 												<label for="previous_balance" class="float-left p-2">Previous Balance</label>
@@ -2966,52 +2666,45 @@ if (isset($_POST['bulk_delete'])) {
 											</div>
 											<div class="form-group col-md-6 d-none" id="cinDIV">
 												<label for="cin" class="float-left p-2">CIN</label>
-												<input type="text" pattern = "[a-zA-Z0-9 ]+" name="cin" class="form-control w-100" id="cin" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
-																																							echo $cin;
-																																						} ?>">
+												<input type="text" pattern="[a-zA-Z0-9 ]+" name="cin" class="form-control w-100" id="cin" aria-describedby="emailHelp" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
+																																													echo $cin;
+																																												} ?>">
 											</div>
 											<div class="form-group d-block col-md-3">
 												<label for="fees_received" class="float-left p-2">Fees Received</label>
-												<input type="number"  readonly class="form-control w-100" name="fees_received" id="fees_received" aria-describedby="emailHelp" placeholder="Enter Fees Received" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
+												<input type="number" readonly class="form-control w-100" name="fees_received" id="fees_received" aria-describedby="emailHelp" placeholder="Enter Fees Received" value="<?php if (isset($_POST['editClient_Masterbtn'])) {
 																																																							echo $edit_fees_received;
 																																																						} ?>">
 											</div>
 
 										</div>
 									</div>
-								</div>																																					
-								
-                                
 								</div>
 							</div>
-						
-				<br>
-				<div class="form-inline">
-					<div class="form-group d-block col-md-3">
-						<span style="color: red;" class="pl-1">Note : * fields are mandatory</span>
 					</div>
-				</div>
-				<div class="form-group text-center">
-					<?php if (isset($_POST['editClient_Masterbtn'])) {
-						if ($_SESSION['admin_status'] == "1") {
-							echo '<input type="button" name="client_update_admin" id="client_update_admin" value="UPDATE" class="btn btn-vowel">';
-							echo '<input type="submit" name="client_update" id="client_update" value="UPDATE" class="btn btn-vowel d-none">'; ?>
-							<input type="submit" name="client_update_duplicate" id="client_update_duplicate" value="UPDATE" class="btn btn-vowel d-none">
-						<?php } else {
-							echo '<input type="button" name="temp_client_update" id="temp_client_update" value="UPDATE" class="btn btn-vowel">';
-							echo '<input type="submit" name="client_update" id="client_update" value="UPDATE" class="btn btn-vowel d-none">';
-						}
-					} else {
-						
-				// 			echo '<input type="button" name="client_save_admin" id="client_save_admin" value="SAVE" class="btn btn-vowel">';
+
+					<br>
+					<div class="form-inline">
+						<div class="form-group d-block col-md-3">
+							<span style="color: red;" class="pl-1">Note : * fields are mandatory</span>
+						</div>
+					</div>
+					<div class="form-group text-center">
+						<?php if (isset($_POST['editClient_Masterbtn'])) {
+							if ($_SESSION['admin_status'] == "1") {
+								echo '<input type="button" name="client_update_admin" id="client_update_admin" value="UPDATE" class="btn btn-vowel">';
+								echo '<input type="submit" name="client_update" id="client_update" value="UPDATE" class="btn btn-vowel d-none">'; ?>
+								<input type="submit" name="client_update_duplicate" id="client_update_duplicate" value="UPDATE" class="btn btn-vowel d-none">
+							<?php } else {
+								echo '<input type="button" name="temp_client_update" id="temp_client_update" value="UPDATE" class="btn btn-vowel">';
+								echo '<input type="submit" name="client_update" id="client_update" value="UPDATE" class="btn btn-vowel d-none">';
+							}
+						} else {
 							echo '<input type="submit" name="client_save" id="client_save" value="SAVE" class="btn btn-vowel">'; ?>
 							<!--<input type="submit" name="client_save_duplicate" id="client_save_duplicate" value="SAVE" class="btn btn-vowel d-none">-->
-					<?php
-				// 			echo '<input type="button" name="temp_client_save" id="temp_client_save" value="SAVE" class="btn btn-vowel">';
-				// 			echo '<input type="submit" name="client_save" id="client_save" value="SAVE" class="btn btn-vowel d-none">';
-						
-					} ?>
-				</div>
+						<?php
+						} ?>
+					</div>
 			</form>
 		</div>
 	</div>
@@ -3043,109 +2736,184 @@ if (isset($_POST['bulk_delete'])) {
 			</div>
 		</div>
 	</div>
-	<input type="hidden" readonly id="tempDSCCompany" name="tempDSCCompany" value="<?php if(isset($edit_DSCStock_company)) echo($edit_DSCStock_company); ?>">
-<input type="hidden" readonly id="tempTokenName" name="tempTokenName" value="<?php if(isset($edit_DSCStock_certificate_name)) echo($edit_DSCStock_certificate_name); ?>">
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var gstOption = document.querySelector('option[value="GST"]');
-        var gstNumberInput = document.getElementById('gst_no');
-        var asteriskSpan = document.getElementById('asterisk');
+	<input type="hidden" readonly id="tempDSCCompany" name="tempDSCCompany" value="<?php if (isset($edit_DSCStock_company)) echo ($edit_DSCStock_company); ?>">
+	<input type="hidden" readonly id="tempTokenName" name="tempTokenName" value="<?php if (isset($edit_DSCStock_certificate_name)) echo ($edit_DSCStock_certificate_name); ?>">
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			var gstOption = document.querySelector('option[value="GST"]');
+			var gstNumberInput = document.getElementById('gst_no');
+			var asteriskSpan = document.getElementById('asterisk');
 
-        gstOption.addEventListener('click', function() {
-            gstNumberInput.setAttribute('required', 'required');
-            asteriskSpan.style.display = 'inline';
-            // alert('You clicked on the GST option.');
-        });
-    });
-</script>
+			gstOption.addEventListener('click', function() {
+				gstNumberInput.setAttribute('required', 'required');
+				asteriskSpan.style.display = 'inline';
+				// alert('You clicked on the GST option.');
+			});
+		});
+	</script>
 
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", function() {
+			const layoutToggle = document.getElementById("layoutToggle");
+
+			if (layoutToggle) { // Check if the element exists
+				layoutToggle.addEventListener("change", function() {
+					let personalDetails = document.getElementById("personalDetails");
+					let permissions = document.getElementById("permissions");
+					// let SecondaryDetail = document.getElementById("SecondaryDetail");
+					// let bankDetail = document.getElementById("bankDetail");
+
+					if (this.checked) {
+						personalDetails.classList.remove("col-md-6");
+						personalDetails.classList.add("col-md-12");
+
+						permissions.classList.remove("col-md-6");
+						permissions.classList.add("col-md-12");
+
+					} else {
+						personalDetails.classList.remove("col-md-12");
+						personalDetails.classList.add("col-md-6");
+
+						permissions.classList.remove("col-md-12");
+						permissions.classList.add("col-md-6");
+
+					}
+				});
+			} else {
+				console.log('Toggle button not found');
+			}
+		});
+
+		document.getElementById('layoutToggle').addEventListener('change', function () {
+			var isChecked = this.checked;
+
+			if (isChecked) {
+				$('#collapseOne').collapse('show');
+				$('#collapseFour').collapse('show');
+			} else {
+				$('#collapseOne').collapse('hide');
+				$('#collapseFour').collapse('hide');
+			}
+		});
+
+		// Click event for collapseOne
+		$('#collapseOne').on('show.bs.collapse', function () {
+			var isChecked = document.getElementById('layoutToggle').checked;
+
+			if (isChecked) {
+				// If toggle is ON, show only collapseOne
+				$('#collapseFour').collapse('hide');
+			} else {
+				// If toggle is OFF, show both
+				$('#collapseFour').collapse('show');
+			}
+		});
+
+		// Click event for collapseFour
+		$('#collapseFour').on('show.bs.collapse', function () {
+			var isChecked = document.getElementById('layoutToggle').checked;
+
+			if (isChecked) {
+				$('#collapseOne').collapse('hide');
+			} else {
+				$('#collapseOne').collapse('show');
+			}
+		});
+	</script>
 
 	<script type="text/javascript">
 		$(document).ready(function() {
-        $('.approveTbody #approvetr').on('click','#clientApproval_Appbtn', function(){
-        var row_indexDEL = $(this).closest('#approvetr'); 
-        var btnID = row_indexDEL.find('#clientApproval_id').val();
-        document.getElementById('pleaseWaitDialog').style.display = 'block';
-        $.ajax({
-        	url:"html/verifyPinProcess.php",
-        	method:"post",
-        	data: {approve_client:btnID,},
-        	dataType:"text",
-        	success:function(data)
-        	{
-        	   $("#showClientMaster").removeClass("d-block");
-        		$("#showClientMaster").addClass("d-none");
-        		$("#import_client").removeClass("d-block");
-        		$("#import_client").addClass("d-none");
-        
-        		$("#addNew_client").removeClass("d-none");
-        		$("#addNew_client").addClass("d-block");
-        		$('#clientApproval_modal_btn').click();
-        		var jsonData = JSON.parse(data);
-        		var client_details = jsonData.client_from+'_'+jsonData.title_id;
-        		$('.crm_client').val(client_details);
-        		$('.client_name').val(jsonData.comp_name);
-                $('.company_name').val(jsonData.comp_name);
-                $('.contact_person').val(jsonData.client_name);
-                $('.mobile_number').val(jsonData.mobile_no1);
-                $('.landline_number').val(jsonData.mobile_no2);
-                $('.email_id_1').val(jsonData.email1);
-                $('.email_id_2').val(jsonData.email2);
-                $('.state').val(jsonData.state);
-                $('.city').val(jsonData.city);
-                $('.pincode').val(jsonData.path);
-        	},complete: function(){
-        		document.getElementById('pleaseWaitDialog').style.display = 'none';
-          }
-        });
-        });
-        $('.approveTbody1 #approvetr1').on('click','#partnerApproval_Appbtn', function(){
-        var row_indexDEL = $(this).closest('#approvetr1'); 
-        var btnID = row_indexDEL.find('#partnerApproval_id').val();
-        document.getElementById('pleaseWaitDialog').style.display = 'block';
-        $.ajax({
-        	url:"html/verifyPinProcess.php",
-        	method:"post",
-        	data: {approve_partner:btnID,},
-        	dataType:"text",
-        	success:function(data)
-        	{
-        	   $("#showClientMaster").removeClass("d-block");
-        		$("#showClientMaster").addClass("d-none");
-        		$("#import_client").removeClass("d-block");
-        		$("#import_client").addClass("d-none");
-        
-        		$("#addNew_client").removeClass("d-none");
-        		$("#addNew_client").addClass("d-block");
-        		$('#clientApproval_modal_btn').click();
-        		var jsonData = JSON.parse(data);
-        		var client_details = jsonData.client_from+'_'+jsonData.title_id;
-        		$('.crm_client').val(client_details);
-        		$('.client_name').val(jsonData.comp_name);
-                $('.company_name').val(jsonData.comp_name);
-                $('.contact_person').val(jsonData.client_name);
-                $('.mobile_number').val(jsonData.mobile_no1);
-                $('.landline_number').val(jsonData.mobile_no2);
-                $('.email_id_1').val(jsonData.email1);
-                $('.email_id_2').val(jsonData.email2);
-                $('.state').val(jsonData.state);
-                $('.city').val(jsonData.city);
-                $('.pincode').val(jsonData.path);
-        	},complete: function(){
-        		document.getElementById('pleaseWaitDialog').style.display = 'none';
-          }
-        });
-        });
-        $('.approveTbody #approvetr').on('click','#clientApproval_Rejbtn', function(){
-        var row_indexDEL = $(this).closest('#approvetr'); 
-        var btnID = row_indexDEL.find('#clientApproval_rejid').val();
-        $('#fetchRejectID').val(btnID);
-        });
-        $('.approveTbody1 #approvetr1').on('click','#partnerApproval_Rejbtn', function(){
-        var row_indexDEL = $(this).closest('#approvetr1'); 
-        var btnID = row_indexDEL.find('#partnerApproval_rejid').val();
-        $('#fetchpartnerRejectID').val(btnID);
-        });
+			$('.approveTbody #approvetr').on('click', '#clientApproval_Appbtn', function() {
+				var row_indexDEL = $(this).closest('#approvetr');
+				var btnID = row_indexDEL.find('#clientApproval_id').val();
+				document.getElementById('pleaseWaitDialog').style.display = 'block';
+				$.ajax({
+					url: "html/verifyPinProcess.php",
+					method: "post",
+					data: {
+						approve_client: btnID,
+					},
+					dataType: "text",
+					success: function(data) {
+						$("#showClientMaster").removeClass("d-block");
+						$("#showClientMaster").addClass("d-none");
+						$("#import_client").removeClass("d-block");
+						$("#import_client").addClass("d-none");
+
+						$("#addNew_client").removeClass("d-none");
+						$("#addNew_client").addClass("d-block");
+						$('#clientApproval_modal_btn').click();
+						var jsonData = JSON.parse(data);
+						var client_details = jsonData.client_from + '_' + jsonData.title_id;
+						$('.crm_client').val(client_details);
+						$('.client_name').val(jsonData.comp_name);
+						$('.company_name').val(jsonData.comp_name);
+						$('.contact_person').val(jsonData.client_name);
+						$('.mobile_number').val(jsonData.mobile_no1);
+						$('.landline_number').val(jsonData.mobile_no2);
+						$('.email_id_1').val(jsonData.email1);
+						$('.email_id_2').val(jsonData.email2);
+						$('.state').val(jsonData.state);
+						$('.city').val(jsonData.city);
+						$('.pincode').val(jsonData.path);
+					},
+					complete: function() {
+						document.getElementById('pleaseWaitDialog').style.display = 'none';
+					}
+				});
+			});
+			$('.approveTbody1 #approvetr1').on('click', '#partnerApproval_Appbtn', function() {
+				var row_indexDEL = $(this).closest('#approvetr1');
+				var btnID = row_indexDEL.find('#partnerApproval_id').val();
+				document.getElementById('pleaseWaitDialog').style.display = 'block';
+				$.ajax({
+					url: "html/verifyPinProcess.php",
+					method: "post",
+					data: {
+						approve_partner: btnID,
+					},
+					dataType: "text",
+					success: function(data) {
+						$("#showClientMaster").removeClass("d-block");
+						$("#showClientMaster").addClass("d-none");
+						$("#import_client").removeClass("d-block");
+						$("#import_client").addClass("d-none");
+
+						$("#addNew_client").removeClass("d-none");
+						$("#addNew_client").addClass("d-block");
+						$('#clientApproval_modal_btn').click();
+						var jsonData = JSON.parse(data);
+						var client_details = jsonData.client_from + '_' + jsonData.title_id;
+						$('.crm_client').val(client_details);
+						$('.client_name').val(jsonData.comp_name);
+						$('.company_name').val(jsonData.comp_name);
+						$('.contact_person').val(jsonData.client_name);
+						$('.mobile_number').val(jsonData.mobile_no1);
+						$('.landline_number').val(jsonData.mobile_no2);
+						$('.email_id_1').val(jsonData.email1);
+						$('.email_id_2').val(jsonData.email2);
+						$('.state').val(jsonData.state);
+						$('.city').val(jsonData.city);
+						$('.pincode').val(jsonData.path);
+					},
+					complete: function() {
+						document.getElementById('pleaseWaitDialog').style.display = 'none';
+					}
+				});
+			});
+			$('.approveTbody #approvetr').on('click', '#clientApproval_Rejbtn', function() {
+				var row_indexDEL = $(this).closest('#approvetr');
+				var btnID = row_indexDEL.find('#clientApproval_rejid').val();
+				$('#fetchRejectID').val(btnID);
+			});
+			$('.approveTbody1 #approvetr1').on('click', '#partnerApproval_Rejbtn', function() {
+				var row_indexDEL = $(this).closest('#approvetr1');
+				var btnID = row_indexDEL.find('#partnerApproval_rejid').val();
+				$('#fetchpartnerRejectID').val(btnID);
+			});
 
 			let MobileNumberCorrect = false;
 			let EmailIdCorrect = false;
@@ -3538,12 +3306,12 @@ if (isset($_POST['bulk_delete'])) {
 					$(this).prop('selected', true);
 				}*/
 
-				
+
 				$(this).parent().change(); //trigger change event
 				mustChangeScrollTop = true;
 				return false;
 			});
-			
+
 			//Intellectual Property Multiple Select Checkboxes
 			$(".ip_allows").mousedown(function(e) {
 				if (e.target.tagName == "OPTION") {
@@ -3588,7 +3356,7 @@ if (isset($_POST['bulk_delete'])) {
 				mustChangeScrollTop = true;
 				return false;
 			});
-			
+
 			$("#dsc_allows").change(function() {
 				//alert($(this).val());
 				if ($(this).val() == '') {
@@ -3804,28 +3572,29 @@ if (isset($_POST['bulk_delete'])) {
 				});
 			});
 		});
-		
+
 		function openCity(evt, cityName) {
-  var i, tabcontent, tablinks;
-  tabcontent = document.getElementsByClassName("tabcontent");
-  for (i = 0; i < tabcontent.length; i++) {
-    tabcontent[i].style.display = "none";
-  }
-  tablinks = document.getElementsByClassName("tablinks");
-  for (i = 0; i < tablinks.length; i++) {
-    tablinks[i].className = tablinks[i].className.replace(" active", "");
-  }
-  document.getElementById(cityName).style.display = "block";
-  evt.currentTarget.className += " active";
-}
+			var i, tabcontent, tablinks;
+			tabcontent = document.getElementsByClassName("tabcontent");
+			for (i = 0; i < tabcontent.length; i++) {
+				tabcontent[i].style.display = "none";
+			}
+			tablinks = document.getElementsByClassName("tablinks");
+			for (i = 0; i < tablinks.length; i++) {
+				tablinks[i].className = tablinks[i].className.replace(" active", "");
+			}
+			document.getElementById(cityName).style.display = "block";
+			evt.currentTarget.className += " active";
+		}
 	</script>
 	<?php include_once 'ltr/header-footer.php'; ?>
-<script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-<script>
-	$(document).ready( function () {
-        $('#ClientApproval_table').DataTable();
-        $('#PartnerApproval_table').DataTable();
-	});
-</script>
+	<script src="//cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$('#ClientApproval_table').DataTable();
+			$('#PartnerApproval_table').DataTable();
+		});
+	</script>
 </body>
+
 </html>
