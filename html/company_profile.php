@@ -33,7 +33,14 @@
 		$seted_psp_coupon_fees = mysqli_real_escape_string($con,$row['psp_coupon_fees']);
 		$seted_audit_fees = mysqli_real_escape_string($con,$row['audit_fees']);
 		$select_cash_on_hand=mysqli_real_escape_string($con,$row['cash_on_hand']);
-		
+		$seted_trade_mark_fees = mysqli_real_escape_string($con,$row['trade_mark_fees']);
+		$seted_patent_fees = mysqli_real_escape_string($con,$row['patent_fees']);
+		$seted_copy_right_fees = mysqli_real_escape_string($con,$row['copy_right_fees']);
+		$seted_trade_secret_fees = mysqli_real_escape_string($con,$row['trade_secret_fees']);
+		$seted_industrial_design_fees = mysqli_real_escape_string($con,$row['industrial_design_fees']);
+		$seted_legal_notice_fees = mysqli_real_escape_string($con,$row['legal_notice_fees']);
+
+		//echo $seted_trade_mark_fees;
 		$select_time_zone=mysqli_real_escape_string($con,$row['time_zone']);
 		if (isset($row['two_step_veri'])) {
             $select_two_step_veri = mysqli_real_escape_string($con, $row['two_step_veri']);
@@ -63,6 +70,12 @@
 		$edit_add_users = $row['add_users'];
 		$edit_company_profile = $row['company_profile'];
 		$edit_e_tender = $row['e_tender'];
+		$edit_trade_mark = $row['trade_mark'];
+		$edit_patent = $row['patent'];
+		$edit_copy_right = $row['copy_right'];
+		$edit_trade_secret = $row['trade_secret'];
+		$edit_industrial_design = $row['industrial_design'];
+		$edit_legal_notice = $row['legal_notice'];
 		$edit_document_records = $row['document_records'];
 		$edit_settlement = $row['settlement'];
 		$edit_expense = $row['expense'];
@@ -92,8 +105,8 @@
         $edit_supplier_master = $row['vendor_master'];
         $edit_other_services = $row['other_services'];
         $edit_other_transaction = $row['other_transaction'];
-	}
-
+	}	
+	//echo $edit_trade_mark;
 	if (isset($_POST['company_profile_save'])) {
 		$user_id = $_SESSION['user_id'];
 		$company_name = $_POST['company_name'];
@@ -139,6 +152,12 @@
 		$tan_fees = $_POST['tan_fees'];
 		$it_returns_fees = $_POST['it_returns_fees'];
 		$e_tds_fees = $_POST['e_tds_fees'];
+		$trade_mark_fees = $_POST['trade_mark_fees'];
+		$patent_fees = $_POST['patent_fees'];
+		$copy_right_fees = $_POST['copy_right_fees'];
+		$trade_secret_fees = $_POST['trade_secret_fees'];
+		$industrial_design_fees = $_POST['industrial_design_fees'];
+		$legal_notice_fees = $_POST['legal_notice_fees'];
 		$gst_fees = $_POST['gst_fees'];
 		$other_services_fees = $_POST['other_services_fees'];
 		$psp_fees = $_POST['psp_fees'];
@@ -146,7 +165,7 @@
 		$audit_fees = $_POST['audit_fees'];
 		//$tender = $_POST['tender'];
 // 		$company_profile_add_query = "INSERT INTO `company_profile`(`user_id`, `company_name`, `contact_person`, `mobile_no`, `address`, `gst_no`, `pan_no`, `email_id`, `website`, `company_logo`, `verify_pin`, `dsc_subscriber_fees`, `dsc_reseller_fees`, `pan_fees`, `tan_fees`, `it_returns_fees`, `e-tds_fees`, `gst_fees`, `other_services_fees`, `psp_fees`, `psp_coupon_fees`, `audit_fees`) VALUES ('".$user_id."','".$company_name."','".$contact_person."','".$mobile_number."','".$address."','".$gst_no."','".$pan_no."','".$email_id."','".$website."','".$company_logo."','".$bulk_deletePin."','".$dsc_subscriber_fees."','".$dsc_reseller_fees."','".$pan_fees."','".$tan_fees."','".$it_returns_fees."','".$e_tds_fees."','".$gst_fees."','".$other_services_fees."','".$psp_fees."','".$psp_coupon_fees."','".$audit_fees."')";
-        $company_profile_add_query = "INSERT INTO `company_profile`(`cash_on_hand`,`user_id`, `company_name`, `contact_person`, `mobile_no`, `address`, `gst_no`, `pan_no`, `email_id`, `website`, `company_logo`, `verify_pin`, `dsc_subscriber_fees`, `dsc_reseller_fees`, `pan_fees`, `tan_fees`, `it_returns_fees`, `e-tds_fees`, `gst_fees`, `other_services_fees`, `psp_fees`, `psp_coupon_fees`, `audit_fees`) VALUES ('".$cash_on_hand."','".$user_id."','".$company_name."','".$contact_person."','".$mobile_number."','".$address."','".$gst_no."','".$pan_no."','".$email_id."','".$website."','".$company_logo."','".$bulk_deletePin."','".$dsc_subscriber_fees."','".$dsc_reseller_fees."','".$pan_fees."','".$tan_fees."','".$it_returns_fees."','".$e_tds_fees."','".$gst_fees."','".$other_services_fees."','".$psp_fees."','".$psp_coupon_fees."','".$audit_fees."')";
+        $company_profile_add_query = "INSERT INTO `company_profile`(`cash_on_hand`,`user_id`, `company_name`, `contact_person`, `mobile_no`, `address`, `gst_no`, `pan_no`, `email_id`, `website`, `company_logo`, `verify_pin`, `dsc_subscriber_fees`, `dsc_reseller_fees`, `pan_fees`, `tan_fees`, `it_returns_fees`, `e-tds_fees`,`trade_mark_fees`,`patent_fees`, `copy_right_fees`, `trade_secret_fees`, `industrial_design_fees`, `legal_notice_fees` ,`gst_fees`, `other_services_fees`, `psp_fees`, `psp_coupon_fees`, `audit_fees`) VALUES ('".$cash_on_hand."','".$user_id."','".$company_name."','".$contact_person."','".$mobile_number."','".$address."','".$gst_no."','".$pan_no."','".$email_id."','".$website."','".$company_logo."','".$bulk_deletePin."','".$dsc_subscriber_fees."','".$dsc_reseller_fees."','".$pan_fees."','".$tan_fees."','".$it_returns_fees."','".$e_tds_fees."','".$trade_mark_fees."','".$patent_fees."','".$copy_right_fees."','".$trade_secret_fees."','".$industrial_design_fees."','".$legal_notice_fees."','".$gst_fees."','".$other_services_fees."','".$psp_fees."','".$psp_coupon_fees."','".$audit_fees."')";
 		$run_company_profile_add = mysqli_query($con,$company_profile_add_query);
 
 		if ($run_company_profile_add) {
@@ -173,6 +192,12 @@
 				$seted_tan_fees = mysqli_real_escape_string($con,$row['tan_fees']);
 				$seted_it_returns_fees = mysqli_real_escape_string($con,$row['it_returns_fees']);
 				$seted_e_tds_fees = mysqli_real_escape_string($con,$row['e-tds_fees']);
+				$seted_trade_mark_fees = mysqli_real_escape_string($con,$row['trade_mark_fees']);
+				$seted_patent_fees = mysqli_real_escape_string($con,$row['patent_fees']);
+				$seted_copy_right_fees = mysqli_real_escape_string($con,$row['copy_right_fees']);
+				$seted_trade_mark_fees = mysqli_real_escape_string($con,$row['trade_secret_fees']);
+				$seted_industrial_design_fees = mysqli_real_escape_string($con,$row['industrial_design_fees']);
+				$seted_legal_notice_fees = mysqli_real_escape_string( $con,$row['legal_notice_fees']);
 				$seted_gst_fees = mysqli_real_escape_string($con,$row['gst_fees']);
 				$seted_other_services_fees = mysqli_real_escape_string($con,$row['other_services_fees']);
 				$seted_psp_fees = mysqli_real_escape_string($con,$row['psp_fees']);
@@ -204,6 +229,12 @@
 				$edit_add_users = $row['add_users'];
 				$edit_company_profile = $row['company_profile'];
 				$edit_e_tender = $row['e_tender'];
+				$edit_trade_mark = $row['trade_mark'];
+				$edit_patent = $row['patent'];
+				$edit_copy_right = $row['copy_right'];
+				$edit_trade_secret = $row['trade_secret'];
+				$edit_industrial_design = $row['industrial_design'];
+				$edit_legal_notice = $row['legal_notice'];
         		$edit_document_records = $row['document_records'];
         		$edit_settlement = $row['settlement'];
         		$edit_expense = $row['expense'];
@@ -234,6 +265,7 @@
                 $edit_other_services = $row['other_services'];
                 $edit_other_transaction = $row['other_transaction'];
 			}
+			
 		}
 	}
 	if (isset($_POST['bank_add'])) {
@@ -373,6 +405,12 @@
 		$tan_fees = $_POST['tan_fees'];
 		$it_returns_fees = $_POST['it_returns_fees'];
 		$e_tds_fees = $_POST['e_tds_fees'];
+		$trade_mark_fees = $_POST['trade_mark_fees'];
+		$patent_fees = $_POST['patent_fees'];
+		$copy_right_fees = $_POST['copy_right_fees'];
+		$trade_secret_fees = $_POST['trade_secret_fees'];
+		$industrial_design_fees = $_POST['industrial_design_fees'];
+		$legal_notice_fees = $_POST['legal_notice_fees'];
 		$gst_fees = $_POST['gst_fees'];
 		$other_services_fees = $_POST['other_services_fees'];
 		$psp_fees = $_POST['psp_fees'];
@@ -432,6 +470,48 @@
 		     $e_tds = 0;
 		} else {
 		     $e_tds = $_POST['e_tds'];
+		}
+		if(!isset($_POST['trade_mark']))
+		{
+			$trade_mark = 0;
+		}
+		else{
+			$trade_mark = $_POST['trade_mark'];
+		}
+		if(!isset($_POST['patent']))
+		{
+			$patent = 0;
+		}
+		else{
+			$patent = $_POST['patent'];
+		}
+		if(!isset($_POST['copy_right']))
+		{
+			$copy_right = 0;
+		}
+		else{
+			$copy_right = $_POST['copy_right'];
+		}
+		if(!isset($_POST['trade_secret']))
+		{
+			$trade_secret = 0;
+		}
+		else{
+			$trade_secret = $_POST['trade_secret'];
+		}
+		if(!isset($_POST['industrial_design']))
+		{
+			$industrial_design = 0;
+		}
+		else{
+			$industrial_design = $_POST['industrial_design'];
+		}
+		if(!isset($_POST['legal_notice']))
+		{
+			$legal_notice = 0;
+		}
+		else{
+			$legal_notice = $_POST['legal_notice'];
 		}
 		//$e_tds = $_POST['e_tds'];
 		if(!isset($_POST['gst']))
@@ -670,17 +750,19 @@
 			}
 		//$tender = $_POST['tender'];
 // 		$company_profile_update_query = "UPDATE `company_profile` SET `company_name`='".$company_name."',`contact_person`='".$contact_person."',`mobile_no`='".$mobile_number."',`address`='".$address."',`gst_no`='".$gst_no."',`pan_no`='".$pan_no."',`email_id`='".$email_id."',`website`='".$website."',`company_logo`='".$company_logo."',`verify_pin`='".$bulk_deletePin."',`dsc_subscriber_fees`='".$dsc_subscriber_fees."',`dsc_reseller_fees`='".$dsc_reseller_fees."',`pan_fees`='".$pan_fees."',`tan_fees`='".$tan_fees."',`it_returns_fees`='".$it_returns_fees."',`e-tds_fees`='".$e_tds_fees."',`gst_fees`='".$gst_fees."',`other_services_fees`='".$other_services_fees."',`psp_fees`='".$psp_fees."',`psp_coupon_fees`='".$psp_coupon_fees."',`audit_fees`='".$audit_fees."' WHERE `company_id` = '".$_SESSION['company_id']."'";
-        $company_profile_update_query = "UPDATE `company_profile` SET `company_name`='".$company_name."',`time_zone`='".$time_zone."',`cash_on_hand`='".$cash_on_hand."',`contact_person`='".$contact_person."',`mobile_no`='".$mobile_number."',`address`='".$address."',`gst_no`='".$gst_no."',`pan_no`='".$pan_no."',`email_id`='".$email_id."',`website`='".$website."',`company_logo`='".$company_logo."',`verify_pin`='".$bulk_deletePin."',`dsc_subscriber_fees`='".$dsc_subscriber_fees."',`dsc_reseller_fees`='".$dsc_reseller_fees."',`pan_fees`='".$pan_fees."',`tan_fees`='".$tan_fees."',`it_returns_fees`='".$it_returns_fees."',`e-tds_fees`='".$e_tds_fees."',`gst_fees`='".$gst_fees."',`other_services_fees`='".$other_services_fees."',`psp_fees`='".$psp_fees."',`psp_coupon_fees`='".$psp_coupon_fees."',`audit_fees`='".$audit_fees."' WHERE `company_id` = '".$_SESSION['company_id']."'";
+        $company_profile_update_query = "UPDATE `company_profile` SET `company_name`='".$company_name."',`time_zone`='".$time_zone."',`cash_on_hand`='".$cash_on_hand."',`contact_person`='".$contact_person."',`mobile_no`='".$mobile_number."',`address`='".$address."',`gst_no`='".$gst_no."',`pan_no`='".$pan_no."',`email_id`='".$email_id."',`website`='".$website."',`company_logo`='".$company_logo."',`verify_pin`='".$bulk_deletePin."',`dsc_subscriber_fees`='".$dsc_subscriber_fees."',`dsc_reseller_fees`='".$dsc_reseller_fees."',`pan_fees`='".$pan_fees."',`tan_fees`='".$tan_fees."',`it_returns_fees`='".$it_returns_fees."',`e-tds_fees`='".$e_tds_fees."',`trade_mark__fees`= '".$trade_mark_fees."',`patent_fees` = '".$patent_fees."',`copy_right_fees` = '".$copy_right_fees."',`trade_secret_fees` = '".$trade_secret_fees."',`industrial_design_fees` ='".$industrial_design_fees."',`legal_notice_fees` = '".$legal_notice_fees."',`gst_fees`='".$gst_fees."',`other_services_fees`='".$other_services_fees."',`psp_fees`='".$psp_fees."',`psp_coupon_fees`='".$psp_coupon_fees."',`audit_fees`='".$audit_fees."' WHERE `company_id` = '".$_SESSION['company_id']."'";
 		$run_company_profile_update = mysqli_query($con,$company_profile_update_query);
+		
 
         $insert_bank_tra="insert into `bank_transaction`(`company_id`,`bank_name`,`opening_balance`,`balance`)values('".$_SESSION['company_id']."','Cash','".$cash_on_hand."','".$cash_on_hand."')";
         $run_bank=mysqli_query($con,$insert_bank_tra);
         
-		$users_portfolio_update_query = "UPDATE `users` SET `company_id` = '".$_SESSION['company_id']."',`reports`='".$reports."',`client_master`='".$client_master."',`other_transaction` = '".$other_transaction."',`dsc_subscriber`='".$dsc_subscriber."',`dsc_reseller`='".$dsc_reseller."',`pan`='".$pan."',`tan`='".$tan."',`it_returns`='".$it_returns."',`e_tds`='".$e_tds."',`gst`='".$gst."',`other_services`='".$other_services."',`psp`='".$psp."',`psp_coupon_consumption`='".$psp_coupon_consumption."',`payment`='".$payment."',`audit`='".$audit."',`add_users`='".$add_users."',`vendor_master` = '".$supplier_master."', `other_services` = '".$other_services."',`e_tender` = '".$e_tender."',`document_records` = '".$document_records."',`settlement` = '".$settlement."',`expense` = '".$expense."',`contra_voucher` = '".$contra_voucher."',`bank_report` = '".$bank_report."',`outstanding` = '".$outstanding."',`payroll` = '".$payroll."',`add_taskmanager` = '".$add_taskM."',`contact_client` = '".$contact_client."',`add_passMang` = '".$add_passMang."',`addFix_meeting` = '".$crm_fix_meeting."',`tickets` = '".$ticket."',`add_enquiry` = '".$crm_enq."',`whatsapp` = '".$whatsapp."',`mail_panel` = '".$mail_panel."',`api_setup` = '".$api_setup."',`depart_panel` = '".$depart_panel."',`design_panel` = '".$desig_panel."',`soft_export` = '".$soft_export."',`data_record` = '".$crm_data_record."',`record_transfer` = '".$crm_rec_tranf."',`add_clientConfig` = '".$crm_clientConfig."',`mom_admin` = '".$crm_admin_mom."',`trace_contact` = '".$crm_trace_cont."',`add_Admin_filter` = '".$crm_admin_filter."',`add_jobProg` = '".$crm_job."' WHERE `company_id` = '".$_SESSION['company_id']."'";
+		$users_portfolio_update_query = "UPDATE `users` SET `company_id` = '".$_SESSION['company_id']."',`reports`='".$reports."',`client_master`='".$client_master."',`other_transaction` = '".$other_transaction."',`dsc_subscriber`='".$dsc_subscriber."',`dsc_reseller`='".$dsc_reseller."',`pan`='".$pan."',`tan`='".$tan."',`it_returns`='".$it_returns."',`e_tds`='".$e_tds."',`trade_mark`='".$trade_mark."',`patent` = '".$patent."',`copy_right` = '".$copy_right."',`trade_secret` ='".$trade_secret."',`industrial_design` = '".$industrial_design."',`legal_notice` = '".$legal_notice."',`gst`='".$gst."',`other_services`='".$other_services."',`psp`='".$psp."',`psp_coupon_consumption`='".$psp_coupon_consumption."',`payment`='".$payment."',`audit`='".$audit."',`add_users`='".$add_users."',`vendor_master` = '".$supplier_master."', `other_services` = '".$other_services."',`e_tender` = '".$e_tender."',`document_records` = '".$document_records."',`settlement` = '".$settlement."',`expense` = '".$expense."',`contra_voucher` = '".$contra_voucher."',`bank_report` = '".$bank_report."',`outstanding` = '".$outstanding."',`payroll` = '".$payroll."',`add_taskmanager` = '".$add_taskM."',`contact_client` = '".$contact_client."',`add_passMang` = '".$add_passMang."',`addFix_meeting` = '".$crm_fix_meeting."',`tickets` = '".$ticket."',`add_enquiry` = '".$crm_enq."',`whatsapp` = '".$whatsapp."',`mail_panel` = '".$mail_panel."',`api_setup` = '".$api_setup."',`depart_panel` = '".$depart_panel."',`design_panel` = '".$desig_panel."',`soft_export` = '".$soft_export."',`data_record` = '".$crm_data_record."',`record_transfer` = '".$crm_rec_tranf."',`add_clientConfig` = '".$crm_clientConfig."',`mom_admin` = '".$crm_admin_mom."',`trace_contact` = '".$crm_trace_cont."',`add_Admin_filter` = '".$crm_admin_filter."',`add_jobProg` = '".$crm_job."' WHERE `company_id` = '".$_SESSION['company_id']."'";
 		$run_users_portfolio_update = mysqli_query($con,$users_portfolio_update_query);
 		
 		$update_admin="update `users` set `two_step_veri`='".$two_step_veri."' WHERE `company_id` = '".$_SESSION['company_id']."' and `username`='".$email_id."' ";
 		$run_ad=mysqli_query($con,$update_admin);
+		
 		
 		$update_admin1="update `company_profile` set `two_step_veri`='".$two_step_veri."' WHERE `company_id` = '".$_SESSION['company_id']."' and `email_id`='".$email_id."' ";
 		$run_ad1=mysqli_query($con,$update_admin1);
@@ -710,6 +792,12 @@
 				$seted_tan_fees = mysqli_real_escape_string($con,$row['tan_fees']);
 				$seted_it_returns_fees = mysqli_real_escape_string($con,$row['it_returns_fees']);
 				$seted_e_tds_fees = mysqli_real_escape_string($con,$row['e-tds_fees']);
+				$seted_trade_mark_fees = mysqli_real_escape_string($con,$row['trade_mark_fees']);
+				$seted_patent_fees = mysqli_real_escape_string( $con,$row['patent_fees']);
+				$seted_copy_right_fees = mysqli_real_escape_string( $con,$row['copy_right_fees']);
+				$seted_trade_secret_fees = mysqli_real_escape_string( $con,$row['trade_secret_fees']);
+				$seted_industrial_design_fees = mysqli_real_escape_string( $con,$row['industrial_design_fees']);
+				$seted_legal_notice_fees = mysqli_real_escape_string( $con,$row['legal_notice_fees']);
 				$seted_gst_fees = mysqli_real_escape_string($con,$row['gst_fees']);
 				$seted_other_services_fees = mysqli_real_escape_string($con,$row['other_services_fees']);
 				$seted_psp_fees = mysqli_real_escape_string($con,$row['psp_fees']);
@@ -721,6 +809,7 @@
 			}
 			$fetch_data = "SELECT * FROM `users` WHERE `company_id` = '".$_SESSION['company_id']."'";
 			$run_fetch_data = mysqli_query($con,$fetch_data);
+			
 			if (mysqli_num_rows($run_fetch_data) > 0) {
 				$row = mysqli_fetch_array($run_fetch_data);
 				$edit_reports = $row['reports'];
@@ -731,6 +820,12 @@
 				$edit_tan = $row['tan'];
 				$edit_it_returns = $row['it_returns'];
 				$edit_e_tds = $row['e_tds'];
+				$edit_trade_mark = $row['trade_mark'];
+				$edit_patent =$row['patent'];
+				$edit_copy_right = $row['copy_right'];
+				$edit_trade_secret = $row['trade_secret'];
+				$edit_industrial_design = $row['industrial_design'];
+				$edit_legal_notice = $row['legal_notice'];
 				$edit_gst = $row['gst'];
 				$edit_other_services = $row['other_services'];
 				$edit_psp = $row['psp'];
@@ -778,6 +873,14 @@
 				$alertClass = "alert alert-danger";
 			}
 		}
+	}
+
+	if (isset($_SESSION['company_id'])) {
+		$company_id = $_SESSION['company_id'];
+		// Fetch user data for the given company ID and user ID
+		$fetch_user_data = "SELECT * FROM `users` WHERE `company_id` = '$company_id' AND `id` = '" . $_SESSION['user_id'] . "'";
+		$run_fetch_user_data = mysqli_query($con, $fetch_user_data);
+		$permission_row = mysqli_fetch_array($run_fetch_user_data);
 	}
 	
 ?>
@@ -999,180 +1102,298 @@ input:checked + .slider:before {
                             }
                         }
                     </script>
-					<!--<div class="form-group d-block col-md-3">-->
-					<!--    <label for="dsc_subscriber_fees" class="float-left p-2">DSC Applicant Fees</label>-->
-					<!--    <div class="d-block">-->
-					<!--    	<input type="number" min="0" name="dsc_subscriber_fees" class="form-control w-100" id="dsc_subscriber_fees" aria-describedby="emailHelp" placeholder="Enter Fees" <?php if (isset($seted_dsc_subscriber_fees)) {echo "disabled value=".$seted_dsc_subscriber_fees;}?>>-->
-					<!--    </div>-->
-					<!--</div>-->
-					<!--<div class="form-group d-block col-md-3">-->
-					<!--    <label for="dsc_reseller_fees" class="float-left p-2">DSC Partner Fees</label>-->
-					<!--    <div class="d-block">-->
-					<!--    	<input type="number" min="0" name="dsc_reseller_fees" class="form-control w-100" id="dsc_reseller_fees" aria-describedby="emailHelp" placeholder="Enter Fees" <?php if (isset($seted_dsc_reseller_fees)) {echo "disabled value=".$seted_dsc_reseller_fees;}?>>-->
-					<!--    </div>-->
-					<!--</div>-->
-					<!--<div class="form-group d-block col-md-3">-->
-					<!--    <label for="pan_fees" class="float-left p-2">PAN Fees</label>-->
-					<!--    <div class="d-block">-->
-					<!--    	<input type="number" min="0" name="pan_fees" class="form-control w-100" id="pan_fees" aria-describedby="emailHelp" placeholder="Enter Fees" <?php if (isset($seted_pan_fees)) {echo "disabled value=".$seted_pan_fees;}?>>-->
-					<!--    </div>-->
-					<!--</div>-->
-					<!--<div class="form-group d-block col-md-3">-->
-					<!--    <label for="tan_fees" class="float-left p-2">TAN Fees</label>-->
-					<!--    <div class="d-block">-->
-					<!--    	<input type="number" min="0" name="tan_fees" class="form-control w-100" id="tan_fees" aria-describedby="emailHelp" placeholder="Enter Fees" <?php if (isset($seted_tan_fees)) {echo "disabled value=".$seted_tan_fees;}?>>-->
-					<!--    </div>-->
-					<!--</div>-->
-					<!--<div class="form-group d-block col-md-3">-->
-					<!--    <label for="it_returns_fees" class="float-left p-2">IT Returns Fees</label>-->
-					<!--    <div class="d-block">-->
-					<!--    	<input type="number" min="0" name="it_returns_fees" class="form-control w-100" id="it_returns_fees" aria-describedby="emailHelp" placeholder="Enter Fees" <?php if (isset($seted_it_returns_fees)) {echo "disabled value=".$seted_it_returns_fees;}?>>-->
-					<!--    </div>-->
-					<!--</div>-->
-					<!--<div class="form-group d-block col-md-3">-->
-					<!--    <label for="e_tds_fees" class="float-left p-2">E-TDS Fees</label>-->
-					<!--    <div class="d-block">-->
-					<!--    	<input type="number" min="0" name="e_tds_fees" class="form-control w-100" id="e_tds_fees" aria-describedby="emailHelp" placeholder="Enter Fees" <?php if (isset($seted_e_tds_fees)) {echo "disabled value=".$seted_e_tds_fees;}?>>-->
-					<!--    </div>-->
-					<!--</div>-->
-					<!--<div class="form-group d-block col-md-3">-->
-					<!--    <label for="gst_fees" class="float-left p-2">GST Fees</label>-->
-					<!--    <div class="d-block">-->
-					<!--    	<input type="number" min="0" name="gst_fees" class="form-control w-100" id="gst_fees" aria-describedby="emailHelp" placeholder="Enter Fees" <?php if (isset($seted_gst_fees)) {echo "disabled value=".$seted_gst_fees;}?>>-->
-					<!--    </div>-->
-					<!--</div>-->
-					<!--<div class="form-group d-block col-md-3">-->
-					<!--    <label for="other_services_fees" class="float-left p-2">Other Services Fees</label>-->
-					<!--    <div class="d-block">-->
-					<!--    	<input type="number" min="0" name="other_services_fees" class="form-control w-100" id="other_services_fees" aria-describedby="emailHelp" placeholder="Enter Fees" <?php if (isset($seted_other_services_fees)) {echo "disabled value=".$seted_other_services_fees;}?>>-->
-					<!--    </div>-->
-					<!--</div>-->
-					<!--<div class="form-group d-block col-md-3">-->
-					<!--    <label for="psp_fees" class="float-left p-2">PSP Agent Fees</label>-->
-					<!--    <div class="d-block">-->
-					<!--    	<input type="number" min="0" name="psp_fees" class="form-control w-100" id="psp_fees" aria-describedby="emailHelp" placeholder="Enter Fees" <?php if (isset($seted_psp_fees)) {echo "disabled value=".$seted_psp_fees;}?>>-->
-					<!--    </div>-->
-					<!--</div>-->
-					<!--<div class="form-group d-block col-md-3">-->
-					<!--    <label for="psp_coupon_fees" class="float-left p-2">PSP Coupon Fees</label>-->
-					<!--    <div class="d-block">-->
-					<!--    	<input type="number" min="0" name="psp_coupon_fees" class="form-control w-100" id="psp_coupon_fees" aria-describedby="emailHelp" placeholder="Enter Fees" <?php if (isset($seted_psp_coupon_fees)) {echo "disabled value=".$seted_psp_coupon_fees;}?>>-->
-					<!--    </div>-->
-					<!--</div>-->
-					<!--<div class="form-group d-block col-md-3">-->
-					<!--    <label for="audit_fees" class="float-left p-2">Audit Fees</label>-->
-					<!--    <div class="d-block">-->
-					<!--    	<input type="number" min="0" name="audit_fees" class="form-control w-100" id="audit_fees" aria-describedby="emailHelp" placeholder="Enter Fees" <?php if (isset($seted_audit_fees)) {echo "disabled value=".$seted_audit_fees;}?>>-->
-					<!--    </div>-->
-					<!--</div>-->
 				</div>
 				<div class="form-inline">
 					<div class="form-group d-block col-md-6 table-responsive" id="esp_soft">
 					    <label class="float-left p-2">ESP Software Permission</label>
 					    <button type="button" class="collapsible">Master</button>
                             <div class="content">
+							<?php  if($permission_row['client_master'] == 1) { ?>
                                 <p><label for="previous_password" class="float-left p-2">Recipient Master:- </label><select class="form-control" id="client_master" name="client_master">
                                         <option value="0" <?php echo ($edit_client_master=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_client_master==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select>
+                            	</p>
+							<?php } else{ ?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Recipient Master:- </label><select class="form-control d-none" id="client_master" name="client_master">
+                                        <option value="0" <?php echo ($edit_client_master=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_client_master==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
                                 </p>
+							<?php  }if($permission_row['vendor_master'] == 1) { ?>
                                 <p><label for="previous_password" class="float-left p-2">Supplier Master:- </label><select class="form-control" id="supplier_master" name="supplier_master">
                                         <option value="0" <?php echo ($edit_supplier_master=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_supplier_master=="1" ? 'selected' : ''); ?>>Controller</option>
                                     </select>
                                 </p>
+							<?php } else{?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Supplier Master:- </label><select class="form-control d-none" id="supplier_master" name="supplier_master">
+                                        <option value="0" <?php echo ($edit_supplier_master=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_supplier_master=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+                                </p>
+							<?php  } ?>
                             </div>
 						<button type="button" class="collapsible">Recipient Station</button>
                             <div class="content">
+							<?php if($permission_row['dsc_subscriber'] == 1) { ?>	
                                 <p><label for="previous_password" class="float-left p-2">DSC Subscriber:- </label><select class="form-control" id="dsc_subscriber" name="dsc_subscriber">
                                         <option value="0" <?php echo ($edit_dsc_subscriber=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_dsc_subscriber==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
-                                    
+							<?php  } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">DSC Subscriber:- </label><select class="form-control d-none" id="dsc_subscriber" name="dsc_subscriber">
+                                        <option value="0" <?php echo ($edit_dsc_subscriber=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_dsc_subscriber==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }if($permission_row['dsc_reseller'] == 1) { ?>  
                                 <p><label for="password" class="float-left p-2">DSC Reseller:- </label><select class="form-control" id="dsc_reseller" name="dsc_reseller">
                                         <option value="0" <?php echo ($edit_dsc_reseller=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_dsc_reseller==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php  } else{?>
+								<p><label for="password" class="float-left p-2 d-none">DSC Reseller:- </label><select class="form-control d-none" id="dsc_reseller" name="dsc_reseller">
+                                        <option value="0" <?php echo ($edit_dsc_reseller=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_dsc_reseller==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php  }if($permission_row['pan'] == 1){?>		
                                 <p><label for="password" class="float-left p-2">PAN:- </label><select class="form-control" id="pan" name="pan">
                                         <option value="0" <?php echo ($edit_pan=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_pan==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
-                                    
+							<?php } else{ ?>
+								<p><label for="password" class="float-left p-2 d-none">PAN:- </label><select class="form-control d-none" id="pan" name="pan">
+                                        <option value="0" <?php echo ($edit_pan=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_pan==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } if($permission_row['tan'] == 1){?>
 								<p><label for="password" class="float-left p-2">TAN:- </label><select class="form-control" id="tan" name="tan">
                                         <option value="0" <?php echo ($edit_tan=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_tan==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
-                                    
+							<?php } else { ?>  
+								<p><label for="password" class="float-left p-2 d-none">TAN:- </label><select class="form-control d-none" id="tan" name="tan">
+                                        <option value="0" <?php echo ($edit_tan=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_tan==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p> 
+							<?php } if($permission_row['it_returns'] == 1){?> 
 								<p><label for="password" class="float-left p-2">IT Return:- </label><select class="form-control" id="it_returns" name="it_returns">
                                         <option value="0" <?php echo ($edit_it_returns=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_it_returns==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
-                                    
+							<?php } else{?>
+                                <p><label for="password" class="float-left p-2 d-none">IT Return:- </label><select class="form-control d-none" id="it_returns" name="it_returns">
+                                        <option value="0" <?php echo ($edit_it_returns=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_it_returns==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } if($permission_row['e_tds'] == 1){?>
 								<p><label for="password" class="float-left p-2">E-tds:- </label><select class="form-control" id="e_tds" name="e_tds">
                                         <option value="0" <?php echo ($edit_e_tds=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_e_tds==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else{ ?>
+								<p><label for="password" class="float-left p-2 d-none">E-tds:- </label><select class="form-control d-none" id="e_tds" name="e_tds">
+                                        <option value="0" <?php echo ($edit_e_tds=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_e_tds==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } if($permission_row['gst'] == 1){?>
                                 <p><label for="password" class="float-left p-2">GST:- </label><select class="form-control" id="gst" name="gst">
                                         <option value="0" <?php echo ($edit_gst=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_gst==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
-                                    
+							<?php } else{?>     
+								<p><label for="password" class="float-left p-2 d-none">GST:- </label><select class="form-control d-none" id="gst" name="gst">
+                                        <option value="0" <?php echo ($edit_gst=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_gst==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }  if($permission_row['other_services'] == 1){?> 
 								<p><label for="password" class="float-left p-2">Other Services:- </label><select class="form-control" id="other_services" name="other_services">
                                         <option value="0" <?php echo ($edit_other_services=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_other_services==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
-                                    
+							<?php } else { ?>    
+								<p><label for="password" class="float-left p-2 d-none">Other Services:- </label><select class="form-control d-none" id="other_services" name="other_services">
+                                        <option value="0" <?php echo ($edit_other_services=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_other_services==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } if($permission_row['psp'] == 1){?> 
 								<p><label for="password" class="float-left p-2">PSP:- </label><select class="form-control" id="psp" name="psp">
                                         <option value="0" <?php echo ($edit_psp=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_psp==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
-                                    
+							<?php } else{?>
+								<p><label for="password" class="float-left p-2 d-none">PSP:- </label><select class="form-control d-none" id="psp" name="psp">
+                                        <option value="0" <?php echo ($edit_psp=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_psp==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } if($permission_row['psp_coupon_consumption'] == 1){?>
 								<p><label for="password" class="float-left p-2">PSP Coupon Comsumption:- </label><select class="form-control" id="psp_coupon_consumption" name="psp_coupon_consumption">
                                         <option value="0" <?php echo ($edit_psp_coupon_consumption=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_psp_coupon_consumption=="1" ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
-                                    
+							<?php  } else{?> 
+								<p><label for="password" class="float-left p-2 d-none">PSP Coupon Comsumption:- </label><select class="form-control d-none" id="psp_coupon_consumption" name="psp_coupon_consumption">
+                                        <option value="0" <?php echo ($edit_psp_coupon_consumption=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_psp_coupon_consumption=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }  if($permission_row['audit'] == 1){?>   
 								<p><label for="password" class="float-left p-2">Audit:- </label><select class="form-control" id="audit" name="audit">
                                         <option value="0" <?php echo ($edit_audit=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_audit==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
-								
+							<?php  } else{?>
+								<p><label for="password" class="float-left p-2 d-none">Audit:- </label><select class="form-control d-none" id="audit" name="audit">
+                                        <option value="0" <?php echo ($edit_audit=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_audit==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } if($permission_row['other_transaction'] == 1){?>
 								<p><label for="password" class="float-left p-2">Other Transaction:- </label><select class="form-control" id="other_transaction" name="other_transaction">
                                         <option value="0" <?php echo ($edit_other_transaction=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_other_transaction=="1" ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
-                                    
+							<?php } else{?> 
+								<p><label for="password" class="float-left p-2 d-none">Other Transaction:- </label><select class="form-control d-none" id="other_transaction" name="other_transaction">
+                                        <option value="0" <?php echo ($edit_other_transaction=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_other_transaction=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>     
+							<?php } if($permission_row['e_tender'] == 1){?>
 								<p><label for="password" class="float-left p-2">E-tender:- </label><select class="form-control" id="e_tender" name="e_tender">
+                                        <option value="0" <?php echo ($edit_e_tender=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_e_tender=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+								</p>
+							<?php } else{ ?>
+								<p><label for="password" class="float-left p-2 d-none">E-tender:- </label><select class="form-control d-none" id="e_tender" name="e_tender">
                                         <option value="0" <?php echo ($edit_e_tender==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_e_tender==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select>
 								</p>
+							<?php  } if($permission_row['trade_mark'] == 1){?>
+								<p><label for="password" class="float-left p-2">Trade mark:- </label><select class="form-control" id="trade_mark" name="trade_mark">
+                                        <option value="0" <?php echo ($edit_trade_mark=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_trade_mark=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+								</p>
+							<?php } else{ ?>
+								<p><label for="password" class="float-left p-2 d-none">Trade mark:- </label><select class="form-control d-none" id="trade_mark" name="trade_mark">
+                                        <option value="0" <?php echo ($edit_trade_mark=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_trade_mark=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+								</p>
+							<?php } if($permission_row['patent'] == 1){?>
+								<p><label for="password" class="float-left p-2">Patent:- </label><select class="form-control" id="patent" name="patent">
+                                        <option value="0" <?php echo ($edit_patent=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_patent=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+								</p>
+							<?php } else{ ?>
+								<p><label for="password" class="float-left p-2 d-none">Patent:- </label><select class="form-control d-none" id="patent" name="patent">
+                                        <option value="0" <?php echo ($edit_patent=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_patent=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+								</p>
+							<?php  } if($permission_row['copy_right'] == 1){?>
+								<p><label for="password" class="float-left p-2">Copy right:- </label><select class="form-control" id="copy_right" name="copy_right">
+                                        <option value="0" <?php echo ($edit_copy_right=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_copy_right=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+								</p>
+							<?php } else{ ?>
+								<p><label for="password" class="float-left p-2 d-none">Copy right:- </label><select class="form-control d-none" id="copy_right" name="copy_right">
+                                        <option value="0" <?php echo ($edit_copy_right==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_copy_right==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+								</p>
+							<?php }if($permission_row['trade_secret'] == 1){?>
+								<p><label for="password" class="float-left p-2">Trade Secret:- </label><select class="form-control" id="trade_secret" name="trade_secret">
+                                        <option value="0" <?php echo ($edit_trade_secret=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_trade_secret=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+								</p>
+							<?php   } else{ ?>
+								<p><label for="password" class="float-left p-2 d-none">Trade Secret:- </label><select class="form-control d-none" id="trade_secret" name="trade_secret">
+                                        <option value="0" <?php echo ($edit_trade_secret==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_trade_secret==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+								</p>
+							<?php  } if($permission_row['industrial_design'] == 1){?>
+								<p><label for="password" class="float-left p-2">Industrial Design:- </label><select class="form-control" id="industrial_design" name="industrial_design">
+                                        <option value="0" <?php echo ($edit_industrial_design=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_industrial_design=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+								</p>
+							<?php } else{ ?>
+								<p><label for="password" class="float-left p-2 d-none">Industrial Design:- </label><select class="form-control d-none" id="industrial_design" name="industrial_design">
+                                        <option value="0" <?php echo ($edit_industrial_design==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_industrial_design==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+								</p>
+							<?php }  if($permission_row['legal_notice'] == 1){?>
+								<p><label for="password" class="float-left p-2">Advocate:- </label><select class="form-control" id="legal_notice" name="legal_notice">
+                                        <option value="0" <?php echo ($edit_legal_notice=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_legal_notice=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+								</p>
+							<?php } else{ ?>
+								<p><label for="password" class="float-left p-2 d-none">Advocate:- </label><select class="form-control d-none" id="advocate" name="advocate">
+                                        <option value="0" <?php echo ($edit_legal_notice=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_legal_notice=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+								</p>
+							<?php  } ?>
                             </div>
                             <button type="button" class="collapsible">Accounts/Document</button>
                             <div class="content">
+							<?php if($permission_row['document_records'] == 1) { ?>
                               <p><label for="previous_password" class="float-left p-2">Document Records:- </label><select class="form-control" id="document_records" name="document_records">
                                         <option value="0" <?php echo ($edit_document_records==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_document_records==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } ?>
                             </div>
                             <button type="button" class="collapsible">Finance Bank</button>
                             <div class="content">
+							<?php if($permission_row['payment'] == 1){ ?>
                                 <p><label for="password" class="float-left p-2">Payment:- </label><select class="form-control" id="payment" name="payment">
                                         <option value="0" <?php echo ($edit_payment=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_payment==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else{ ?>
+								<p><label for="password" class="float-left p-2 d-none">Payment:- </label><select class="form-control d-none" id="payment" name="payment">
+                                        <option value="0" <?php echo ($edit_payment=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_payment==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } if($permission_row['settlement'] == 1){ ?>
                                 <p><label for="password" class="float-left p-2">Settlement:- </label><select class="form-control" id="settlement" name="settlement">
                                         <option value="0" <?php echo ($edit_settlement=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_settlement==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else{ ?>
+								<p><label for="password" class="float-left p-2 d-none">Settlement:- </label><select class="form-control d-none" id="settlement" name="settlement">
+                                        <option value="0" <?php echo ($edit_settlement=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_settlement==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } if($permission_row['expense'] == 1){ ?>
                                 <p><label for="password" class="float-left p-2">Expense:- </label><select class="form-control" id="expense" name="expense">
                                         <option value="0" <?php echo ($edit_expense=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_expense==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else{ ?>
+								<p><label for="password" class="float-left p-2 d-none">Expense:- </label><select class="form-control d-none" id="expense" name="expense">
+                                        <option value="0" <?php echo ($edit_expense=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_expense==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } if($permission_row['contra_voucher'] == 1){ ?>
                                 <p><label for="password" class="float-left p-2">Contra Voucher:- </label><select class="form-control" id="contra_voucher" name="contra_voucher">
                                         <option value="0" <?php echo ($edit_contra_voucher=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_contra_voucher==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else{ ?>
+								<p><label for="password" class="float-left p-2 d-none">Contra Voucher:- </label><select class="form-control d-none" id="contra_voucher" name="contra_voucher">
+                                        <option value="0" <?php echo ($edit_contra_voucher=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_contra_voucher==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } ?>
                                 <!--<p><label for="previous_password" class="float-left p-2">Financial Record:- </label><select class="form-control" id="financial_records" name="financial_records">-->
                                 <!--        <option value="" <?php if (isset($_POST['editUserbtn'])) { echo ($edit_financial_records==0 ? 'selected' : '');} if (isset($reopen_financial_records)) { echo "selected";}?>>Restrict</option>-->
                                 <!--        <option value="1" <?php if (isset($_POST['editUserbtn'])) { echo ($edit_financial_records==1 ? 'selected' : '');} if (isset($reopen_financial_records)) { echo "selected";}?>>Operator</option>-->
@@ -1180,135 +1401,290 @@ input:checked + .slider:before {
                             </div>
                             <button type="button" class="collapsible">Reports</button>
                             <div class="content">
+							<?php  if($permission_row['reports'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Service Reports:- </label><select class="form-control" id="reports" name="reports">
                                         <option value="0" <?php echo ($edit_reports=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_reports==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select>
                                 </p>
+							<?php } else{ ?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Service Reports:- </label><select class="form-control d-none" id="reports" name="reports">
+                                        <option value="0" <?php echo ($edit_reports=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_reports==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+                                </p>
+							<?php  } if($permission_row['bank_report'] == 1){ ?>
                                  <p><label for="previous_password" class="float-left p-2">Bank Report:- </label><select class="form-control" id="bank_report" name="bank_report">
                                         <option value="0" <?php echo ($edit_bank_report=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_bank_report==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select>
                                 </p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Bank Report:- </label><select class="form-control d-none" id="bank_report" name="bank_report">
+                                        <option value="0" <?php echo ($edit_bank_report=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_bank_report==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+                                </p>
+							<?php }if($permission_row['outstanding'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Outstanding:- </label><select class="form-control" id="outstanding" name="outstanding">
                                         <option value="0" <?php echo ($edit_outstanding=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_outstanding==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select>
                                 </p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Outstanding:- </label><select class="form-control d-none" id="outstanding" name="outstanding">
+                                        <option value="0" <?php echo ($edit_outstanding=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_outstanding==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+                                </p>
+							<?php } ?>	
                             </div>
                             <button type="button" class="collapsible">HR/Payroll</button>
                             <div class="content">
+							<?php  if($permission_row['payroll'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Payroll:- </label><select class="form-control" id="payroll" name="payroll">
                                         <option value="0" <?php echo ($edit_payroll==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_payroll==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Payroll:- </label><select class="form-control d-none" id="payroll" name="payroll">
+                                        <option value="0" <?php echo ($edit_payroll==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_payroll==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } ?>
                             </div>
                             <button type="button" class="collapsible">Task Manager</button>
                             <div class="content">
+							<?php  if($permission_row['add_taskmanager'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Task Manager:- </label><select class="form-control" id="add_taskM" name="add_taskM">
                                         <option value="0" <?php echo ($edit_add_taskmanager=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_add_taskmanager=="1" ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Task Manager:- </label><select class="form-control d-none" id="add_taskM" name="add_taskM">
+                                        <option value="0" <?php echo ($edit_add_taskmanager=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_add_taskmanager=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } ?>
                             </div>
                             <button type="button" class="collapsible">Booster Apps</button>
                             <div class="content">
+							<?php  if($permission_row['contact_client'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Contact Client:- </label><select class="form-control" id="contact_client" name="contact_client">
                                         <option value="0" <?php echo ($edit_contact_client==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_contact_client==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Contact Client:- </label><select class="form-control d-none" id="contact_client" name="contact_client">
+                                        <option value="0" <?php echo ($edit_contact_client==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_contact_client==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } if($permission_row['add_passMang'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Password Manager:- </label><select class="form-control" id="add_passMang" name="add_passMang">
                                         <option value="0" <?php echo ($edit_add_passMang=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_add_passMang=="1" ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Password Manager:- </label><select class="form-control d-none" id="add_passMang" name="add_passMang">
+                                        <option value="0" <?php echo ($edit_add_passMang=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_add_passMang=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }if($permission_row['addFix_meeting'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Fix Meeting:- </label><select class="form-control" id="crm_fix_meeting" name="crm_fix_meeting">
                                         <option value="0" <?php echo ($edit_addFix_meeting==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_addFix_meeting==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Fix Meeting:- </label><select class="form-control d-none" id="crm_fix_meeting" name="crm_fix_meeting">
+                                        <option value="0" <?php echo ($edit_addFix_meeting==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_addFix_meeting==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }if($permission_row['tickets'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Tickets:- </label><select class="form-control" id="ticket" name="ticket">
                                         <option value="0" <?php echo ($edit_ticket=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_ticket=="1" ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Tickets:- </label><select class="form-control d-none" id="ticket" name="ticket">
+                                        <option value="0" <?php echo ($edit_ticket=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_ticket=="1" ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }if($permission_row['add_enquiry'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Enquiry:- </label><select class="form-control" id="crm_enq" name="crm_enq">
                                         <option value="0" <?php echo ($edit_add_enquiry==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_add_enquiry==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Enquiry:- </label><select class="form-control d-none" id="crm_enq" name="crm_enq">
+                                        <option value="0" <?php echo ($edit_add_enquiry==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_add_enquiry==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } ?>
                             </div>
                             <button type="button" class="collapsible">Social PLatform</button>
                             <div class="content">
+							<?php if($permission_row['whatsapp'] == 1){ ?>
                               <p><label for="previous_password" class="float-left p-2">WhatsApp:- </label><select class="form-control" id="whatsapp" name="whatsapp">
                                         <option value="0" <?php echo ($edit_whatsapp=="0" ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_whatsapp==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select>
                                 </p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">WhatsApp:- </label><select class="form-control d-none" id="whatsapp" name="whatsapp">
+                                        <option value="0" <?php echo ($edit_whatsapp=="0" ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_whatsapp==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select>
+                                </p>
+							<?php } ?>
                             </div>
                             <button type="button" class="collapsible">Profile Management</button>
                             <div class="content">
+							<?php if($permission_row['add_users'] == 1){ ?>
                               <p><label for="previous_password" class="float-left p-2">Add Users:- </label><select class="form-control" id="add_users" name="add_users">
                                         <option value="0" <?php echo ($edit_add_users==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_add_users==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Add Users:- </label><select class="form-control d-none" id="add_users" name="add_users">
+                                        <option value="0" <?php echo ($edit_add_users==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_add_users==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+									<?php }if($permission_row['mail_panel'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Mail Panel:- </label><select class="form-control" id="mail_panel" name="mail_panel">
                                         <option value="0" <?php echo ($edit_mail_panel==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_mail_panel==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Mail Panel:- </label><select class="form-control d-none" id="mail_panel" name="mail_panel">
+                                        <option value="0" <?php echo ($edit_mail_panel==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_mail_panel==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }if($permission_row['api_setup'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Api Setup:- </label><select class="form-control" id="api_setup" name="api_setup">
                                         <option value="0" <?php echo ($edit_api_setup==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_api_setup==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else {?>
+							</p><label for="previous_password" class="float-left p-2 d-none">Api Setup:- </label><select class="form-control d-none" id="api_setup" name="api_setup">
+                                        <option value="0" <?php echo ($edit_api_setup==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_api_setup==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }if($permission_row['depart_panel'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Department Panel:- </label><select class="form-control" id="depart_panel" name="depart_panel">
                                         <option value="0" <?php echo ($edit_depart_panel==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_depart_panel==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Department Panel:- </label><select class="form-control d-none" id="depart_panel" name="depart_panel">
+                                        <option value="0" <?php echo ($edit_depart_panel==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_depart_panel==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }if($permission_row['design_panel'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Designation Panel:- </label><select class="form-control" id="desig_panel" name="desig_panel">
                                         <option value="0" <?php echo ($edit_desig_panel==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_desig_panel==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Designation Panel:- </label><select class="form-control d-none" id="desig_panel" name="desig_panel">
+                                        <option value="0" <?php echo ($edit_desig_panel==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_desig_panel==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }if($permission_row['soft_export'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Export:- </label><select class="form-control" id="soft_export" name="soft_export">
                                         <option value="0" <?php echo ($edit_soft_export==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_soft_export==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else {?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Export:- </label><select class="form-control d-none" id="soft_export" name="soft_export">
+                                        <option value="0" <?php echo ($edit_soft_export==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_soft_export==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } ?>
                             </div>
 					</div>
 					<div class="form-group d-block col-md-6 table-responsive" id="crm_soft">
 					    <label class="float-left p-2">CRM Software Permission</label>
 					    <button type="button" class="collapsible">CRM Setup</button>
                             <div class="content">
+							<?php if($permission_row['data_record'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Data Record:- </label><select class="form-control" id="crm_data_record" name="crm_data_record">
                                         <option value="0" <?php echo ($edit_crm_data_record==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_crm_data_record==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php }else { ?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Data Record:- </label><select class="form-control d-none" id="crm_data_record" name="crm_data_record">
+                                        <option value="0" <?php echo ($edit_crm_data_record==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_crm_data_record==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }if($permission_row['record_transfer'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Record Transfer:- </label><select class="form-control" id="crm_rec_tranf" name="crm_rec_tranf">
                                         <option value="0" <?php echo ($edit_crm_rec_tranf==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_crm_rec_tranf==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php }else { ?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Record Transfer:- </label><select class="form-control d-none" id="crm_rec_tranf" name="crm_rec_tranf">
+                                        <option value="0" <?php echo ($edit_crm_rec_tranf==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_crm_rec_tranf==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }if($permission_row['add_clientConfig'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Client Configuration:- </label><select class="form-control" id="crm_clientConfig" name="crm_clientConfig">
                                         <option value="0" <?php echo ($edit_add_clientConfig==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_add_clientConfig==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php }else { ?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Client Configuration:- </label><select class="form-control d-none" id="crm_clientConfig" name="crm_clientConfig">
+                                        <option value="0" <?php echo ($edit_add_clientConfig==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_add_clientConfig==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } ?>
                             </div>
                             <button type="button" class="collapsible">CRM Utility</button>
                             <div class="content">
+							<?php if($permission_row['mom_admin'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">MOM Filter:- </label><select class="form-control" id="crm_admin_mom" name="crm_admin_mom">
                                         <option value="0" <?php echo ($edit_mom_admin==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_mom_admin==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else{ ?>
+								<p><label for="previous_password" class="float-left p-2 d-none">MOM Filter:- </label><select class="form-control d-none" id="crm_admin_mom" name="crm_admin_mom">
+                                        <option value="0" <?php echo ($edit_mom_admin==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_mom_admin==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }if($permission_row['trace_contact'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Trace Contact:- </label><select class="form-control" id="crm_trace_cont" name="crm_trace_cont">
                                         <option value="0" <?php echo ($edit_crm_trace_cont==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_crm_trace_cont==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
-                                <p><label for="previous_password" class="float-left p-2">Admin Filter:- </label><select class="form-control" id="crm_admin_filter" name="crm_admin_filter">
+							<?php } else{ ?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Trace Contact:- </label><select class="form-control d-none" id="crm_trace_cont" name="crm_trace_cont">
+                                        <option value="0" <?php echo ($edit_crm_trace_cont==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_crm_trace_cont==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php }if($permission_row['add_Admin_filter	'] == 1){ ?>
+                                <p><label for="previous_password" class="float-left p-2 ">Admin Filter:- </label><select class="form-control" id="crm_admin_filter" name="crm_admin_filter">
                                         <option value="0" <?php echo ($edit_add_Admin_filter==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_add_Admin_filter==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
-                                
-                                
+							<?php } else{ ?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Admin Filter:- </label><select class="form-control d-none" id="crm_admin_filter" name="crm_admin_filter">
+                                        <option value="0" <?php echo ($edit_add_Admin_filter==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_add_Admin_filter==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } ?> 
                             </div>
                             <button type="button" class="collapsible">Job Progress</button>
                             <div class="content">
+							<?php if($permission_row['add_jobProg'] == 1){ ?>
                                 <p><label for="previous_password" class="float-left p-2">Job Progress:- </label><select class="form-control" id="crm_job" name="crm_job">
                                         <option value="0" <?php echo ($edit_add_jobProg==0 ? 'selected' : ''); ?>>Restrict</option>
                                         <option value="1" <?php echo ($edit_add_jobProg==1 ? 'selected' : ''); ?>>Controller</option>
                                     </select></p>
+							<?php } else{ ?>
+								<p><label for="previous_password" class="float-left p-2 d-none">Job Progress:- </label><select class="form-control d-none" id="crm_job" name="crm_job">
+                                        <option value="0" <?php echo ($edit_add_jobProg==0 ? 'selected' : ''); ?>>Restrict</option>
+                                        <option value="1" <?php echo ($edit_add_jobProg==1 ? 'selected' : ''); ?>>Controller</option>
+                                    </select></p>
+							<?php } ?>
                             </div>
 					</div>
 				</div>
@@ -1758,6 +2134,12 @@ var coll = document.getElementsByClassName("collapsible");
     	$('#tan_fees').removeAttr("disabled");
     	$('#it_returns_fees').removeAttr("disabled");
     	$('#e_tds_fees').removeAttr("disabled");
+		$('#trade_mark_fees').removeAttr("disabled");
+		$('#patent_fees').removeAttr("disabled");
+		$('#copy_right_fees').removeAttr("disable");
+		$('#trade_secret_fees').removeAttr("disable");
+		$('#industrial_design_fees').removeAttr("disable");
+		$('#legal_notice_fees').removeAttr("disable");
     	$('#gst_fees').removeAttr("disabled");
     	$('#other_services_fees').removeAttr("disabled");
     	$('#psp_fees').removeAttr("disabled");

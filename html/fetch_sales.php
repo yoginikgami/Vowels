@@ -24,7 +24,7 @@ switch ($filter) {
         $dateCondition = "CURDATE() - INTERVAL 365 DAY";
         break;
     default:
-        $dateCondition = "CURDATE()";
+        $dateCondition = "1";
         break;
 }
 

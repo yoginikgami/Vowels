@@ -857,19 +857,19 @@
         }
         .client_multiple_select::before
         {
-            //content: var(--text);
+            /* //content: var(--text); */
             display: block;
           margin-left: 5px;
           margin-bottom: 2px;
         }
         .client_multiple_select_active
         {
-            //overflow: visible !important;
+            /* //overflow: visible !important; */
             overflow-y: scroll;
         }
         .client_multiple_select option
         {
-            //display: none;
+            /* //display: none; */
             height: 18px;
             background-color: white;
         }
@@ -901,19 +901,19 @@
         }
         .vendor_multiple_select::before
         {
-            //content: var(--text);
+            /* //content: var(--text); */
             display: block;
           margin-left: 5px;
           margin-bottom: 2px;
         }
         .vendor_multiple_select_active
         {
-            //overflow: visible !important;
+            /* //overflow: visible !important; */
             overflow-y: scroll;
         }
         .vendor_multiple_select option
         {
-            //display: none;
+            /* //display: none; */
             height: 18px;
             background-color: white;
         }

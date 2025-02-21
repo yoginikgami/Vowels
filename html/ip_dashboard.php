@@ -24,9 +24,6 @@
       $result = mysqli_query($con,$query);
   }
 
-
-
-  
   if(isset($_POST['mom_chat_del'])){
       $tempMultipleIDdel = $_POST['tempMultipleIDdel'];
       $tempMultipleClientIDdel = $_POST['tempMultipleClientIDdel'];
@@ -199,6 +196,30 @@
   $current = "select * from `users` where `firstname` = '".$_SESSION['username']."'";
     $rs_result = mysqli_query($con,$current);
 	$rs_show = mysqli_fetch_array($rs_result);
+
+    if (isset($_SESSION['company_id'])) {
+        $company_id = $_SESSION['company_id'];
+        // Fetch user data for the given company ID and user ID
+        $fetch_user_data = "SELECT * FROM `users` WHERE `company_id` = '$company_id' AND `id` = '" . $_SESSION['user_id'] . "'";
+        $run_fetch_user_data = mysqli_query($con, $fetch_user_data);
+        $portfoliorow = mysqli_fetch_array($run_fetch_user_data);
+    }
+
+    $columns = [
+        "trade_mark" => "trade_mark",
+        "patent" => "patent",
+        "copy_right" => "copy_right",
+        "industrial_design" => "industrial_design",
+        "trade_secret" => "trade_secret",
+    ];
+
+    $hasPortfolio = false;
+    foreach ($columns as $key => $value) {
+        if (!empty($portfoliorow[$key]) && $portfoliorow[$key] == 1) {
+            $hasPortfolio = true;
+            break;
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -231,7 +252,40 @@
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 	<style type="text/css">
-	
+	.form-group h4 {
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    margin-bottom: 15px;
+    color: #333;
+    font-size: 16px; /* Reduced size for a compact layout */
+}
+
+.form-control:focus {
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
+    border-color: #007bff;
+}
+
+#salesGraph_form label {
+    color: #555;
+    font-size: 14px; /* Reduced label font size */
+}
+
+#salesPorfolio[]::placeholder {
+    color: #999;
+}
+
+/* Compact overall layout */
+.form-control {
+    padding: 5px; /* Reduced padding for smaller inputs */
+    font-size: 14px; /* Adjusted font size */
+    border-radius: 5px;
+}
+
+.chart-container {
+    padding: 10px;
+    height: 300px; /* Reduced height for compact chart */
+}
+
 	/* General styles for multi-select dropdown and search */
 .custom-control {
     display: flex;
@@ -394,24 +448,24 @@
 
 		/* Optional: Scrollbar customization */
 		/*.typeOfProcess_multiple_select::-webkit-scrollbar {*/
-		height: 8px;
+		/* height: 8px; */
 		/* Height of the horizontal scrollbar */
 		/*}*/
 
 		/*.typeOfProcess_multiple_select::-webkit-scrollbar-thumb {*/
-		background-color: #888;
+		/* background-color: #888; */
 		/* Color of the scrollbar thumb */
-		border-radius: 4px;
+		/* border-radius: 4px; */
 		/* Rounded corners for the thumb */
 		/*}*/
 
 		/*.typeOfProcess_multiple_select::-webkit-scrollbar-thumb:hover {*/
-		background-color: #555;
+		/* background-color: #555; */
 		/* Darker thumb color on hover */
 		/*}*/
 
 		/*.typeOfProcess_multiple_select::-webkit-scrollbar-track {*/
-		background: #f1f1f1;
+		/* background: #f1f1f1; */
 		/* Background of the scrollbar track */
 		/*}*/
 	</style>
@@ -459,7 +513,7 @@ while ($row = $result->fetch_assoc()) {
 
 ?>
 
-<div class="container mt-4">
+<div class="container">
   <div class="row">
     <div class="col-md-6">
         
@@ -637,89 +691,94 @@ function generateGooglePieChart($data) {
       generateGooglePieChart($data);
       ?>
     </div>
-    <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">-->
-    <!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-multiselect@1.1.0/dist/css/bootstrap-multiselect.css">-->
-    <!--<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>-->
-    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>-->
-    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap-multiselect@1.1.0/dist/js/bootstrap-multiselect.min.js"></script>-->
-    <!--<div class="form-group col-md-6" style="height:500px;">-->
-    <!--	               <h4 class="col-md-12">30 Days Sales Graph</h4>-->
-    <!--	               <form method="post" id="salesGraph_form">-->
-    <!--	               <div class="form-inline">-->
-    <!--					<div class="form-group d-block col-md-12">-->
-    <!--					    <select class="form-control w-100" name="salesPorfolio[]" id="salesPorfolio[]" multiple multiselect-search="true" placeholder="Select Portfolio" multiselect-select-all="true">-->
-                            <!--<option value="dsc_subscriber">DSC Applicant</option>-->
-                            <!--<option value="dsc_reseller">DSC Partner</option>-->
-                            <!--<option value="pan">PAN</option>-->
-                            <!--<option value="tan">TAN</option>-->
-                            <!--<option value="it_returns">IT Returns</option>-->
-                            <!--<option value="e_tds">e-TDS</option>-->
-                            <!--<option value="gst_fees">GST Fees</option>-->
-                            <!--<option value="other_services">Other Services</option>-->
-                            <!--<option value="psp">PSP Coupon Distribution</option>-->
-                            <!--<option value="dsc_token">DSC Token</option>-->
-                            <!--<option value="e_tender">E-Tender</option>-->
-                            <!--<option value="sales">Sales</option>-->
-    <!--                        <option value="trade_mark">Trade Mark</option>-->
-    <!--                        <option value="patent">Patent</option>-->
-    <!--                        <option value="copy_right">Copy Right</option>-->
-    <!--                        <option value="trade_secret">Trade Secret</option>-->
-    <!--                        <option value="industrial_design">Industrial Design</option>-->
-    <!--                    </select><input type="submit" name="latest_sales_graph" id="latest_sales_graph" value="Search" class="btn btn-vowel">-->
-    <!--					</div>-->
-    					
-        					
-    <!--					</div>-->
-    <!--					</form>-->
-    <!--					<div class="chart-container" id="sales_material" style="width:100%;height:400px;"></div>-->
-    <!--					</div>-->
-    <div class="form-group col-md-6" style="height:500px;">
-    	               <h4 class="col-md-12">30 Days Sales Graph</h4>
-<form method="post" id="salesGraph_form">
-    <div class="form-inline">
-        <div class="form-group d-block col-md-12">
-            <select class="form-control w-100" name="salesPorfolio[]" id="salesPorfolio[]" multiple multiselect-search="true" placeholder="Select Portfolio" multiselect-select-all="true">
-                <option value="trade_mark">Trade Mark</option>
-                <option value="patent">Patent</option>
-                <option value="copy_right">Copy Right</option>
-                <option value="trade_secret">Trade Secret</option>
-                <option value="industrial_design">Industrial Design</option>
-            </select>
+    
+<div class="col-md-6">
+    <h4 class="text-center">Intellectual Property Sales Graph</h4>
+    <form method="post" id="salesGraph_form" style="background: #f8f9fa; padding: 15px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);">
+        <!-- Date Range Row -->
+        <div class="form-row align-items-center mb-3">
+            <div class="col">
+                <label for="from_date" class="font-weight-bold" style="font-size: 14px;">From:</label>
+                <input type="date" id="from_date" name="from_date" class="form-control" style="font-size: 14px; padding: 5px; border-radius: 5px; border: 1px solid #ced4da;">
+            </div>
+            <div class="col">
+                <label for="to_date" class="font-weight-bold" style="font-size: 14px;">To:</label>
+                <input type="date" id="to_date" name="to_date" class="form-control" style="font-size: 14px; padding: 5px; border-radius: 5px; border: 1px solid #ced4da;">
+            </div>
         </div>
-    </div>
-</form>
-<div class="chart-container" id="sales_material" style="width:100%;height:400px;"></div>
+
+        <!-- Portfolio Selection -->
+         <?php 
+            if ($hasPortfolio) {
+            ?>
+            <div class="form-group mb-3">
+                <label for="salesPorfolio[]" class="font-weight-bold" style="font-size: 14px;">Select Portfolios:</label>
+                <select class="form-control" name="salesPorfolio[]" id="salesPorfolio[]" multiple multiselect-search="true" placeholder="Select Portfolio" multiselect-select-all="true" style="height: 120px; font-size: 14px; padding: 5px; border-radius: 5px; border: 1px solid #ced4da;">
+                    <?php
+                    foreach ($columns as $key => $label) {
+                        if (!empty($portfoliorow[$key]) && $portfoliorow[$key] == 1) {
+                            echo "<option value=\"$key\">$label</option>";
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
+            <?php
+        }
+        ?>
+    </form>
+
+    <!-- Chart Container -->
+    <div class="chart-container" id="sales_material" style="width: 100%; height: 300px; margin-top: 10px; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);"></div>
 </div>
 
 
 <script>
     $(document).ready(function () {
-        // Trigger the chart fetching and rendering when the page loads
+        // Set default date range to the last 30 days
+        var today = new Date().toISOString().split('T')[0];
+        var lastMonth = new Date();
+        lastMonth.setDate(lastMonth.getDate() - 30);
+        var lastMonthDate = lastMonth.toISOString().split('T')[0];
+
+        $('#from_date').val(lastMonthDate);
+        $('#to_date').val(today);
+
+        // Default selection: select all portfolios
+        $('#salesPorfolio\\[\\] option').prop('selected', true);
+
+        // Fetch chart data for the last 30 days by default
         fetchAndDisplayChart();
 
-        // Update chart dynamically on portfolio change
-        $('#salesPorfolio\\[\\]').change(function () {
+        // Fetch chart dynamically on date or portfolio change
+        $('#from_date, #to_date, #salesPorfolio\\[\\]').on('change', function () {
+            console.log('Input changed:', $(this).attr('id'), $(this).val()); // Debug
             fetchAndDisplayChart();
         });
-
-        function fetchAndDisplayChart() {
-            var portfolio = $('#salesGraph_form').serialize();
-            
-            // Send AJAX request to fetch chart data
-            $.ajax({
-                method: "post",
-                url: 'html/sales_graph.php',
-                data: portfolio,
-                success: function (response) {
-                    $('#sales_material').html(response); // Inject the response HTML/JS
-                },
-                error: function (xhr, status, error) {
-                    console.error("AJAX Error: " + status + " - " + error);
-                }
-            });
-        }
     });
+
+    // Define fetchAndDisplayChart function outside of $(document).ready()
+    function fetchAndDisplayChart() {
+        // Serialize form data, including date range and portfolio
+        var formData = $('#salesGraph_form').serialize();
+
+        $.ajax({
+            method: "post",
+            url: 'html/ip_sales_graph.php', // Adjust this path if needed
+            data: formData,
+            success: function (response) {
+                $('#sales_material').html(response); // Inject the response into the chart container
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX Error: " + status + " - " + error);
+            }
+        });
+    }
 </script>
+
+
+
+
 
   </div>
   <?php
@@ -750,62 +809,86 @@ if(isset($_GET['titleDate'])){
                 
                 // Example switch statement to determine SQL query based on $transaction_id
                 switch ($transaction_id) {
-                case 'TRD':
-                   $fetchIdForServiceId = "SELECT dt.title_date,tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
-                        FROM `trade_mark` tr
-                        JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
-                        WHERE tr.transaction_id = '" . $transaction_id_full . "' AND dt.status_title = 'pending' and dt.date_time='$current_date' and dt.title_date='$date_val'";
+    case 'TRD':
+        $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
+                                tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
+                                FROM `trade_mark` tr
+                                JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
+                                WHERE tr.transaction_id = '" . $transaction_id_full . "' 
+                                  AND dt.status_title = 'pending' 
+                                  AND dt.date_time = '$current_date' 
+                                  AND dt.title_date = '$date_val'
+                                LIMIT 1";
+        $count_result = mysqli_query($con, $fetchIdForServiceId);
+        $ViewPageForServiceId = 'View_Trade_mark';
+        $ViewPageForServiceId_page = 'intell_trademark';
+        break;
 
-                    // SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate FROM Orders INNER JOIN Customers ON Orders.CustomerID=Customers.CustomerID;
-                    $count_result = mysqli_query($con, $fetchIdForServiceId);
-                    $ViewPageForServiceId = 'View_Trade_mark';
-                    $ViewPageForServiceId_page='intell_trademark';
-                    break;
-                case 'PTN':
-                    // $fetchIdForServiceId = "SELECT * FROM `patent` WHERE `transaction_id` = '" . $transaction_id_full . "'";
-                    $fetchIdForServiceId = "SELECT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
-                        FROM `patent` tr
-                        JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
-                        WHERE tr.transaction_id = '" . $transaction_id_full . "' AND dt.status_title = 'pending' and dt.date_time='$current_date' and dt.title_date='$date_val'";
-                    $count_result = mysqli_query($con, $fetchIdForServiceId);
-                    $ViewPageForServiceId = 'View_patent';
-                    $ViewPageForServiceId_page='intell_patent';
-                    break;
-                case 'COP':
-                    // $fetchIdForServiceId = "SELECT * FROM `patent` WHERE `transaction_id` = '" . $transaction_id_full . "'";
-                    $fetchIdForServiceId = "SELECT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
-                        FROM `copy_right` tr
-                        JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
-                        WHERE tr.transaction_id = '" . $transaction_id_full . "' AND dt.status_title = 'pending' and dt.date_time='$current_date' and dt.title_date='$date_val'";
-                    $count_result = mysqli_query($con, $fetchIdForServiceId);
-                    $ViewPageForServiceId = 'View_copy_right';
-                    $ViewPageForServiceId_page='intell_copyright';
-                    break;
-                case 'TRS':
-                    // $fetchIdForServiceId = "SELECT * FROM `patent` WHERE `transaction_id` = '" . $transaction_id_full . "'";
-                    $fetchIdForServiceId = "SELECT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
-                        FROM `trade_secret` tr
-                        JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
-                        WHERE tr.transaction_id = '" . $transaction_id_full . "' AND dt.status_title = 'pending' and dt.date_time='$current_date' and dt.title_date='$date_val'";
-                    $count_result = mysqli_query($con, $fetchIdForServiceId);
-                    $ViewPageForServiceId = 'View_tradesecret';
-                    $ViewPageForServiceId_page='intell_tradesecret';
-                    break;
-                case 'IDS':
-                    // $fetchIdForServiceId = "SELECT * FROM `patent` WHERE `transaction_id` = '" . $transaction_id_full . "'";
-                    $fetchIdForServiceId = "SELECT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
-                        FROM `industrial_design` tr
-                        JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
-                        WHERE tr.transaction_id = '" . $transaction_id_full . "' AND dt.status_title = 'pending' and dt.date_time='$current_date' and dt.title_date='$date_val'";
-                    $count_result = mysqli_query($con, $fetchIdForServiceId);
-                    $ViewPageForServiceId = 'View_industrial_design';
-                    $ViewPageForServiceId_page='industrial_design';
-                    break;
-                // Add more cases as needed for different types
-                default:
-                    // Handle default case or unknown transaction_id
-                    break;
-            }
+    case 'PTN':
+        $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
+                                tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
+                                FROM `patent` tr
+                                JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
+                                WHERE tr.transaction_id = '" . $transaction_id_full . "' 
+                                  AND dt.status_title = 'pending' 
+                                  AND dt.date_time = '$current_date' 
+                                  AND dt.title_date = '$date_val'
+                                LIMIT 1";
+        $count_result = mysqli_query($con, $fetchIdForServiceId);
+        $ViewPageForServiceId = 'View_patent';
+        $ViewPageForServiceId_page = 'intell_patent';
+        break;
+
+    case 'COP':
+        $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
+                                tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
+                                FROM `copy_right` tr
+                                JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
+                                WHERE tr.transaction_id = '" . $transaction_id_full . "' 
+                                  AND dt.status_title = 'pending' 
+                                  AND dt.date_time = '$current_date' 
+                                  AND dt.title_date = '$date_val'
+                                LIMIT 1";
+        $count_result = mysqli_query($con, $fetchIdForServiceId);
+        $ViewPageForServiceId = 'View_copy_right';
+        $ViewPageForServiceId_page = 'intell_copyright';
+        break;
+
+    case 'TRS':
+        $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
+                                tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
+                                FROM `trade_secret` tr
+                                JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
+                                WHERE tr.transaction_id = '" . $transaction_id_full . "' 
+                                  AND dt.status_title = 'pending' 
+                                  AND dt.date_time = '$current_date' 
+                                  AND dt.title_date = '$date_val'
+                                LIMIT 1";
+        $count_result = mysqli_query($con, $fetchIdForServiceId);
+        $ViewPageForServiceId = 'View_tradesecret';
+        $ViewPageForServiceId_page = 'intell_tradesecret';
+        break;
+
+    case 'IDS':
+        $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
+                                tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
+                                FROM `industrial_design` tr
+                                JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
+                                WHERE tr.transaction_id = '" . $transaction_id_full . "' 
+                                  AND dt.status_title = 'pending' 
+                                  AND dt.date_time = '$current_date' 
+                                  AND dt.title_date = '$date_val'
+                                LIMIT 1";
+        $count_result = mysqli_query($con, $fetchIdForServiceId);
+        $ViewPageForServiceId = 'View_industrial_design';
+        $ViewPageForServiceId_page = 'industrial_design';
+        break;
+
+    default:
+        // Handle default case or unknown transaction_id
+        break;
+}
+
                 
                 // Execute SQL query and fetch data
                 
@@ -857,81 +940,166 @@ if ($result && mysqli_num_rows($result) > 0) {
 
             // Example switch statement to determine SQL query based on $transaction_id
             
-switch ($transaction_id) {
-    case 'TRD':
-        $fetchIdForServiceId = "SELECT tr.id as id, dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
-                                tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.modify_by, 
-                                tr.modify_date 
+// switch ($transaction_id) {
+//     case 'TRD':
+//         $fetchIdForServiceId = "SELECT tr.id as id, dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
+//                                 tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.modify_by, 
+//                                 tr.modify_date 
+//                                 FROM `trade_mark` tr
+//                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
+//                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
+//                                 AND dt.status_title = 'pending' 
+//                                 AND dt.date_time = '$current_date' 
+//                                 AND dt.title_date = '$date_val'";
+//         $ViewPageForServiceId = 'View_Trade_mark';
+//         $ViewPageForServiceId_page = 'intell_trademark';
+//         break;
+
+//     case 'PTN':
+//         $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
+//                                 tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, 
+//                                 tr.modify_by, tr.modify_date
+//                                 FROM `patent` tr
+//                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
+//                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
+//                                 AND dt.status_title = 'pending' 
+//                                 AND dt.date_time = '$current_date' 
+//                                 AND dt.title_date = '$date_val'";
+//         $ViewPageForServiceId = 'View_patent';
+//         $ViewPageForServiceId_page = 'intell_patent';
+//         break;
+
+//     case 'COP':
+//         $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
+//                                 tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, 
+//                                 tr.modify_by, tr.modify_date
+//                                 FROM `copy_right` tr
+//                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
+//                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
+//                                 AND dt.status_title = 'pending' 
+//                                 AND dt.date_time = '$current_date' 
+//                                 AND dt.title_date = '$date_val'";
+//         $ViewPageForServiceId = 'View_copy_right';
+//         $ViewPageForServiceId_page = 'intell_copyright';
+//         break;
+
+//     case 'TRS':
+//         $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
+//                                 tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, 
+//                                 tr.modify_by, tr.modify_date
+//                                 FROM `trade_secret` tr
+//                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
+//                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
+//                                 AND dt.status_title = 'pending' 
+//                                 AND dt.date_time = '$current_date' 
+//                                 AND dt.title_date = '$date_val'";
+//         $ViewPageForServiceId = 'View_tradesecret';
+//         $ViewPageForServiceId_page = 'intell_tradesecret';
+//         break;
+
+//     case 'IDS':
+//         $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
+//                                 tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, 
+//                                 tr.modify_by, tr.modify_date
+//                                 FROM `industrial_design` tr
+//                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
+//                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
+//                                 AND dt.status_title = 'pending' 
+//                                 AND dt.date_time = '$current_date' 
+//                                 AND dt.title_date = '$date_val'";
+//         $ViewPageForServiceId = 'View_industrial_design';
+//         $ViewPageForServiceId_page = 'industrial_design';
+//         break;
+
+//     default:
+//         echo "Unknown transaction type.";
+//         break;
+// }
+
+
+$groupByClause = "GROUP BY tr.transaction_id, dt.transaction_id";
+
+switch ($transaction_id) {     
+    case 'TRD':         
+        $fetchIdForServiceId = "SELECT tr.id as id, dt.title_date, tr.transaction_id, 
+                                       tr.tax_invoice_number, tr.retail_invoice_number, 
+                                       tr.client_name, tr.status_fetch, tr.modify_by, 
+                                       tr.modify_date
                                 FROM `trade_mark` tr
                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
-                                AND dt.status_title = 'pending' 
-                                AND dt.date_time = '$current_date' 
-                                AND dt.title_date = '$date_val'";
+                                  AND dt.status_title = 'pending' 
+                                  AND dt.title_date = '$date_val'
+                                $groupByClause";
         $ViewPageForServiceId = 'View_Trade_mark';
         $ViewPageForServiceId_page = 'intell_trademark';
         break;
 
-    case 'PTN':
-        $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
-                                tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, 
-                                tr.modify_by, tr.modify_date
+    case 'PTN':         
+        $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, 
+                                       tr.tax_invoice_number, tr.retail_invoice_number, 
+                                       tr.client_name, tr.status_fetch, tr.id, 
+                                       tr.modify_by, tr.modify_date
                                 FROM `patent` tr
                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
-                                AND dt.status_title = 'pending' 
-                                AND dt.date_time = '$current_date' 
-                                AND dt.title_date = '$date_val'";
+                                  AND dt.status_title = 'pending' 
+                                  AND dt.title_date = '$date_val'
+                                $groupByClause";
         $ViewPageForServiceId = 'View_patent';
         $ViewPageForServiceId_page = 'intell_patent';
         break;
 
-    case 'COP':
-        $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
-                                tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, 
-                                tr.modify_by, tr.modify_date
+    case 'COP':         
+        $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, 
+                                       tr.tax_invoice_number, tr.retail_invoice_number, 
+                                       tr.client_name, tr.status_fetch, tr.id, 
+                                       tr.modify_by, tr.modify_date
                                 FROM `copy_right` tr
                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
-                                AND dt.status_title = 'pending' 
-                                AND dt.date_time = '$current_date' 
-                                AND dt.title_date = '$date_val'";
+                                  AND dt.status_title = 'pending' 
+                                  AND dt.title_date = '$date_val'
+                                $groupByClause";
         $ViewPageForServiceId = 'View_copy_right';
         $ViewPageForServiceId_page = 'intell_copyright';
         break;
 
-    case 'TRS':
-        $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
-                                tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, 
-                                tr.modify_by, tr.modify_date
+    case 'TRS':         
+        $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, 
+                                       tr.tax_invoice_number, tr.retail_invoice_number, 
+                                       tr.client_name, tr.status_fetch, tr.id, 
+                                       tr.modify_by, tr.modify_date
                                 FROM `trade_secret` tr
                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
-                                AND dt.status_title = 'pending' 
-                                AND dt.date_time = '$current_date' 
-                                AND dt.title_date = '$date_val'";
+                                  AND dt.status_title = 'pending' 
+                                  AND dt.title_date = '$date_val'
+                                $groupByClause";
         $ViewPageForServiceId = 'View_tradesecret';
         $ViewPageForServiceId_page = 'intell_tradesecret';
         break;
 
-    case 'IDS':
-        $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
-                                tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, 
-                                tr.modify_by, tr.modify_date
+    case 'IDS':         
+        $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, 
+                                       tr.tax_invoice_number, tr.retail_invoice_number, 
+                                       tr.client_name, tr.status_fetch, tr.id, 
+                                       tr.modify_by, tr.modify_date
                                 FROM `industrial_design` tr
                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
-                                AND dt.status_title = 'pending' 
-                                AND dt.date_time = '$current_date' 
-                                AND dt.title_date = '$date_val'";
+                                  AND dt.status_title = 'pending' 
+                                  AND dt.title_date = '$date_val'
+                                $groupByClause";
         $ViewPageForServiceId = 'View_industrial_design';
         $ViewPageForServiceId_page = 'industrial_design';
         break;
 
-    default:
-        echo "Unknown transaction type.";
+    default:         
+        echo "Unknown transaction type.";         
         break;
 }
+
 
 // Execute the query
 $count_result = mysqli_query($con, $fetchIdForServiceId);
