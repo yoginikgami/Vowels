@@ -1,542 +1,863 @@
-    <?php 
-	include_once 'ltr/header.php';
-	include_once 'connection.php';
-	date_default_timezone_set('Asia/Kolkata');
-    $currentTime = date( 'Y-m-d', time () );
-	$date = date('Y-m-d');
-	
-	$alertMsg = "";
-	$alertClass = "";
-	 if (isset($_SESSION['company_id'])) {
-        $fetch_user_data = "SELECT * FROM `users` WHERE `company_id` = '".$_SESSION['company_id']."' AND `id` = '".$_SESSION['user_id']."' AND `crm_teamleader` = 1";
-        $run_fetch_user_data = mysqli_query($con,$fetch_user_data);
-        $userrow = mysqli_fetch_array($run_fetch_user_data);
-        $leader_member = explode(',',$userrow['username'].','.$userrow['crm_teamMember']);
-        $members = implode("', '", $leader_member);
-      }
-  
-  if(isset($_POST['save_mom'])){
-      $mom_client_id = $_POST['mom_client_id'];
-      $user_name = $_POST['user_name'];
-      $client_name = $_POST['client_name'];
-      $paragraph = $_POST['paragraph'];
-      $query = "insert into `call_client_mom`(`company_id`,`client_id`,`by_user`,`to_client`,`paragraph`,`modify_date`) values('".$_SESSION['company_id']."','$mom_client_id','$user_name','$client_name','$paragraph','".date('Y-m-d h:m:s')."')";
-      $result = mysqli_query($con,$query);
-  }
+<?php
+include_once 'ltr/header.php';
+include_once 'connection.php';
+date_default_timezone_set('Asia/Kolkata');
+$currentTime = date('Y-m-d', time());
+$date = date('Y-m-d');
 
-  if(isset($_POST['mom_chat_del'])){
-      $tempMultipleIDdel = $_POST['tempMultipleIDdel'];
-      $tempMultipleClientIDdel = $_POST['tempMultipleClientIDdel'];
-      $delquery = "delete from `call_client_mom` where `id` = '$tempMultipleIDdel'";
-      $result = mysqli_query($con,$delquery);
-  }
-  
-    if(isset($_GET['myStatus'])) { 
-      $str = str_replace("add","",$_GET['myStatus']);
-      $str = str_replace("_Status","",$_GET['myStatus']);
-      $tableName = $_GET['myStatus'];
-    }
-    
-    if(isset($_GET['Today'])){
-        $str = str_replace("add","",$_GET['Today']);
-      $str = str_replace("_Status","",$_GET['Today']);
-      $str = "Today's ".$str;
-      $tableName = $_GET['Today'];
-    }
-  
-    // $num_per_page = 2000;
-    // if(isset($_GET["page"])){
-    //     $page = $_GET["page"];
-    // } else {
-    //     $page = 1;
-    // }
-    // $start_from = ($page-1)*2000;
+if (isset($_SESSION['company_id'])) {
+    $company_id = $_SESSION['company_id'];
+    // Fetch user data for the given company ID and user ID
+    $fetch_user_data = "SELECT * FROM `users` WHERE `company_id` = '$company_id' AND `id` = '" . $_SESSION['user_id'] . "'";
+    $run_fetch_user_data = mysqli_query($con, $fetch_user_data);
+    $portfoliorow = mysqli_fetch_array($run_fetch_user_data);
+}
 
-//   on edit
-  	if(isset($_POST['editSheet_Data'])){
-      if (isset($_POST['sheet_EditID'])) {
-        $editQuery = "select * from `" . $tableName . "` where id = '" . $_POST['sheet_EditID'] . "'";
-		$run_fetch_data = mysqli_query($con, $editQuery);
-		$row = mysqli_fetch_array($run_fetch_data);
-		$title_id = $row['title_id'];
-		$comp_name = $row['comp_name'];
-		$cont_person = $row['cont_person'];
-		$mob1 = $row['mob1'];
-		$mob2 = $row['mob2'];
-		$email1 = $row['email1'];
-		$email2 = $row['email2'];
-		$state = $row['state'];
-		$city = $row['city'];
-		$pincode = $row['pincode'];
-		$website = $row['website'];
-		$whatsapp = $row['whatsapp'];
-		$department = $row['department'];
-		$designation = $row['designation'];
-		$reff = $row['reff'];
-		$others = $row['other'];
-		$keyword = $row['keyword'];
-		$leadDate = $row['leadDate'];
-		$userName = $row['username2'];
-		$Status = $row['status'];
-// 		$Stat_table = "add".ucwords($Status)."_Status";
-		$mom = $row['mom'];
-		$remark = $row['remark'];
-		$followUpDate = $row['followUpDate'];
-      }
-  }
-  
-  if(isset($_POST['changeToStatus'])){
-        $id = $_POST['statusSID'];
-        $table_name = $_POST['statusTable_name'];
-        $desired_table = $_POST['statusSName'];
-        $str = str_replace("add","",$desired_table);
-        $str = str_replace("_Status","",$desired_table);
-        // echo "ID".$id;
-        // echo "current table".$table_name;
-        // echo "desired table".$desired_table;
-        $query = "select `title_id`,`company_id`,`comp_name`,`cont_person`,`mob1`,`mob2`,`email1`,`email2`,`state`,`city`,`pincode`,`website`,`whatsapp`,`designation`,`department`,`reff`,`other`,`keyword`,`leadDate`,`username2`,`status`,`mom`,`remark`,`followUpDate`,`modify_by`,`created_by` from `$table_name` where `title_id` = '".$id."'";
-        $result1 = mysqli_query($con,$query);
-        $row = mysqli_fetch_array($result1);
-        
-        $update = "insert into `$desired_table`(`title_id`,`company_id`,`comp_name`,`cont_person`,`mob1`,`mob2`,`email1`,`email2`,`state`,`city`,`pincode`,`website`,`whatsapp`,`designation`,`department`,`reff`,`other`,`keyword`,`leadDate`,`username2`,`status`,`mom`,`remark`,`followUpDate`,`modify_by`,`stat_modify_at`,`created_by`) values('".$row['title_id']."','".$row['company_id']."','".$row['comp_name']."','".$row['cont_person']."','".$row['mob1']."','".$row['mob2']."','".$row['email1']."','".$row['email2']."','".$row['state']."','".$row['city']."','".$row['pincode']."','".$row['website']."','".$row['whatsapp']."','".$row['designation']."','".$row['department']."','".$row['reff']."','".$row['other']."','".$row['keyword']."','".$row['leadDate']."','".$row['username2']."','".$str."','".$row['mom']."','".$row['remark']."','".$row['followUpDate']."','" . date('Y-m-d') . "','" . date('Y-m-d') . "','" . $_SESSION['username'] . "')";
-        $result2 = mysqli_query($con,$update);
-        if($result2){
-            $querys = "insert into `status_update_history`(`username`,`client_id`,`status`,`old_status_date`) values('".$row['username2']."','".$row['title_id']."','".$table_name."','".$row['stat_modify_at']."')";
-            $result3 = mysqli_query($con,$querys);
-        }
-        
-        if($result2){
-            $drop = "delete from `$table_name` where `title_id` = '".$id."'";
-            $rs_drop = mysqli_query($con,$drop);
-            echo '<div class="alert alert-success alert-dismissible">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong>Success!</strong>Data has been moved.
-                    </div>';
-        } else {
-            echo '<div class="alert alert-danger alert-dismissible">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong>Failed!</strong>Some problem has occured, Try again after some time.
-                    </div>';
-        }
-        
-    }
-  
-    if(isset($_POST['user_update'])){
-        $editSheet_Data_temp = $_POST['editSheet_Data_temp'];
-        $editSheetTitle_id = $_POST['editSheetTitle_id'];
-		$comp_name = $_POST['company_name'];
-		$cont_person = $_POST['cont_person'];
-		$mob1 = $_POST['mob1'];
-		$mob2 = $_POST['mob2'];
-		$email1 = $_POST['email1'];
-		$email2 = $_POST['email2'];
-		$state = $_POST['state'];
-		$city = $_POST['city'];
-		$pincode = $_POST['pincode'];
-		$website = $_POST['website'];
-		$whatsapp = $_POST['whatsapp'];
-		$department = $_POST['department'];
-		$designation = $_POST['designation'];
-		$reff = $_POST['reff'];
-		$others = $_POST['other'];
-		$keyword = $_POST['keyword'];
-		$leadDate = $_POST['leadDate'];
-		$userName = $_POST['userName'];
-		$Status = $_POST['Status'];
-// 		$Stat_table = "add".ucwords($Status)."_Status";
-		$mom = $_POST['mom'];
-		$remark = $_POST['remark'];
-		$followUpDate = $_POST['followUpDate'];
-		$editQuery = "select * from `" . $tableName . "` where id = '" . $editSheet_Data_temp . "'";
-		$run_fetch_data = mysqli_query($con, $editQuery);
-		$row = mysqli_fetch_array($run_fetch_data);
-		$prevStatus = $row['status'];
-		if($prevStatus == $Status){
-    		$query = "update `".$tableName."` set `title_id`= '".$editSheetTitle_id."',`comp_name` = '".$comp_name."',`cont_person` = '".$cont_person."',`mob1` = '".$mob1."',`mob2` = '".$mob2."',`email1` = '".$email1."',`email2` = '".$email2."',`state` = '".$state."',`city` = '".$city."',`pincode` = '".$pincode."',`website` = '".$website."',`whatsapp` = '".$whatsapp."',`designation` = '".$designation."',`department` = '".$department."',`reff` = '".$reff."',`other` = '".$others."',`keyword` = '".$keyword."',`leadDate` = '".$leadDate."',`status` = '".$Status."',`mom`='".$mom."',`remark` = '".$remark."',`followUpDate` = '".$followUpDate."',`modify_by` = '" . date('Y-m-d') . "' where id = '".$editSheet_Data_temp."'";
-    		$queryResult = mysqli_query($con,$query);
-    		if($queryResult){
-    		    echo '<div class="alert alert-success alert-dismissible">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong>Success!</strong>Data has been updated.
-                    </div>';
-    		} else {
-                echo '<div class="alert alert-danger alert-dismissible">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong>Failed!</strong>Some problem has occured, Try again after some time.
-                    </div>';
-    		}
-		
-		} else {
-		    $Stat_table = "add".ucwords($Status)."_Status";
-		    $insertquery = "insert into `".$Stat_table."`(`title_id`,`company_id`,`comp_name`,`cont_person`,`mob1`,`mob2`,`email1`,`email2`,`state`,`city`,`pincode`,`website`,`whatsapp`,`designation`,`department`,`reff`,`other`,`keyword`,`leadDate`,`username2`,`status`,`mom`,`remark`,`followUpDate`,`modify_by`,`stat_modify_at`,`created_by`) values('".$editSheetTitle_id."','" . $_SESSION['company_id'] . "','" . $comp_name . "','" . $cont_person . "','" . $mob1 . "','" . $mob2 . "','" . $email1 . "','" . $email2 . "','" . $state . "','" . $city . "','" . $pincode . "','" . $website . "','" . $whatsapp . "','" . $department . "','" . $designation . "','" . $reff . "','" . $others . "','" . $keyword . "','".$leadDate."','".$row['username2']."','".$Status."','".$mom."','".$remark."','".$followUpDate."','" . date('Y-m-d') . "','" . date('Y-m-d') . "','" . $_SESSION['username'] . "')";
-		    $insertResult = mysqli_query($con,$insertquery);
-		    if($insertResult){
-		        $query = "update `$Stat_table` set `client_id` = concat('CLT-0',`id`) where `id` is not null";
-		        $run = mysqli_query($con,$query);
-		        $delData = "delete from `".$tableName."` where id = '$editSheet_Data_temp'";
-                $delResult = mysqli_query($con,$delData);
-                if($delResult){
-                    $querys = "insert into `status_update_history`(`username`,`client_id`,`status`,`old_status_date`) values('".$userrow['username']."','".$editSheetTitle_id."','".$Status."','".$row['stat_modify_at']."')";
-                    $result3 = mysqli_query($con,$querys);
-                }
-                echo '<div class="alert alert-success alert-dismissible">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong>Success!</strong>Data has been moved.
-                    </div>';
-    		} else {
-                echo '<div class="alert alert-danger alert-dismissible">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                    <strong>Failed!</strong>Some problem has occured, Try again after some time.
-                    </div>';
-    		}
-		    
-		}
-  }
-  
-  $current = "select * from `users` where `firstname` = '".$_SESSION['username']."'";
-    $rs_result = mysqli_query($con,$current);
-	$rs_show = mysqli_fetch_array($rs_result);
+$columns = [
+    "trade_mark" => "trade_mark",
+    "patent" => "patent",
+    "copy_right" => "copy_right",
+    "industrial_design" => "industrial_design",
+    "trade_secret" => "trade_secret",
+];
 
-    if (isset($_SESSION['company_id'])) {
-        $company_id = $_SESSION['company_id'];
-        // Fetch user data for the given company ID and user ID
-        $fetch_user_data = "SELECT * FROM `users` WHERE `company_id` = '$company_id' AND `id` = '" . $_SESSION['user_id'] . "'";
-        $run_fetch_user_data = mysqli_query($con, $fetch_user_data);
-        $portfoliorow = mysqli_fetch_array($run_fetch_user_data);
+$hasPortfolio = false;
+foreach ($columns as $key => $value) {
+    if (!empty($portfoliorow[$key]) && $portfoliorow[$key] == 1) {
+        $hasPortfolio = true;
+        break;
     }
+}
 
-    $columns = [
-        "trade_mark" => "trade_mark",
-        "patent" => "patent",
-        "copy_right" => "copy_right",
-        "industrial_design" => "industrial_design",
-        "trade_secret" => "trade_secret",
-    ];
+$card_columns = [
+    "trade_mark" => ["label" => "Trade Mark", "table" => "trade_mark"],
+    "patent" => ["label" => "Patent", "table" => "patent"],
+    "copy_right" => ["label" => "Copyright", "table" => "copy_right"],
+    "industrial_design" => ["label" => "Industrial Design", "table" => "industrial_design"],
+    "trade_secret" => ["label" => "Trade Secret", "table" => "trade_secret"]
+];
 
-    $hasPortfolio = false;
-    foreach ($columns as $key => $value) {
-        if (!empty($portfoliorow[$key]) && $portfoliorow[$key] == 1) {
-            $hasPortfolio = true;
-            break;
-        }
+$colors = ["#ff6b6b", "#1e90ff", "#2ecc71", "#ff9f43", "#8e44ad"];
+
+// If no portfolio data, show message
+if (!$hasPortfolio) {
+    echo '<div class="alert alert-warning">No portfolio data available.</div>';
+    exit;
+}
+
+// Define status labels correctly
+$statuses = [
+    "registration" => "Pending",
+    "hearing" => "Active", // ✅ Changed from "Active" to "Hearing"
+    "expired" => "Expired"
+];
+
+$total_portfolio = 0;
+$index = 0;
+
+// Define portfolio options with database table mapping
+$portfolioOptions = [
+    "trade_mark" => ["name" => "Trade Mark", "table" => "trade_mark", "date_column" => "date_application"],
+    "patent" => ["name" => "Patent", "table" => "patent", "date_column" => "filling_date"],
+    "copy_right" => ["name" => "Copyright", "table" => "copy_right", "date_column" => "filling_date"],
+    "industrial_design" => ["name" => "Industrial Design", "table" => "industrial_design", "date_column" => "filling_date"],
+    "trade_secret" => ["name" => "Trade Secret", "table" => "trade_secret", "date_column" => "date_of_filling"]
+];
+
+// Build dynamic SQL query based on enabled portfolios
+$queryParts = [];
+
+foreach ($portfolioOptions as $key => $details) {
+    if (!empty($portfoliorow[$key]) && $portfoliorow[$key] == 1) {
+        $queryParts[] = "(SELECT '{$details['name']}' AS type, transaction_id, client_name, {$details['date_column']} AS expiry_date FROM {$details['table']} ORDER BY {$details['date_column']} ASC LIMIT 5)";
     }
+}
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-	<title></title>
-	<!--<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>-->
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP Dashboard</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.11.3/css/dataTables.bootstrap4.min.css" />
+    <link rel="stylesheet" href="//cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
 
-	    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+    <style>
+        .multiselect-container {
+            position: relative;
+            width: 100%;
+        }
 
+        .multiselect-dropdown {
+            background: white;
+            border: 1px solid #ccc;
+            padding: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            position: relative;
+            /* Ensure correct positioning */
+            z-index: 10;
+        }
 
+        .multiselect-dropdown span {
+            font-size: 14px;
+            color: #333;
+        }
 
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
-	<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>-->
-	<!-- <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css"/> -->
-	<link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.11.3/css/dataTables.bootstrap4.min.css"/>
-	<!--<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">-->
-    <!--<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>-->
-    <!--<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>-->
-    <!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>-->
-	<script type="text/javascript" src="js/virtual-select.min.js"></script>
-	<link rel="stylesheet" href="//cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
-	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        .multiselect-options {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            display: none;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
 
-	<style type="text/css">
-	.form-group h4 {
-    font-family: 'Arial', sans-serif;
-    font-weight: bold;
-    margin-bottom: 15px;
-    color: #333;
-    font-size: 16px; /* Reduced size for a compact layout */
-}
+        .multiselect-options.show {
+            display: block;
+        }
 
-.form-control:focus {
-    box-shadow: 0 0 4px rgba(0, 123, 255, 0.4);
-    border-color: #007bff;
-}
+        .multiselect-options input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+            border: none;
+            border-bottom: 1px solid #ccc;
+            outline: none;
+        }
 
-#salesGraph_form label {
-    color: #555;
-    font-size: 14px; /* Reduced label font size */
-}
+        .multiselect-options ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
 
-#salesPorfolio[]::placeholder {
-    color: #999;
-}
+        .multiselect-options li {
+            padding: 5px;
+            display: flex;
+            align-items: center;
+        }
 
-/* Compact overall layout */
-.form-control {
-    padding: 5px; /* Reduced padding for smaller inputs */
-    font-size: 14px; /* Adjusted font size */
-    border-radius: 5px;
-}
+        .multiselect-options input[type="checkbox"] {
+            margin-right: 8px;
+        }
 
-.chart-container {
-    padding: 10px;
-    height: 300px; /* Reduced height for compact chart */
-}
+        /* .card {
+        min-height: 100px; 
+        display: flex;
+        flex-direction: column;
+    } */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            /* Ensures border-radius works */
+        }
 
-	/* General styles for multi-select dropdown and search */
-.custom-control {
+        thead tr {
+            background-color: #218125 !important;
+            /* Ensure Green Color */
+            color: white !important;
+        }
+
+        thead th {
+            background-color: #218125 !important;
+            /* Apply Green Background to Each <th> */
+            color: white !important;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #fff;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #e9ecef;
+            transition: background-color 0.3s;
+        }
+
+        .card h5 {
+
+            font-weight: bold;
+        }
+
+        .table th,
+        .table td {
+
+            vertical-align: middle;
+        }
+
+        /* Card Base Styling */
+        .portfolio-card {
+            padding: 15px;
+            text-align: center;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+            transition: 0.3s ease-in-out;
+        }
+
+        /* Hover Effect */
+        .portfolio-card:hover {
+            transform: scale(1.05);
+            box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Different Colors for Each Card */
+        .portfolio-total {
+            background: rgb(39, 39, 40);
+        }
+
+        /* Dark Gray */
+        .portfolio-trademark {
+            background: rgb(97, 161, 229);
+        }
+
+        /* Blue */
+        .portfolio-patent {
+            background: rgb(22, 181, 59);
+        }
+
+        /* Green */
+        .portfolio-industrial {
+            background: rgb(253, 121, 13);
+        }
+
+        /* Orange */
+        .portfolio-copyright {
+            background: rgb(95, 41, 196);
+        }
+
+        /* Purple */
+        .portfolio-secret {
+            background: rgb(234, 4, 27);
+        }
+
+        /* Red */
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .portfolio-card {
+                margin-bottom: 10px;
+                font-size: 14px;
+            }
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: 0.rem;
+
+        }
+        .container-fluid.custom-gap {
+            padding-top: 0.5rem;
+            /* Adjust top padding */
+            padding-bottom: 0.5rem;
+            /* Adjust bottom padding */
+        }
+
+        .container-fluid.custom-gap .card {
+            margin-bottom: 0.5rem;
+            /* Adjust gap between cards */
+        }
+        /* .row {
     display: flex;
+    flex-wrap: wrap;
+}
+
+.col-md-4 {
+    display: flex;
+} */
+
+.rectangle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-}
-
-.custom-control-label {
-    font-size: 14px;
-    margin-left: 5px;
-}
-
-/* Multi-select dropdowns */
-.client_multiple_select,
-.panStatus_multiple_select,
-.typeOfProcess_multiple_select {
-    height: 150px;
-    overflow: auto; /* Only show scrollbars when content overflows */
-    width: 90%;
-    position: relative;
-    -webkit-appearance: menulist;
-}
-
-/* Form control and group styles */
-.form-control {
-    margin-bottom: 10px;
-    font-size: 14px;
-}
-
-.form-group.hidden {
-    display: none;
-}
-
-/* Toggle switch design */
-.toggle {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 26px;
-    background-color: red;
-    border-radius: 15px;
-    border: 2px solid gray;
-}
-
-.toggle:after {
-    content: '';
-    position: absolute;
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background-color: gray;
-    top: 6.5px;
-    left: 6.5px;
-    transition: all 0.5s;
-}
-
-/* Toggle active state */
-.checkbox:checked + .toggle {
-    background-color: green;
-}
-
-.checkbox:checked + .toggle:after {
-    left: 25px;
-}
-
-/* Hide checkbox */
-.checkbox {
-    display: none;
-}
-
-/* Active state for multi-select dropdown */
-.client_multiple_select_active,
-.panStatus_multiple_select_active,
-.typeOfProcess_multiple_select_active {
-    overflow: auto; /* Scrollbars only when needed */
-}
-
-/* Option styles */
-.client_multiple_select option,
-.panStatus_multiple_select option,
-.typeOfProcess_multiple_select option {
-    height: 18px;
-    background-color: white;
-    white-space: nowrap; /* Prevent text wrapping */
-}
-
-.client_multiple_select option::before,
-.panStatus_multiple_select option::before,
-.typeOfProcess_multiple_select option::before {
-    font-family: "Font Awesome 5 Free";
-    content: "\f0c8 ";
-    width: 1.3em;
     text-align: center;
-    display: inline-block;
-}
-
-.client_multiple_select option:checked::before,
-.panStatus_multiple_select option:checked::before,
-.typeOfProcess_multiple_select option:checked::before {
-    content: "\f14a ";
-}
-
-/* Add spacing and labels before dropdowns */
-.client_multiple_select::before,
-.panStatus_multiple_select::before,
-.typeOfProcess_multiple_select::before {
-    display: block;
-    margin-left: 5px;
-    margin-bottom: 2px;
-}
-
-/* Specific height and overflow settings */
-.client_multiple_select {
-    height: 110px !important;
-}
-
-.panStatus_multiple_select,
-.typeOfProcess_multiple_select {
-    height: 90px !important;
-    overflow: auto; /* Only show scrollbars when content overflows */
-}
-
-/* Custom scrollbar for webkit browsers (Chrome, Edge, Safari) */
-.client_multiple_select::-webkit-scrollbar,
-.panStatus_multiple_select::-webkit-scrollbar,
-.typeOfProcess_multiple_select::-webkit-scrollbar {
-    width: 6px; /* Narrow scrollbar width */
-    height: 6px; /* Narrow scrollbar height for horizontal scrolling */
-}
-
-.client_multiple_select::-webkit-scrollbar-track,
-.panStatus_multiple_select::-webkit-scrollbar-track,
-.typeOfProcess_multiple_select::-webkit-scrollbar-track {
-    background: #f1f1f1; /* Background color of the scrollbar track */
-    border-radius: 3px; /* Rounded edges for the track */
-}
-
-.client_multiple_select::-webkit-scrollbar-thumb,
-.panStatus_multiple_select::-webkit-scrollbar-thumb,
-.typeOfProcess_multiple_select::-webkit-scrollbar-thumb {
-    background: #888; /* Scrollbar thumb color */
-    border-radius: 3px; /* Rounded edges for the thumb */
-}
-
-.client_multiple_select::-webkit-scrollbar-thumb:hover,
-.panStatus_multiple_select::-webkit-scrollbar-thumb:hover,
-.typeOfProcess_multiple_select::-webkit-scrollbar-thumb:hover {
-    background: #555; /* Darker thumb color on hover */
-}
-
-/* Firefox-specific scrollbar styling */
-@supports (scrollbar-width: thin) {
-    .client_multiple_select,
-    .panStatus_multiple_select,
-    .typeOfProcess_multiple_select {
-        scrollbar-width: thin; /* Thin scrollbar for Firefox */
-        scrollbar-color: #888 #f1f1f1; /* Thumb and track colors */
-    }
+    width: 100%;
+    height: 100%;
+    min-height: 110px; /* Ensures equal height */
+    padding: 20px;
+    border-radius: 10px;
 }
 
 
-		/* Optional: Scrollbar customization */
-		/*.typeOfProcess_multiple_select::-webkit-scrollbar {*/
-		/* height: 8px; */
-		/* Height of the horizontal scrollbar */
-		/*}*/
 
-		/*.typeOfProcess_multiple_select::-webkit-scrollbar-thumb {*/
-		/* background-color: #888; */
-		/* Color of the scrollbar thumb */
-		/* border-radius: 4px; */
-		/* Rounded corners for the thumb */
-		/*}*/
-
-		/*.typeOfProcess_multiple_select::-webkit-scrollbar-thumb:hover {*/
-		/* background-color: #555; */
-		/* Darker thumb color on hover */
-		/*}*/
-
-		/*.typeOfProcess_multiple_select::-webkit-scrollbar-track {*/
-		/* background: #f1f1f1; */
-		/* Background of the scrollbar track */
-		/*}*/
-	</style>
+    </style>
 </head>
+
 <body>
-<div class="container-fluid">
- <div id='EditUserDiv'></div>
- <input type="hidden" id="showDetailStatus" value="<?php if(isset($_GET['myStatus'])) { echo $_GET['myStatus']; } ?>">
- <input type="hidden" id="showTodayDetailStatus" value="<?php if(isset($_GET['Today'])) { echo $_GET['Today']; } ?>">
-	<h4 align="center" class="pageHeading" id="pageHeading"><?php if(isset($str)) { echo $modified_variable = str_replace("add", "",  $str); } ?></h4>
-	<?php
-	$current_date = date('Y-m-d');
+    <div class="container mt-4">
+        <div class="row d-flex align-items-stretch">
+            <div class="col-md-6 d-flex">
+                <div class="card p-3 flex-fill w-100">
+                    <div class="row ">
+                        <h5>Intellectual Property Sales Graph</h5>
+                        <br>
 
-    // Construct the query to count the rows
-    $count_query = "SELECT COUNT(*) as count FROM trade_mark WHERE DATE(reply_fill_date) = '$current_date'";
-    // / $count_query;
-    
-    // Execute the query
-    $count_result = mysqli_query($con, $count_query);
-    
-    if ($count_result) {
-        // Fetch the count result
-        $show_count_result = mysqli_fetch_assoc($count_result);
-        $count = $show_count_result['count'];
-        // echo "N/umber of rows: " . $count;
-    } else {
-        // echo "Quer/y failed: " . mysqli_error($con);
-    }
-	?>
-	<?php
-	
-$data = array();
-$current_date = date('Y-m-d'); // Define the current date
-// $query = "SELECT portfolio, COUNT(*) AS record_count FROM date_title_data WHERE title_date != 'Date of Application' and DATE(date_time) = '$current_date' and status_title='pending' GROUP BY portfolio";
-$query = "SELECT portfolio, COUNT(*) AS record_count FROM date_title_data WHERE title_date != 'Date of Application' and status_title='pending' GROUP BY portfolio";
-$result = $con->query($query);
+                        <div class="col-md-6">
+                            <label><b>From:</b></label>
+                            <input type="date" class="form-control" id="fromDate">
+                        </div>
+                        <div class="col-md-6">
+                            <label><b>To:</b></label>
+                            <input type="date" class="form-control" id="toDate">
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="salesPorfolio[]" class="font-weight-bold" style="font-size: 14px;">Select Portfolios:</label>
 
-while ($row = $result->fetch_assoc()) {
-    $data[] = array($row['portfolio'], (int)$row['record_count']);
-}
+                        <div class="multiselect-container">
+                            <div class="multiselect-dropdown" onclick="toggleDropdown()">
+                                <span id="selectedText">Select Portfolios</span>
+                                <div class="multiselect-options">
+                                    <!-- <input type="text" id="searchBox" placeholder="Search..." onkeyup="filterOptions()"> -->
+
+                                    <ul>
+                                        <li>
+                                            <!-- <input type="checkbox" id="selectAll" onclick="selectAllToggle(this)"> -->
+                                            <!-- <label for="selectAll"><b>Select All</b></label> -->
+                                        </li>
+                                        <?php
+                                        foreach ($columns as $key => $label) {
+                                            if (!empty($portfoliorow[$key]) && $portfoliorow[$key] == 1) {
+                                                echo '<li>
+                                                <input type="checkbox" class="multi-checkbox" name="salesPorfolio[]" value="' . $key . '" onclick="updateSelection()">
+                                                ' . ucfirst(str_replace('_', ' ', $label)) . '
+                                            </li>';
+                                            }
+                                        }
+                                        ?>
+                                    </ul>
+                                </div>
+                            </div>
 
 
-// // Call the function with the data retrieved from MySQL
-// generateGooglePieCha/rt($data);
+                            <div id="sales_material" style="width: 100%; height: 350px;"></div>
+                        </div>
+                    </div>
+                </div>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        let fromDateInput = document.getElementById("fromDate");
+                        let toDateInput = document.getElementById("toDate");
 
-?>
+                        // Get today's date in YYYY-MM-DD format
+                        let today = new Date();
+                        let todayStr = today.toISOString().split('T')[0];
 
-<div class="container">
-  <div class="row">
-    <div class="col-md-6">
-        
-      <?php
-function generateGooglePieChart($data) {
-    // Convert data array to JSON format
-    $jsonTable = json_encode($data);
+                        // Get date 1 month ago
+                        let pastDate = new Date();
+                        pastDate.setMonth(today.getMonth() - 1);
+                        let pastDateStr = pastDate.toISOString().split('T')[0];
 
-    // Display GET parameters if there are any
-    // if (!empty($_GET)) {
-    //     echo '<div style="padding: 10px; background-color: #f0f0f0; margin-bottom: 10px;">';
-    //     echo '<h4>GET Parameters:</h4>';
-    //     echo '<pre>';
-    //     print_r($_GET);
-    //     echo '</pre>';
-    //     echo '</div>';
-    // }
+                        // Set default values for "From Date" and "To Date"
+                        fromDateInput.value = pastDateStr;
+                        toDateInput.value = todayStr;
 
-    // Define an array of colors
-    $colors = ['blue', 'green', 'red', 'yellow', 'orange', 'purple', 'pink', 'brown', 'grey'];
+                        // Set max limit for "From Date" (future dates not allowed)
+                        fromDateInput.setAttribute("max", todayStr);
 
-    // HTML and JavaScript to render the chart
-    echo '
+                        // Ensure "To Date" is within the allowed range
+                        toDateInput.setAttribute("min", pastDateStr);
+                        toDateInput.setAttribute("max", todayStr);
+
+                        // Event listener for "From Date" selection or manual entry
+                        fromDateInput.addEventListener("change", function() {
+                            let selectedFromDate = new Date(fromDateInput.value);
+
+                            // Check if the manually entered date is in the future
+                            if (selectedFromDate > today) {
+                                alert("Future dates are not allowed in 'From Date'. Resetting to 1 month ago.");
+                                fromDateInput.value = pastDateStr; // Reset to 1 month ago
+                            }
+
+                            // Adjust "To Date" limits
+                            toDateInput.setAttribute("min", fromDateInput.value);
+                            toDateInput.setAttribute("max", todayStr);
+
+                            // Reset "To Date" if it's out of range
+                            if (new Date(toDateInput.value) < selectedFromDate || new Date(toDateInput.value) > today) {
+                                toDateInput.value = todayStr;
+                            }
+                        });
+
+
+
+                        toDateInput.addEventListener("change", function() {
+                            let selectedFromDate = new Date(fromDateInput.value);
+                            let selectedToDate = new Date(toDateInput.value);
+
+                            if (selectedToDate < selectedFromDate) {
+
+                                toDateInput.value = fromDateInput.value;
+                            }
+                        });
+
+                        // Default: Select all portfolios
+                        let checkboxes = document.querySelectorAll(".multi-checkbox");
+                        checkboxes.forEach(cb => cb.checked = true);
+
+                        // Update chart on load with all selected portfolios
+                        updateSelection();
+                    });
+
+
+                    function toggleDropdown() {
+                        let dropdownMenu = document.querySelector(".multiselect-options");
+                        dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+                    }
+
+                    // Close dropdown when clicking outside
+                    document.addEventListener("click", function(event) {
+                        let container = document.querySelector(".multiselect-container");
+                        if (!container.contains(event.target)) {
+                            document.querySelector(".multiselect-options").style.display = "none";
+                        }
+                    });
+
+                    // Search filter for dropdown options
+                    function filterOptions() {
+                        let searchBox = document.getElementById("searchBox").value.toLowerCase();
+                        let options = document.querySelectorAll(".multiselect-options ul li");
+
+                        options.forEach(option => {
+                            let label = option.textContent.toLowerCase();
+                            option.style.display = label.includes(searchBox) ? "block" : "none";
+                        });
+                    }
+
+                    // Select/Deselect All
+                    function selectAllToggle(selectAllCheckbox) {
+                        let checkboxes = document.querySelectorAll(".multi-checkbox");
+                        checkboxes.forEach(checkbox => checkbox.checked = selectAllCheckbox.checked);
+                        updateSelection();
+                    }
+
+                    // Update selected text
+                    function updateSelection() {
+                        let selectedOptions = [];
+                        document.querySelectorAll(".multi-checkbox:checked").forEach(checkbox => {
+                            selectedOptions.push(checkbox.parentNode.textContent.trim());
+                        });
+
+                        document.getElementById("selectedText").innerText = selectedOptions.length > 0 ? selectedOptions.join(", ") : "Select Portfolios";
+                    }
+                </script>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                        document.getElementById("fromDate").addEventListener("change", fetchGraphData);
+                        document.getElementById("toDate").addEventListener("change", fetchGraphData);
+                        document.querySelectorAll(".multi-checkbox").forEach(cb => cb.addEventListener("change", fetchGraphData));
+
+                        function fetchGraphData() {
+                            let fromDate = document.getElementById("fromDate").value;
+                            let toDate = document.getElementById("toDate").value;
+
+                            let selectedPortfolios = [];
+                            document.querySelectorAll(".multi-checkbox:checked").forEach(checkbox => {
+                                selectedPortfolios.push(checkbox.value);
+                            });
+
+                            if (selectedPortfolios.length === 0) {
+                                alert("Please select at least one portfolio.");
+                                return;
+                            }
+
+                            let formData = new FormData();
+                            formData.append("from_date", fromDate);
+                            formData.append("to_date", toDate);
+                            selectedPortfolios.forEach((portfolio, index) => {
+                                formData.append("salesPorfolio[]", portfolio);
+                            });
+
+                            fetch("html/ip_sales_graph.php", {
+                                    method: "POST",
+                                    body: formData
+                                })
+                                .then(response => response.json()) // Expect JSON response
+                                .then(data => {
+                                    //console.log("Received Data:", data); // Debugging Step 1
+                                    if (data.success) {
+                                        drawPortfolioGraph(data.salesData);
+                                    } else {
+                                        alert("No data found for the selected filters.");
+                                    }
+                                })
+                                .catch(error => console.error("Error fetching graph data:", error));
+
+                        }
+
+                        function drawPortfolioGraph(salesData) {
+                            google.charts.load('current', {
+                                'packages': ['corechart']
+                            });
+                            google.charts.setOnLoadCallback(() => {
+                                let chartData = [
+                                    ['Portfolio', 'Total Sales']
+                                ];
+                                salesData.forEach(item => chartData.push([item.portfolio, parseFloat(item.sales) || 0]));
+
+                                let data = google.visualization.arrayToDataTable(chartData);
+                                let options = {
+                                    title: 'Sales by Portfolio',
+                                    hAxis: {
+                                        title: 'Portfolio'
+                                    },
+                                    vAxis: {
+                                        title: 'Total Sales'
+                                    },
+                                    legend: {
+                                        position: 'none'
+                                    },
+                                    bar: {
+                                        groupWidth: '75%'
+                                    },
+                                    colors: ['#4CAF50']
+                                };
+
+                                let chart = new google.visualization.ColumnChart(document.getElementById('sales_material'));
+                                chart.draw(data, options);
+                            });
+                        }
+
+                        // Load data on page load
+                        fetchGraphData();
+                    });
+                </script>
+
+            </div>
+
+            <div class="col-md-6 d-flex">
+                <div class="card p-3 flex-fill w-100 ">
+                    <h5>Status</h5>
+                    <br>
+                    <div class="row d-flex align-items-stretch">
+                        <?php
+                        foreach ($card_columns as $column => $data) {
+                            if (!empty($portfoliorow[$column]) && $portfoliorow[$column] == 1) {
+                                $table_name = $data["table"];
+                                $category_total = 0;
+
+                                // Fetch status counts
+                                $query = "SELECT LOWER(`status_fetch`) AS status_fetch, COUNT(*) AS total FROM `$table_name` GROUP BY `status_fetch`";
+                                $result = mysqli_query($con, $query);
+
+                                if (!$result) {
+                                    echo "Error fetching status data: " . mysqli_error($con);
+                                    continue;
+                                }
+
+                                // Initialize status counts
+                                $status_counts = ["registration" => 0, "hearing" => 0, "expired" => 0];
+
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    $db_status = trim(strtolower($row["status_fetch"])); // ✅ Trim spaces + Convert to lowercase
+                                    if (isset($status_counts[$db_status])) {
+                                        $status_counts[$db_status] = $row["total"];
+                                    }
+                                }
+
+                                // Calculate total for category
+                                $category_total = array_sum($status_counts);
+                                $total_portfolio += $category_total;
+
+                                // Display card with status counts
+                                echo '<div class="col-md-4 mb-3">
+                            <div class="card p-3 text-white " style="background-color: ' . $colors[$index] . ';">
+                                <h5>' . $data["label"] . '</h5>
+                                <p>Pending: <strong>' . $status_counts["registration"] . '</strong></p>
+                                <p>Hearing: <strong>' . $status_counts["hearing"] . '</strong></p>  
+                                <p>Expired: <strong>' . $status_counts["expired"] . '</strong></p>
+                            </div>
+                          </div>';
+                                $index++;
+                            }
+                        }
+                        ?>
+
+                        <!-- Total Portfolio Card -->
+                        <div class="col-md-4 mb-3 d-flex">
+                            <div class="card p-3 text-white flex-fill w-100" style="background-color: #2d3436;">
+                                <h5>Total Portfolio</h5>
+                                <p>Total portfolio: <strong><?php echo $total_portfolio; ?></strong></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <div class="row d-flex align-items-stretch">
+                <!-- Last Expiring Record -->
+                <div class="col-md-6 d-flex">
+                    <div class="card p-3 flex-fill w-100">
+                        <h5>Last Expiring Record</h5><br>
+                        <?php
+                        include_once 'connection.php';
+
+                        if (!empty($queryParts)) {
+                            $query = implode(" UNION ALL ", $queryParts) . " ORDER BY expiry_date ASC LIMIT 5";
+                            $result = mysqli_query($con, $query);
+
+                            echo '<table class="table">
+                    <thead><tr><th>Type</th><th>Transaction ID</th><th>Name</th><th>Expiry Date</th></tr></thead>
+                    <tbody>';
+
+                            if (mysqli_num_rows($result) > 0) {
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    echo "<tr>
+                            <td>{$row['type']}</td>
+                            <td>{$row['transaction_id']}</td>
+                            <td>{$row['client_name']}</td>
+                            <td>{$row['expiry_date']}</td>
+                        </tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='4' class='text-center text-muted'>No data available</td></tr>";
+                            }
+
+                            echo '</tbody></table>';
+                            mysqli_free_result($result);
+                        } else {
+                            echo "<p class='text-center text-muted'>No categories enabled to display data.</p>";
+                        }
+                        ?>
+                    </div>
+                </div>
+
+                <!-- Last File Examination Record -->
+                <div class="col-md-6 d-flex">
+                    <div class="card p-3 flex-fill w-100">
+                        <h5>Last File Examination Record</h5><br>
+                        <?php
+                        include_once 'connection.php';
+
+                        if (!empty($queryParts)) {
+                            $query = implode(" UNION ALL ", $queryParts) . " ORDER BY expiry_date DESC LIMIT 5";
+                            $result = mysqli_query($con, $query);
+
+                            echo '<table class="table">
+                    <thead><tr><th>Type</th><th>Transaction ID</th><th>Name</th><th>Examination Date</th></tr></thead>
+                    <tbody>';
+
+                            if (mysqli_num_rows($result) > 0) {
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    echo "<tr>
+                            <td>{$row['type']}</td>
+                            <td>{$row['transaction_id']}</td>
+                            <td>{$row['client_name']}</td>
+                            <td>{$row['expiry_date']}</td>
+                        </tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='4' class='text-center text-muted'>No data available</td></tr>";
+                            }
+
+                            echo '</tbody></table>';
+                            mysqli_free_result($result);
+                        } else {
+                            echo "<p class='text-center text-muted'>No categories enabled to display data.</p>";
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row d-flex align-items-stretch">
+                <!-- Last Renewals Record -->
+                <div class="col-md-6 d-flex">
+                    <div class="card p-3 flex-fill w-100">
+                        <h5>Last Renewals Record</h5><br>
+                        <?php
+                        include_once 'connection.php';
+
+                        if (!empty($queryParts)) {
+                            $query = implode(" UNION ALL ", $queryParts) . " ORDER BY expiry_date DESC LIMIT 5";
+                            $result = mysqli_query($con, $query);
+
+                            echo '<table class="table">
+                    <thead><tr><th>Type</th><th>Transaction ID</th><th>Name</th><th>Renewals Date</th></tr></thead>
+                    <tbody>';
+
+                            if (mysqli_num_rows($result) > 0) {
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    echo "<tr>
+                            <td>{$row['type']}</td>
+                            <td>{$row['transaction_id']}</td>
+                            <td>{$row['client_name']}</td>
+                            <td>{$row['expiry_date']}</td>
+                        </tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='4' class='text-center text-muted'>No data available</td></tr>";
+                            }
+
+                            echo '</tbody></table>';
+                            mysqli_free_result($result);
+                        } else {
+                            echo "<p class='text-center text-muted'>No categories enabled to display data.</p>";
+                        }
+                        ?>
+                    </div>
+                </div>
+
+                <!-- Last Update Record -->
+                <div class="col-md-6 d-flex">
+                    <div class="card p-3 flex-fill w-100">
+                        <h5>Last Update Record</h5><br>
+                        <?php
+                        include_once 'connection.php';
+
+                        if (!empty($queryParts)) {
+                            $query = implode(" UNION ALL ", $queryParts) . " ORDER BY expiry_date DESC LIMIT 5";
+                            $result = mysqli_query($con, $query);
+
+                            echo '<table class="table">
+                    <thead><tr><th>Type</th><th>Transaction ID</th><th>Name</th><th>Update Date</th></tr></thead>
+                    <tbody>';
+
+                            if (mysqli_num_rows($result) > 0) {
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    echo "<tr>
+                            <td>{$row['type']}</td>
+                            <td>{$row['transaction_id']}</td>
+                            <td>{$row['client_name']}</td>
+                            <td>{$row['expiry_date']}</td>
+                        </tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='4' class='text-center text-muted'>No data available</td></tr>";
+                            }
+
+                            echo '</tbody></table>';
+                            mysqli_free_result($result);
+                        } else {
+                            echo "<p class='text-center text-muted'>No categories enabled to display data.</p>";
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card p-3">
+                        <div id='EditUserDiv'></div>
+                        <input type="hidden" id="showDetailStatus" value="<?php if (isset($_GET['myStatus'])) {
+                                                                                echo $_GET['myStatus'];
+                                                                            } ?>">
+                        <input type="hidden" id="showTodayDetailStatus" value="<?php if (isset($_GET['Today'])) {
+                                                                                    echo $_GET['Today'];
+                                                                                } ?>">
+                        <h4 align="center" class="pageHeading" id="pageHeading"><?php if (isset($str)) {
+                                                                                    echo $modified_variable = str_replace("add", "",  $str);
+                                                                                } ?></h4>
+                        <?php
+                        $current_date = date('Y-m-d');
+
+                        // Construct the query to count the rows
+                        $count_query = "SELECT COUNT(*) as count FROM trade_mark WHERE DATE(reply_fill_date) = '$current_date'";
+
+                        // Execute the query
+                        $count_result = mysqli_query($con, $count_query);
+
+                        if ($count_result) {
+                            // Fetch the count result
+                            $show_count_result = mysqli_fetch_assoc($count_result);
+                            $count = $show_count_result['count'];
+                        } else {
+                        }
+                        ?>
+                       <?php
+                            // Database connection
+                            include 'connection.php';
+
+                            if (isset($_SESSION['company_id'])) {
+                                $company_id = $_SESSION['company_id'];
+
+                                // Fetch user data for the given company ID and user ID
+                                $fetch_user_data = "SELECT * FROM `users` WHERE `company_id` = '$company_id' AND `id` = '" . $_SESSION['user_id'] . "'";
+                                $run_fetch_user_data = mysqli_query($con, $fetch_user_data);
+                                $user_row = mysqli_fetch_array($run_fetch_user_data);
+                            }
+
+                            // Define portfolio-related columns (Ensuring correct case)
+                            $columns = [
+                                "trade_mark" => "trade mark",
+                                "patent" => "patent",
+                                "copy_right" => "copy right",
+                                "industrial_design" => "industrial design",
+                                "trade_secret" => "trade secret"
+                            ];
+
+                            $data = array(); // Store chart data
+
+                            // Fetch record counts from `date_title_data` where the status is 'pending'
+                            $query = "SELECT LOWER(portfolio) AS portfolio, COUNT(*) AS record_count FROM date_title_data 
+                                    WHERE title_date != 'Date of Application' AND status_title='pending' GROUP BY portfolio";
+                            $result = $con->query($query);
+
+                            while ($row = $result->fetch_assoc()) {
+                                $portfolio_name = strtolower($row['portfolio']); // Ensure lowercase match
+                                $record_count = (int)$row['record_count'];
+
+                                // Check if the portfolio corresponds to a column where the value is 1 in `users`
+                                foreach ($columns as $column => $label) {
+                                    if (isset($user_row[$column]) && $user_row[$column] == 1 && $portfolio_name == $label) {
+                                        $data[] = array(ucwords(str_replace("_", " ", $portfolio_name)), $record_count);
+                                    }
+                                }
+                            }
+
+                            // Convert the filtered data into JSON for Google Charts
+                            $jsonTable = json_encode($data);
+                            echo "<script>console.log(" . json_encode($data) . ");</script>";
+                        ?>
+
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-md-12">
+
+                                    <?php
+                                    function generateGooglePieChart($data)
+                                    {
+                                        // Convert data array to JSON format
+                                        $jsonTable = json_encode($data);
+
+                                        $colors = ['blue', 'green', 'red', 'yellow', 'orange', 'purple', 'pink', 'brown', 'grey'];
+
+                                        // HTML and JavaScript to render the chart
+                                        echo '
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
       google.charts.load(\'current\', {\'packages\':[\'corechart\']});
@@ -559,19 +880,13 @@ function generateGooglePieChart($data) {
         chart.draw(data, options);
 
         // Add click event listener to handle click on chart slices
-        google.visualization.events.addListener(chart, \'select\', function() {
-            var selectedItem = chart.getSelection()[0];
-            if (selectedItem) {
-                var category = data.getValue(selectedItem.row, 0); // Get the category
-
-                // Update the URL without refreshing the page
-                var newUrl = \'ip_dashboard?category=\' + encodeURIComponent(category);
-                window.history.pushState({ path: newUrl }, \'\', newUrl);
-
-                // Reload the page
-                window.location.reload();
-            }
-        });
+         google.visualization.events.addListener(chart, \'select\', function() {
+        var selectedItem = chart.getSelection()[0];
+        if (selectedItem) {
+            var category = data.getValue(selectedItem.row, 0); // Get the category
+            fetchData(category); // Fetch data using AJAX
+        }
+    });
 
         // Fetch data based on initial URL parameters if present
         var urlParams = new URLSearchParams(window.location.search);
@@ -609,7 +924,7 @@ function generateGooglePieChart($data) {
             for (var i = 0; i < data.length; i++) {
                 var titleDate = data[i].title_date || \'No Date\';
                 var col = document.createElement(\'div\');
-                col.className = \'col-md-4 mb-3\';  // Adjust the column size as needed
+                col.className = \'col-md-4 mb-3 d-flex\';  // Adjust the column size as needed
 
                 // Cycle through colors
                 var color = colors[colorIndex];
@@ -642,25 +957,35 @@ function generateGooglePieChart($data) {
         }
       }
     </script>
-    <div id="piechart_div" class="mt-3"></div>
-    <div id="data_container" class="mt-3"></div>
+    <div class="row d-flex align-items-stretch">
+        <div class="col-md-6 d-flex">
+            <div class="card p-3 flex-fill w-100">
+                <div id="piechart_div" class="mt-3"></div>
+            </div>
+        </div>
+        <div class="col-md-6 d-flex">
+            <div class="card p-3 flex-fill w-100 ">
+                <div id="data_container" class="mt-3 h-100"></div>
+            </div>
+        </div>
+    </div>
     ';
 
-    // Add inline CSS for rectangle colors
-    echo '
+                                        // Add inline CSS for rectangle colors
+                                        echo '
     <style>
-      .rectangle.blue { background-color: #007bff; }
-      .rectangle.green { background-color: #28a745; }
-      .rectangle.red { background-color: #dc3545; }
-      .rectangle.yellow { background-color: #ffc107; }
-      .rectangle.orange { background-color: #fd7e14; }
-      .rectangle.purple { background-color: #6f42c1; }
-      .rectangle.pink { background-color: #e83e8c; }
-      .rectangle.brown { background-color: #795548; }
-      .rectangle.grey { background-color: #6c757d; }
+      .rectangle.blue { background-color: #1e90ff; }
+      .rectangle.green { background-color: #2ecc71; }
+      .rectangle.red { background-color: #e84118; }
+      .rectangle.yellow { background-color: #f1c40f; }
+      .rectangle.orange { background-color: #ff9f43; }
+      .rectangle.purple { background-color: #8e44ad; }
+      .rectangle.pink { background-color: #f368e0; }
+      .rectangle.brown { background-color: #e84118; }
+      .rectangle.grey { background-color: #34495e; }
       .rectangle {
         padding:25px;
-        height: 80%;
+        height: 90%;
         border-radius: 5px;
         color: #fff;
         cursor: pointer;
@@ -669,148 +994,67 @@ function generateGooglePieChart($data) {
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        margin-bottom:-10%;
+        margin-bottom:20%;
       }
       .inner-content {
         text-align: center;
         margin-bottom:none;
       }
       .total-users {
-        font-size: 24px;
+        font-size: 26px;
         font-weight: bold;
-        margin-bottom:-40%;
+        margin-bottom:-25%;
         margin-top:-17%;
       }
       .label {
-        font-size: 14px;
-      }
+        font-size: 18px;
+        line-height: normal;
+      }   
     </style>
     ';
-}
-      // Call the function with the data retrieved from MySQL
-      generateGooglePieChart($data);
-      ?>
-    </div>
-    
-<div class="col-md-6">
-    <h4 class="text-center">Intellectual Property Sales Graph</h4>
-    <form method="post" id="salesGraph_form" style="background: #f8f9fa; padding: 15px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);">
-        <!-- Date Range Row -->
-        <div class="form-row align-items-center mb-3">
-            <div class="col">
-                <label for="from_date" class="font-weight-bold" style="font-size: 14px;">From:</label>
-                <input type="date" id="from_date" name="from_date" class="form-control" style="font-size: 14px; padding: 5px; border-radius: 5px; border: 1px solid #ced4da;">
-            </div>
-            <div class="col">
-                <label for="to_date" class="font-weight-bold" style="font-size: 14px;">To:</label>
-                <input type="date" id="to_date" name="to_date" class="form-control" style="font-size: 14px; padding: 5px; border-radius: 5px; border: 1px solid #ced4da;">
-            </div>
-        </div>
+                                    }
+                                    // Call the function with the data retrieved from MySQL
+                                    generateGooglePieChart($data);
+                                    ?>
+                                </div>
 
-        <!-- Portfolio Selection -->
-         <?php 
-            if ($hasPortfolio) {
-            ?>
-            <div class="form-group mb-3">
-                <label for="salesPorfolio[]" class="font-weight-bold" style="font-size: 14px;">Select Portfolios:</label>
-                <select class="form-control" name="salesPorfolio[]" id="salesPorfolio[]" multiple multiselect-search="true" placeholder="Select Portfolio" multiselect-select-all="true" style="height: 120px; font-size: 14px; padding: 5px; border-radius: 5px; border: 1px solid #ced4da;">
-                    <?php
-                    foreach ($columns as $key => $label) {
-                        if (!empty($portfoliorow[$key]) && $portfoliorow[$key] == 1) {
-                            echo "<option value=\"$key\">$label</option>";
-                        }
-                    }
-                    ?>
-                </select>
-            </div>
-            <?php
-        }
-        ?>
-    </form>
+                            </div>
+                        </div>
+                    </div>
 
-    <!-- Chart Container -->
-    <div class="chart-container" id="sales_material" style="width: 100%; height: 300px; margin-top: 10px; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);"></div>
-</div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card p-3">
+                                <?php
+                                if (isset($_GET['category'])) {
+                                    $_GET['category'];
+                                    $cat = $_GET['category']; // Assign category to variable $cat
+                                }
 
+                                if (isset($_GET['titleDate'])) {
+                                    // $_GET['titleDate'] can be an array if multiple parameters are passed with the same name
+                                    if (is_array($_GET['titleDate'])) {
+                                        foreach ($_GET['titleDate'] as $date) {
+                                            echo $date . "<br>";
+                                            $date_val = $_GET['titleDate'];
+                                            // Construct and execute your SQL query
+                                            $display_date_data = "SELECT * FROM date_title_data WHERE portfolio='$cat' and title_date='$date_val'";
+                                            if ($result) {
+                                                while ($row = mysqli_fetch_assoc($result)) {
+                                                    // Access columns from $row as needed
+                                                    $row['transaction_id']; // Example of accessing a column
 
-<script>
-    $(document).ready(function () {
-        // Set default date range to the last 30 days
-        var today = new Date().toISOString().split('T')[0];
-        var lastMonth = new Date();
-        lastMonth.setDate(lastMonth.getDate() - 30);
-        var lastMonthDate = lastMonth.toISOString().split('T')[0];
+                                                    // Assuming $row['transaction_id'] is used directly instead of $client_name_fees
+                                                    $transaction_id = $row['transaction_id'];
 
-        $('#from_date').val(lastMonthDate);
-        $('#to_date').val(today);
+                                                    // Construct your SQL query based on $transaction_id
+                                                    $fetchIdForServiceId = "";
+                                                    $ViewPageForServiceId = "";
 
-        // Default selection: select all portfolios
-        $('#salesPorfolio\\[\\] option').prop('selected', true);
-
-        // Fetch chart data for the last 30 days by default
-        fetchAndDisplayChart();
-
-        // Fetch chart dynamically on date or portfolio change
-        $('#from_date, #to_date, #salesPorfolio\\[\\]').on('change', function () {
-            console.log('Input changed:', $(this).attr('id'), $(this).val()); // Debug
-            fetchAndDisplayChart();
-        });
-    });
-
-    // Define fetchAndDisplayChart function outside of $(document).ready()
-    function fetchAndDisplayChart() {
-        // Serialize form data, including date range and portfolio
-        var formData = $('#salesGraph_form').serialize();
-
-        $.ajax({
-            method: "post",
-            url: 'html/ip_sales_graph.php', // Adjust this path if needed
-            data: formData,
-            success: function (response) {
-                $('#sales_material').html(response); // Inject the response into the chart container
-            },
-            error: function (xhr, status, error) {
-                console.error("AJAX Error: " + status + " - " + error);
-            }
-        });
-    }
-</script>
-
-
-
-
-
-  </div>
-  <?php
-  if(isset($_GET['category'])){
-    $_GET['category'];
-    $cat = $_GET['category']; // Assign category to variable $cat
-}
-
-if(isset($_GET['titleDate'])){
-    // $_GET['titleDate'] can be an array if multiple parameters are passed with the same name
-    if(is_array($_GET['titleDate'])){
-        foreach($_GET['titleDate'] as $date){
-            echo $date . "<br>";
-            $date_val=$_GET['titleDate'];
-            // Construct and execute your SQL query
-            $display_date_data = "SELECT * FROM date_title_data WHERE portfolio='$cat' and title_date='$date_val'";
-            if ($result) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                // Access columns from $row as needed
-                $row['transaction_id']; // Example of accessing a column
-                
-                // Assuming $row['transaction_id'] is used directly instead of $client_name_fees
-                $transaction_id = $row['transaction_id'];
-                
-                // Construct your SQL query based on $transaction_id
-                $fetchIdForServiceId = "";
-                $ViewPageForServiceId = "";
-                
-                // Example switch statement to determine SQL query based on $transaction_id
-                switch ($transaction_id) {
-    case 'TRD':
-        $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
+                                                    // Example switch statement to determine SQL query based on $transaction_id
+                                                    switch ($transaction_id) {
+                                                        case 'TRD':
+                                                            $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
                                 tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
                                 FROM `trade_mark` tr
                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
@@ -819,13 +1063,13 @@ if(isset($_GET['titleDate'])){
                                   AND dt.date_time = '$current_date' 
                                   AND dt.title_date = '$date_val'
                                 LIMIT 1";
-        $count_result = mysqli_query($con, $fetchIdForServiceId);
-        $ViewPageForServiceId = 'View_Trade_mark';
-        $ViewPageForServiceId_page = 'intell_trademark';
-        break;
+                                                            $count_result = mysqli_query($con, $fetchIdForServiceId);
+                                                            $ViewPageForServiceId = 'View_Trade_mark';
+                                                            $ViewPageForServiceId_page = 'intell_trademark';
+                                                            break;
 
-    case 'PTN':
-        $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
+                                                        case 'PTN':
+                                                            $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
                                 tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
                                 FROM `patent` tr
                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
@@ -834,13 +1078,13 @@ if(isset($_GET['titleDate'])){
                                   AND dt.date_time = '$current_date' 
                                   AND dt.title_date = '$date_val'
                                 LIMIT 1";
-        $count_result = mysqli_query($con, $fetchIdForServiceId);
-        $ViewPageForServiceId = 'View_patent';
-        $ViewPageForServiceId_page = 'intell_patent';
-        break;
+                                                            $count_result = mysqli_query($con, $fetchIdForServiceId);
+                                                            $ViewPageForServiceId = 'View_patent';
+                                                            $ViewPageForServiceId_page = 'intell_patent';
+                                                            break;
 
-    case 'COP':
-        $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
+                                                        case 'COP':
+                                                            $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
                                 tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
                                 FROM `copy_right` tr
                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
@@ -849,13 +1093,13 @@ if(isset($_GET['titleDate'])){
                                   AND dt.date_time = '$current_date' 
                                   AND dt.title_date = '$date_val'
                                 LIMIT 1";
-        $count_result = mysqli_query($con, $fetchIdForServiceId);
-        $ViewPageForServiceId = 'View_copy_right';
-        $ViewPageForServiceId_page = 'intell_copyright';
-        break;
+                                                            $count_result = mysqli_query($con, $fetchIdForServiceId);
+                                                            $ViewPageForServiceId = 'View_copy_right';
+                                                            $ViewPageForServiceId_page = 'intell_copyright';
+                                                            break;
 
-    case 'TRS':
-        $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
+                                                        case 'TRS':
+                                                            $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
                                 tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
                                 FROM `trade_secret` tr
                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
@@ -864,13 +1108,13 @@ if(isset($_GET['titleDate'])){
                                   AND dt.date_time = '$current_date' 
                                   AND dt.title_date = '$date_val'
                                 LIMIT 1";
-        $count_result = mysqli_query($con, $fetchIdForServiceId);
-        $ViewPageForServiceId = 'View_tradesecret';
-        $ViewPageForServiceId_page = 'intell_tradesecret';
-        break;
+                                                            $count_result = mysqli_query($con, $fetchIdForServiceId);
+                                                            $ViewPageForServiceId = 'View_tradesecret';
+                                                            $ViewPageForServiceId_page = 'intell_tradesecret';
+                                                            break;
 
-    case 'IDS':
-        $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
+                                                        case 'IDS':
+                                                            $fetchIdForServiceId = "SELECT DISTINCT tr.transaction_id, tr.tax_invoice_number, tr.retail_invoice_number, 
                                 tr.client_name, tr.status_fetch, tr.id, tr.modify_by, tr.modify_date
                                 FROM `industrial_design` tr
                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
@@ -879,149 +1123,66 @@ if(isset($_GET['titleDate'])){
                                   AND dt.date_time = '$current_date' 
                                   AND dt.title_date = '$date_val'
                                 LIMIT 1";
-        $count_result = mysqli_query($con, $fetchIdForServiceId);
-        $ViewPageForServiceId = 'View_industrial_design';
-        $ViewPageForServiceId_page = 'industrial_design';
-        break;
+                                                            $count_result = mysqli_query($con, $fetchIdForServiceId);
+                                                            $ViewPageForServiceId = 'View_industrial_design';
+                                                            $ViewPageForServiceId_page = 'industrial_design';
+                                                            break;
 
-    default:
-        // Handle default case or unknown transaction_id
-        break;
-}
+                                                        default:
+                                                            // Handle default case or unknown transaction_id
+                                                            break;
+                                                    }
+                                                    // Execute SQL query and fetch data
+                                                }
+                                            } else {
+                                                // Handle the case where $result is false or query execution fails
+                                                echo "Error executing query: " . mysqli_error($con);
+                                            }
+                                        }
+                                    } else {
+                                        // Handle single value if needed
+                                        $date_val = $_GET['titleDate'];
+                                        // Construct and execute your SQL query for single value
+                                        $display_date_data = "SELECT * FROM date_title_data WHERE portfolio='$cat' and title_date='$date_val'";
+                                        // Assuming you want to execute the query here, but consider using prepared statements for security
+                                        $result = mysqli_query($con, $display_date_data); // Replace $your_db_connection with your actual database connection variable
+                                        // // Handle the result as needed
 
-                
-                // Execute SQL query and fetch data
-                
-            }
-        } else {
-            // Handle the case where $result is false or query execution fails
-            echo "Error executing query: " . mysqli_error($con);
-        }
-        }
-    } else {
-        // Handle single value if needed
-        $date_val=$_GET['titleDate'];
-        // Construct and execute your SQL query for single value
-        $display_date_data = "SELECT * FROM date_title_data WHERE portfolio='$cat' and title_date='$date_val'";
-        // Assuming you want to execute the query here, but consider using prepared statements for security
-        $result = mysqli_query($con, $display_date_data); // Replace $your_db_connection with your actual database connection variable
-        // // Handle the result as needed
-        
-if ($result && mysqli_num_rows($result) > 0) {
-    ?>
-    <table class="table-striped" id="otherServicesTable">
-        <thead class="bg-white">
-            <?php if ($_SESSION['user_type'] == 'system_user') {?>
-                <th class="tableDate">
-                    <!-- Checkbox or other elements for system users -->
-                </th>
-                <th class="tableDate">Action</th>
-            <?php }?>
-            <th class="txt">Service Id</th>
-            <th class="txt">Recipient Name</th>
-            <th class="txt">Date Type</th>
-            <th class="txt">Status</th>
-            <!--<th>User</th>-->
-        </thead>
-        <tbody>
-        <?php
-        $current_date = date('Y-m-d');
-        while ($row = mysqli_fetch_assoc($result)) {
-            // Access columns from $row as needed
-            $transaction_id_full = $row['transaction_id'];
-            $transaction_parts = explode('_', $transaction_id_full);
-            $transaction_id = $transaction_parts[1];
-            
-            // Construct your SQL query based on $transaction_id
-            $fetchIdForServiceId = "";
-            $count_result = null;
-            $ViewPageForServiceId = "";
-            
+                                        if ($result && mysqli_num_rows($result) > 0) {
+                                ?>
+                                            <table class="table-striped" id="otherServicesTable">
+                                                <thead class="bg-white">
+                                                    <?php if ($_SESSION['user_type'] == 'system_user') { ?>
+                                                        <th class="tableDate">
+                                                            <!-- Checkbox or other elements for system users -->
+                                                        </th>
+                                                        <th class="tableDate">Action</th>
+                                                    <?php } ?>
+                                                    <th class="txt">Service Id</th>
+                                                     <th class="txt">Recipient Name</th>
+                                                    <th class="txt">Date Type</th>
+                                                    <th class="txt">Status</th>
+                                                    <!--<th>User</th>-->
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+                                                    $current_date = date('Y-m-d');
+                                                    while ($row = mysqli_fetch_assoc($result)) {
+                                                        // Access columns from $row as needed
+                                                        $transaction_id_full = $row['transaction_id'];
+                                                        $transaction_parts = explode('_', $transaction_id_full);
+                                                        $transaction_id = $transaction_parts[1];
 
-            // Example switch statement to determine SQL query based on $transaction_id
-            
-// switch ($transaction_id) {
-//     case 'TRD':
-//         $fetchIdForServiceId = "SELECT tr.id as id, dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
-//                                 tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.modify_by, 
-//                                 tr.modify_date 
-//                                 FROM `trade_mark` tr
-//                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
-//                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
-//                                 AND dt.status_title = 'pending' 
-//                                 AND dt.date_time = '$current_date' 
-//                                 AND dt.title_date = '$date_val'";
-//         $ViewPageForServiceId = 'View_Trade_mark';
-//         $ViewPageForServiceId_page = 'intell_trademark';
-//         break;
+                                                        // Construct your SQL query based on $transaction_id
+                                                        $fetchIdForServiceId = "";
+                                                        $count_result = null;
+                                                        $ViewPageForServiceId = "";
 
-//     case 'PTN':
-//         $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
-//                                 tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, 
-//                                 tr.modify_by, tr.modify_date
-//                                 FROM `patent` tr
-//                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
-//                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
-//                                 AND dt.status_title = 'pending' 
-//                                 AND dt.date_time = '$current_date' 
-//                                 AND dt.title_date = '$date_val'";
-//         $ViewPageForServiceId = 'View_patent';
-//         $ViewPageForServiceId_page = 'intell_patent';
-//         break;
+                                                        $groupByClause = "GROUP BY tr.transaction_id, dt.transaction_id";
 
-//     case 'COP':
-//         $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
-//                                 tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, 
-//                                 tr.modify_by, tr.modify_date
-//                                 FROM `copy_right` tr
-//                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
-//                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
-//                                 AND dt.status_title = 'pending' 
-//                                 AND dt.date_time = '$current_date' 
-//                                 AND dt.title_date = '$date_val'";
-//         $ViewPageForServiceId = 'View_copy_right';
-//         $ViewPageForServiceId_page = 'intell_copyright';
-//         break;
-
-//     case 'TRS':
-//         $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
-//                                 tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, 
-//                                 tr.modify_by, tr.modify_date
-//                                 FROM `trade_secret` tr
-//                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
-//                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
-//                                 AND dt.status_title = 'pending' 
-//                                 AND dt.date_time = '$current_date' 
-//                                 AND dt.title_date = '$date_val'";
-//         $ViewPageForServiceId = 'View_tradesecret';
-//         $ViewPageForServiceId_page = 'intell_tradesecret';
-//         break;
-
-//     case 'IDS':
-//         $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, tr.tax_invoice_number, 
-//                                 tr.retail_invoice_number, tr.client_name, tr.status_fetch, tr.id, 
-//                                 tr.modify_by, tr.modify_date
-//                                 FROM `industrial_design` tr
-//                                 JOIN `date_title_data` dt ON tr.transaction_id = dt.transaction_id
-//                                 WHERE tr.transaction_id = '" . $transaction_id_full . "' 
-//                                 AND dt.status_title = 'pending' 
-//                                 AND dt.date_time = '$current_date' 
-//                                 AND dt.title_date = '$date_val'";
-//         $ViewPageForServiceId = 'View_industrial_design';
-//         $ViewPageForServiceId_page = 'industrial_design';
-//         break;
-
-//     default:
-//         echo "Unknown transaction type.";
-//         break;
-// }
-
-
-$groupByClause = "GROUP BY tr.transaction_id, dt.transaction_id";
-
-switch ($transaction_id) {     
-    case 'TRD':         
-        $fetchIdForServiceId = "SELECT tr.id as id, dt.title_date, tr.transaction_id, 
+                                                        switch ($transaction_id) {
+                                                            case 'TRD':
+                                                                $fetchIdForServiceId = "SELECT tr.id as id, dt.title_date, tr.transaction_id, 
                                        tr.tax_invoice_number, tr.retail_invoice_number, 
                                        tr.client_name, tr.status_fetch, tr.modify_by, 
                                        tr.modify_date
@@ -1031,12 +1192,12 @@ switch ($transaction_id) {
                                   AND dt.status_title = 'pending' 
                                   AND dt.title_date = '$date_val'
                                 $groupByClause";
-        $ViewPageForServiceId = 'View_Trade_mark';
-        $ViewPageForServiceId_page = 'intell_trademark';
-        break;
+                                                                $ViewPageForServiceId = 'View_Trade_mark';
+                                                                $ViewPageForServiceId_page = 'intell_trademark';
+                                                                break;
 
-    case 'PTN':         
-        $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, 
+                                                            case 'PTN':
+                                                                $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, 
                                        tr.tax_invoice_number, tr.retail_invoice_number, 
                                        tr.client_name, tr.status_fetch, tr.id, 
                                        tr.modify_by, tr.modify_date
@@ -1046,12 +1207,12 @@ switch ($transaction_id) {
                                   AND dt.status_title = 'pending' 
                                   AND dt.title_date = '$date_val'
                                 $groupByClause";
-        $ViewPageForServiceId = 'View_patent';
-        $ViewPageForServiceId_page = 'intell_patent';
-        break;
+                                                                $ViewPageForServiceId = 'View_patent';
+                                                                $ViewPageForServiceId_page = 'intell_patent';
+                                                                break;
 
-    case 'COP':         
-        $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, 
+                                                            case 'COP':
+                                                                $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, 
                                        tr.tax_invoice_number, tr.retail_invoice_number, 
                                        tr.client_name, tr.status_fetch, tr.id, 
                                        tr.modify_by, tr.modify_date
@@ -1061,12 +1222,12 @@ switch ($transaction_id) {
                                   AND dt.status_title = 'pending' 
                                   AND dt.title_date = '$date_val'
                                 $groupByClause";
-        $ViewPageForServiceId = 'View_copy_right';
-        $ViewPageForServiceId_page = 'intell_copyright';
-        break;
+                                                                $ViewPageForServiceId = 'View_copy_right';
+                                                                $ViewPageForServiceId_page = 'intell_copyright';
+                                                                break;
 
-    case 'TRS':         
-        $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, 
+                                                            case 'TRS':
+                                                                $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, 
                                        tr.tax_invoice_number, tr.retail_invoice_number, 
                                        tr.client_name, tr.status_fetch, tr.id, 
                                        tr.modify_by, tr.modify_date
@@ -1076,12 +1237,12 @@ switch ($transaction_id) {
                                   AND dt.status_title = 'pending' 
                                   AND dt.title_date = '$date_val'
                                 $groupByClause";
-        $ViewPageForServiceId = 'View_tradesecret';
-        $ViewPageForServiceId_page = 'intell_tradesecret';
-        break;
+                                                                $ViewPageForServiceId = 'View_tradesecret';
+                                                                $ViewPageForServiceId_page = 'intell_tradesecret';
+                                                                break;
 
-    case 'IDS':         
-        $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, 
+                                                            case 'IDS':
+                                                                $fetchIdForServiceId = "SELECT dt.title_date, tr.transaction_id, 
                                        tr.tax_invoice_number, tr.retail_invoice_number, 
                                        tr.client_name, tr.status_fetch, tr.id, 
                                        tr.modify_by, tr.modify_date
@@ -1091,448 +1252,72 @@ switch ($transaction_id) {
                                   AND dt.status_title = 'pending' 
                                   AND dt.title_date = '$date_val'
                                 $groupByClause";
-        $ViewPageForServiceId = 'View_industrial_design';
-        $ViewPageForServiceId_page = 'industrial_design';
-        break;
+                                                                $ViewPageForServiceId = 'View_industrial_design';
+                                                                $ViewPageForServiceId_page = 'industrial_design';
+                                                                break;
 
-    default:         
-        echo "Unknown transaction type.";         
-        break;
-}
-
-
-// Execute the query
-$count_result = mysqli_query($con, $fetchIdForServiceId);
-
-// Check and fetch data rows
-if ($count_result && mysqli_num_rows($count_result) > 0) {
-    while ($row = mysqli_fetch_assoc($count_result)) { 
-        ?>
-        <tr>
-            <?php if ($_SESSION['user_type'] == 'system_user') { ?>
-                <td>
-                    <form method="post" action="<?php echo $ViewPageForServiceId_page; ?>" target="_blank" class="inline-form">
-                        <input type="hidden" name="other_serviceEditID" value="<?= htmlspecialchars($row['id']); ?>">
-                        <button class="editOtherServicebtn mr-2" name="editOtherServicebtn" id="editOtherServicebtn" style="padding: 0; border: none; background: none;" data-toggle="tooltip" data-placement="top" title="Edit">
-                            <i class="fas fa-pencil-alt fa-lg" style="color:green;"></i>
-                        </button>
-                    </form>
-                </td>
-            <?php } ?>
-            <td class="ttext"><?= htmlspecialchars($row['transaction_id']); ?></td>
-            <td>
-                <form method="post" action="<?= $ViewPageForServiceId; ?>" target="_blank" style="display: inline;">
-                    <input type="hidden" name="ViewID" id="ViewID" value="<?= htmlspecialchars($row['id']); ?>">
-                    <button type="submit" name="viewOtherServiceDetailbtn" id="viewOtherServiceDetailbtn" 
-                        style="padding: 0; border: none; background: none; color: blue; text-decoration: underline; cursor: pointer;">
-                        <?= htmlspecialchars($row['transaction_id']); ?>
-                    </button>
-                </form>
-            </td>
-            <td class="ttext"><?= htmlspecialchars($row['client_name']); ?></td>
-            <td class="ttext"><?= htmlspecialchars($row['title_date']); ?></td>
-            <td class="ttext"><?= htmlspecialchars($row['status_fetch']); ?></td>
-        </tr>
-        <?php
-    }
-}
-
-// End of while loop for count_result
-        } // End of while loop for $result
-        ?>
-        </tbody>
-    </table>
-    
-    <?php
-} 
-
- else {
-            // Handle the case where $result is false or query execution fails
-            echo "Error executing query: " . mysqli_error($con);
-        }
-    }
-}
-  ?>
-</div>
-<script>
-$(document).ready(function() {
-    $('#salesPorfolio').multiselect({
-        includeSelectAllOption: true,
-        enableFiltering: true,
-        filterPlaceholder: 'Search Portfolio',
-        buttonWidth: '100%'
-    });
-});
-</script>
-<div class="row border justify-content-center mt-4" id="after-heading">
-</div>
-<div id="searchShowDetails" class="table-responsive d-block mt-4"></div>
-
-<!--<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.1.0/mdb.min.js"></script>-->
-
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-<script>
+                                                            default:
+                                                                echo "Unknown transaction type.";
+                                                                break;
+                                                        }
 
 
-$('#salesGraph_form').submit(function(e){
-		    e.preventDefault();
-		    var portfolio = $('#salesGraph_form').serialize();
-		  //  alert(portfolio);
-		   $.ajax({
-    method: "post",
-    url: 'html/sales_graph.php',
-    data: $('#salesGraph_form').serialize(),
-    success: function(data) {
-        // console.log(data); // Check the response data
-        $('#sales_material').html(data); // Ensure this is correct
-    }
-});
+                                                        // Execute the query
+                                                        $count_result = mysqli_query($con, $fetchIdForServiceId);
 
-    });
+                                                        // Check and fetch data rows
+                                                        if ($count_result && mysqli_num_rows($count_result) > 0) {
+                                                            while ($row = mysqli_fetch_assoc($count_result)) {
+                                                    ?>
+                                                                <tr>
+                                                                    <?php if ($_SESSION['user_type'] == 'system_user') { ?>
+                                                                        <td>
+                                                                            <form method="post" action="<?php echo $ViewPageForServiceId_page; ?>" target="_blank" class="inline-form">
+                                                                                <input type="hidden" name="other_serviceEditID" value="<?= htmlspecialchars($row['id']); ?>">
+                                                                                <button class="editOtherServicebtn mr-2" name="editOtherServicebtn" id="editOtherServicebtn" style="padding: 0; border: none; background: none;" data-toggle="tooltip" data-placement="top" title="Edit">
+                                                                                    <i class="fas fa-pencil-alt fa-lg" style="color:green;"></i>
+                                                                                </button>
+                                                                            </form>
+                                                                        </td>
+                                                                    <?php } ?>
+                                                                    <td class="ttext"><?= htmlspecialchars($row['transaction_id']); ?></td>
+                                                                    <td>
+                                                                        <form method="post" action="<?= $ViewPageForServiceId; ?>" target="_blank" style="display: inline;">
+                                                                            <input type="hidden" name="ViewID" id="ViewID" value="<?= htmlspecialchars($row['id']); ?>">
+                                                                            <button type="submit" name="viewOtherServiceDetailbtn" id="viewOtherServiceDetailbtn"
+                                                                                style="padding: 0; border: none; background: none; color: blue; text-decoration: underline; cursor: pointer;">
+                                                                                <?= htmlspecialchars($row['transaction_id']); ?>
+                                                                            </button>
+                                                                        </form>
+                                                                    </td>
+                                                                    <td class="ttext"><?= htmlspecialchars($row['client_name']); ?></td>
+                                                                    <td class="ttext"><?= htmlspecialchars($row['title_date']); ?></td>
+                                                                    <td class="ttext"><?= htmlspecialchars($row['status_fetch']); ?></td>
+                                                                </tr>
+                                                    <?php
+                                                            }
+                                                        }
 
+                                                        // End of while loop for count_result
+                                                    } // End of while loop for $result
+                                                    ?>
+                                                </tbody>
+                                            </table>
 
-$('#meeting_rectangle').on('click',function(){
-    $('#showMeeting_btn').addClass('d-block');
-    $('#showMeeting_btn').removeClass('d-none');
-    $('#showEnquiry_btn').addClass('d-none');
-    $('#showEnquiry_btn').removeClass('d-block');
-    $('#showMeet_enq_btn').addClass('d-block');
-    $('#showMeet_enq_btn').removeClass('d-none');
-    
-    var div = document.getElementById('svg_section');
-    div.style.display = 'none'; // Hide the div
-    var div1 = document.getElementById('showTodays_section');
-    div1.style.display = 'none'; // Hide the div
-});
-$('#enquiry_rectangle').on('click',function(){
-    $('#showEnquiry_btn').addClass('d-block');
-    $('#showEnquiry_btn').removeClass('d-none');
-    $('#showMeeting_btn').addClass('d-none');
-    $('#showMeeting_btn').removeClass('d-block');
-    $('#showMeet_enq_btn').addClass('d-block');
-    $('#showMeet_enq_btn').removeClass('d-none');
-    var div = document.getElementById('svg_section');
-    div.style.display = 'none'; // Hide the div
-    var div1 = document.getElementById('showTodays_section');
-    div1.style.display = 'none'; // Hide the div
-});
-$('.tableRecords #tableids').on('change','#Status_change', function(){
-     var row_indexDEL = $(this).closest('tr'); 
-     var btnID = row_indexDEL.find('#sheetTitle_id').val();
-    var btnStatus = row_indexDEL.find('#Status_change').val();
-    const colorModal = new bootstrap.Modal(document.getElementById('colorModal'));
-    colorModal.show();
-    $('#statusSID').val(btnID);
-    $('#statusSName').val(btnStatus);
-});
-$('#testCap').on('keyup', function () {
-		  var capt = $('#testCap').val();
-		  var pre = $('#Pastemomcache').val();
-		  if(capt == pre){
-		      $('#testCap').html('').css({'color':'green'});
-		      document.getElementById('mom_chat_del').style.visibility = 'visible';
-		  } else {
-		      $('#testCap').html('').css({'color':'red'});
-		      //$(".client_delete").modal('hide');
-		      document.getElementById('mom_chat_del').style.visibility = 'hidden';
-		  }
-		});
-
-var up = document.getElementById('MOM_Fun');
-    var down = document.getElementById('Pastemomcache');
-    
-
-    function MOM_Fun() {
-        document.getElementById("Pastemomcache").value = down.innerText =
-        Math.random().toString(36).slice(2);
-    }
-    
-    $('#summernote').summernote({
-        tabsize: 2,
-        height: 120,
-        toolbar: [
-          ['style', ['style']],
-          ['font', ['bold', 'underline', 'clear']],
-          ['color', ['color']],
-          ['para', ['ul', 'ol', 'paragraph']],
-          ['table', ['table']],
-          ['insert', ['link', 'picture', 'video']],
-          ['view', ['fullscreen', 'codeview', 'help']]
-        ]
-      });
-      function removeLeadingZero(inputString) {
-      if (inputString.charAt(0) === "0") {
-        return inputString.substring(1);
-      } else {
-        return inputString;
-      }
-    }
-    function containsCountryCode91(number) {
-      const pattern = /^(91\d{10})|\+91\d{10}/;
-      return pattern.test(number);
-    }
-$(document).ready(function() {
-    $(document).on('submit', '#update-form', function() {
-      // do your things
-      return false;
-     });
-     
-
-
-     $('.tableRecords #tableids').on('click', '#gstWhatsAppbtn', function() {
-         <?php if(($_SESSION['accessToken'] != "invalid") && ($_SESSION['endpoint'] != "invalid")){ ?>
-        var row_indexDEL = $(this).closest('tr'); 
-        var btnID1 = row_indexDEL.find('#companyWhatsAppID').val();
-        var btnID = row_indexDEL.find('#mobiWhatsAppID').val();
-        var domain = "User Dashboard";
-        var template = "chatbot_client_msg";
-        var endPoint = "<?= $_SESSION['endpoint']; ?>";
-        var apiProvider = "<?= $_SESSION['whatsapp_type']; ?>";
-		var userResponse = window.confirm("Are you sure to send Whatsapp message to "+btnID1+"?");
-        btnID = removeLeadingZero(btnID);
-        mobile = btnID.replace(/\s/g, "");
-        if (userResponse) {
-          try {
-                if (apiProvider !== "local") {
-                    if (containsCountryCode91(mobile)) {
-                        mobile;
-                    } else {
-                        mobile = '91'+mobile;
-                    }
-		        }
-		        mobile = "9016043397";
-                if(mobile != ""){
-                    if (apiProvider === "wati") {
-                        sendWatiMessage(endPoint,mobile);
-                    } else if (apiProvider === "local") {
-                        var user_dashboard_fetch_data = "sdwd";
-                        $.ajax({
-                    		url:"html/verifyPinProcess.php",
-                    		method:"post",
-                    		data: {user_dashboard_fetch_data:user_dashboard_fetch_data},
-                    		dataType:"text",
-                    		success:function(data)
-                    		{
-                    		    var jsonData = JSON.parse(data);
-                    		    var result = jsonData.result;
-                    		    var message = jsonData.message;
-                    		    var file = jsonData.file;
-                                sendLocalMessage(mobile,result,message,file);
-                    		}
-                        });
-                    } else {
-                        alert("Whatsapp Support is not their");
-                    }
-                }
-                  
-        	} catch (error) {
-                console.error('JSON parsing error:', error);
-            }
-        }
-            <?php } else { ?> alert('Whatsapp Support Is not their !'); <?php } ?>
-    	});
-     
-     $('.tableRecords #tableids').on('click','#active_client_mom_btn', function(){
-          var row_indexDEL = $(this).closest('tr'); 
-          var btnID = row_indexDEL.find('#active_client_mom_id').val();
-          $('#mom_client_id').val(btnID);
-            $.ajax({
-				url:"html/verifyPinProcess.php",
-				method:"post",
-				data: {show_clientMOM:true,btnID:btnID},
-				dataType:"text",
-				success:function(data)
-				{
-				    $("#client_mom_table").html(data);
-				},
-			});
-  });
-});
-$(document).ready(function() {
-if ($("#editSheet_Data_temp").val() != "") {
-		// CheckMobileNumberExist();
-		// CheckEmailIdExist();
-		$("#showData").removeClass("d-none");
-		$("#showData").addClass("d-block");
-		$("selectTitle").removeClass("d-none");
-		// $("#import_client").removeClass("d-block");
-		// $("#import_client").addClass("d-none");
-        $("#searchShowDetails").addClass("d-none");
-		        $("#searchShowDetails").removeClass("d-block");
-		$("#addNew_Data").removeClass("d-none");
-		$("#addNew_Data").addClass("d-block");
-
-	}
-});
-function sendWatiMessage(endPoint,mobile) {
-    const options = {
-      method: 'POST',
-      headers: {
-        'content-type': 'text/json',
-        Authorization: "<?= $_SESSION['accessToken']; ?>"
-      },
-      body: JSON.stringify({
-        broadcast_name: 'chatbot_client_msg',
-        template_name: 'chatbot_client_msg',
-        parameters: [{name: 'link', value: 'Tendervow.com'}]
-      })
-    };
-    
-    fetch(endPoint+'/api/v1/sendTemplateMessage?whatsappNumber='+mobile, options)
-          .then(response => response.json())
-          .then(data => {
-            // Access specific values from the JSON data
-            const result = data.result;
-            const mobile = data.phone_number;
-            if(result === true){
-        //         $.ajax({
-        // 			url:"html/whatsapi_log_file.php",
-        // 			method:"post",
-        // 			data: {user_dashboard:domain,template:template,mobile:mobile,result:result,},
-        // 			dataType:"text",
-        // 			success:function(data)
-        // 			{
-        // 			}
-        // 		});
-            $('#EditUserDiv').append('\<div class="alert alert-success alert-dismissible fade show" role="alert">\
-              <strong>Success! </strong> Message sent to '+mobile+'.\
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
-                <span aria-hidden="true">&times;</span>\
-              </button>\
-            </div>');
-            // $('#gstWhatsAppbtn').click();
-            } else {
-                $('#EditUserDiv').append('\<div class="alert alert-danger alert-dismissible fade show" role="alert">\
-              <strong>Failed! </strong> Message not sent to '+mobile+'.\
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">\
-                <span aria-hidden="true">&times;</span>\
-              </button>\
-            </div>');
-            // $('#gstWhatsAppbtn').click();
-            }
-        })
-}
-
-async function sendLocalMessage(mobile,result,message,file) {
-		    if(result != "empty"){
-			const apiUrl = "<?= $_SESSION['accessToken']; ?>";
-            const apiKey = "<?= $_SESSION['endpoint']; ?>";
-            // const message = message;
-            // alert(file);
-            if(file != ""){
-                const image = "<?= $_SESSION['location_path']; ?>"+'html/whatsapp_template_file/'+file;
-                if (image.indexOf("jpg") !== -1 || image.indexOf("png") !== -1) {
-                    var file_type = `&img1=${image}`;
-                } else if (image.indexOf("pdf") !== -1) {
-                    var file_type = `&pdf=${image}`;
-                    // const apiRequestUrl = `${apiUrl}?apikey=${apiKey}&mobile=${mobile}&pdf=${image}`;
-                }
-            }
-            const apiRequestUrl = `${apiUrl}?apikey=${apiKey}&mobile=${mobile}`+file_type;
-            const apiRequestUrl1 = `${apiUrl}?apikey=${apiKey}&mobile=${mobile}&msg=${encodeURIComponent(message)}`;
-//             // $('#gstWhatsAppbtn').click();
-            swal({
-              title: "Message Sent!",
-              text: "WhatsApp message sent to "+mobile,
-              icon: "success",
-              button: "Close!",
-            });
-        
-            try {
-                if(file != ""){
-                const response = await fetch(apiRequestUrl, { mode: 'no-cors' });
-                
-                const response1 = await fetch(apiRequestUrl1, { mode: 'no-cors' });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-            
-                console.log('API request was made, but CORS restrictions prevent accessing the response directly.');
-                }
-            //     // Note: You won't be able to access response.json() or other response methods here.
-            
-            } catch (error) {
-                console.error('Error:', error);
-            }
-		    }
-		
-    
-}
-function openTitle() {
-  document.getElementById("mysideTitle").style.width = "250px";
-}
-
-function closeTitle() {
-  document.getElementById("mysideTitle").style.width = "0";
-}
-    $(document).ready(function() {
-        $("#search").on("input", function(){
-        var search = $("#search").val();
-        var tstatus = $("#showTodayDetailStatus").val();
-		var status = $('#showDetailStatus').val();
-		
-		$.ajax({
-			url:"html/showUserStatus_Data.php",
-			method:"post",
-			data: {search:search,status:status,tstatus:tstatus},
-			dataType:"text",
-			success:function(data)
-			{
-				$("#showData").addClass("d-none");
-		        $("#showData").removeClass("d-block");
-				$("#searchShowDetails").addClass("d-block");
-		        $("#searchShowDetails").removeClass("d-none");
-		        $("#searchShowDetails").html(data);
-			}
-		});
-    });
-    
-    $('#closeSearch').click(function(){
-		$("#search").val('');
-		var no_of_records_per_page = $("#no_of_records_per_page").val();
-		var first = $('#first').val();
-		var currentPageno = $('#currentPageno').val();
-		var last = $('#IncomeLast').val();
-                $("#showData").addClass("d-block");
-		        $("#showData").removeClass("d-none");
-	            $("#searchShowDetails").addClass("d-none");
-		        $("#searchShowDetails").removeClass("d-block");
-	});
-	
-	$('#Status').on('change',function(){
-        var status = $('#Status').val();
-        if(status == "Client" || status == "Rejected"){
-            $("#followDate").addClass("d-none");
-		        $("#followDate").removeClass("d-block");
-		        $("#followDate").prop('required',false);
-        } else {
-            $("#followDate").addClass("d-block");
-		        $("#followDate").removeClass("d-none");
-		        $("#followDate").prop('required',true);
- }
-});
-    var get = $('#Status').val();
-    if(get == "Client" || get == "Rejected"){
-        $("#followDate").addClass("d-none");
-		        $("#followDate").removeClass("d-block");
-		        $("#followDate").prop('required',false);
-    } else{
-        $("#followDate").addClass("d-block");
-		        $("#followDate").removeClass("d-none");
-		        $("#followDate").prop('required',true);
-    }
-    });
-</script>
+                                <?php
+                                        } else {
+                                            // Handle the case where $result is false or query execution fails
+                                            echo "Error executing query: " . mysqli_error($con);
+                                        }
+                                    }
+                                }
+                                ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 </body>
+
 </html>
+
 <?php include_once 'ltr/header-footer.php'; ?>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#otherServicesTable').DataTable();
-        });
-    </script>
