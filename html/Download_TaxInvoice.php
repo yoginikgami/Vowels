@@ -786,16 +786,8 @@ if ($procure_type == 'Goods') {
                 }
             }
         }
-
-
-
-
-
-
-
         $count = 0;
         $finalTax = (($_POST['cgst_tax_percentage'] + $_POST['sgst_tax_percentage'] + $_POST['igst_tax_percentage'] + 100) / 100);
-
 
         $output .= "<tr>
                     <td colspan='5' style='border-left:none; border-top:none;  text-align: right; font-size: 12px;'>Total Fees</td>
@@ -849,7 +841,7 @@ if ($procure_type == 'Goods') {
                     </td>
                 </tr>";
         $output .= '</table>';
-        $sql = "SELECT position, tems_cond_name FROM temps_condi_tax_invoice"; // Updated SQL to fetch ID
+        $sql = "SELECT position, tems_cond_name FROM temps_condi_tax_invoice WHERE optional= '1' "; // Updated SQL to fetch ID
         $result = $con->query($sql);
 
         $terms = [];
@@ -865,7 +857,6 @@ if ($procure_type == 'Goods') {
             }
         }
 
-
         // Building the output for Terms and Conditions
         $output .= '
         <p style="font-size: 14px; font-weight: bold; margin-bottom: 10px; text-decoration: underline;">Terms & Conditions</p>
@@ -873,7 +864,7 @@ if ($procure_type == 'Goods') {
 
         foreach ($terms as $term) {
             $output .= '<p style="font-size: 12px; margin:0 ; padding: 5px 0;">
-                    ' . htmlspecialchars($term['position']) . '. ' . htmlspecialchars($term['name']) . '
+                     ' . htmlspecialchars($term['name']) . '
                 </p>';
         }
 
@@ -1038,7 +1029,7 @@ if ($procure_type == 'Goods') {
                     </td>
                 </tr>";
         $output .= '</table>';
-        $sql = "SELECT position, tems_cond_name FROM temps_condi_tax_invoice"; // Updated SQL to fetch ID
+        $sql = "SELECT position, tems_cond_name FROM temps_condi_tax_invoice"; 
         $result = $con->query($sql);
 
         // Prepare an array to hold the terms and IDs
@@ -1059,7 +1050,7 @@ if ($procure_type == 'Goods') {
         $output .= '<br>
             <table border="1" style="width: 100%;">
             <tr>
-                <td style="font-size: 12px; ">No</td>
+                // <td style="font-size: 12px; ">No</td>
                 <td style="font-size: 12px;">Terms and Conditions</td>
             </tr>';
 
