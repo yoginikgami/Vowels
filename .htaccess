@@ -478,7 +478,7 @@ RewriteRule ^documents_setup html/documents_setup.php
 # Callaric Report
 RewriteRule ^callaric html/callaric_dashboard.php
 RewriteRule ^call_report html/callaric_call_report.php
-RewriteRule ^log_report html/callaric_log_report.php
+RewriteRule ^log_report html/callaric_log_report_ajax.php
 RewriteRule ^aric_analytics html/aric_analytics.php
 RewriteRule ^staff_dashboard html/callaric_staff_dashboard.php
 
